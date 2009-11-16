@@ -108,10 +108,12 @@ if ($twitterInfo->response && $twitterInfo->response['error']) {
 		    $user->twitter_icon_url_normal = $twitterInfo->profile_image_url;
 		    $user->twitter_icon_url_mini = str_replace('_normal.jpg','_mini.jpg',$twitterInfo->profile_image_url);
 		}
-		
+
+                /*
 		if ($new_account) {
 			thewire_save_post($twitterInfo->status['text'], ACCESS_PUBLIC, 0, 'twitter');
 		}
+                 */
 	}
 }
 

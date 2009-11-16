@@ -12,4 +12,4 @@
 	 */
 	 
 ?>
-<div id="googleappslogin-box"><a id="googleappslogin_show" href="<?php echo $vars['url']; ?>action/googleappslogin/login"><img src="<?php echo $vars['url']; ?>mod/googleappslogin/graphics/sign_in_with_googleapps.gif" alt="googleapps" /></a></div>
+<div id="googleappslogin-box" style="margin-left: 10px;"><a id="googleappslogin_show" href="<?php echo $vars['url']; ?>action/googleappslogin/login"><img src="<?php echo $vars['url']; ?>mod/googleappslogin/graphics/sign_in_with_googleapps.gif" alt="googleapps" /></a></div>

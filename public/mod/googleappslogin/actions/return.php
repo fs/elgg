@@ -11,26 +11,39 @@ require_once (dirname(dirname(__FILE__)) . "/models/Google_OpenID.php");
 global $CONFIG;
 
 $google = Google_OpenID::create_from_response($CONFIG->input);
+$google->set_home_url("elgg.flatsourcing.com");
 
-var_dump($google->get_response());
+if (! $google->is_authorized()) {
+    //register_error(sprintf(elgg_echo('googleappslogin:googleappserror'), ''));
+    //forward();
+} else {
+    echo "user is authorized\n<br>";
+
+    $do_login = false;
+    $duplicate_account = false;
+
+    $entities = get_entities_from_metadata('googleapps_screen_name', $google->get_email(), 'user');
+
+    if (!$entities) {
+        // this account does not exist, so create it
+	// currently the username is just set to the Google name, but this may change
+        // check to make sure that a non-Google account with the same user name
+	// does not already exist (c) twitter login
+
+        
+    }
+
+}
 
 exit;
 
 /*
 // get model
 
-require_once(dirname(dirname(__FILE__)) . "/models/EpiCurl.php");
-require_once(dirname(dirname(__FILE__)) . "/models/EpiOAuth.php");
-require_once(dirname(dirname(__FILE__)) . "/models/EpiTwitter.php");
-require_once(dirname(dirname(__FILE__)) . "/models/secret.php");
-
 $twitterObj = new EpiTwitter($consumer_key, $consumer_secret);
-
-$twitterObj->setToken(get_input('oauth_token',''));
 $token = $twitterObj->getAccessToken();
-$twitterObj->setToken($token->oauth_token, $token->oauth_token_secret);
 $twitterInfo = $twitterObj->get_accountVerify_credentials();
-//print_r($twitterInfo->response);
+
 if ($twitterInfo->response && $twitterInfo->response['error']) {
     register_error(sprintf(elgg_echo('twitterlogin:twittererror'),$twitterInfo->response['error']));
 } else {
@@ -39,9 +52,11 @@ if ($twitterInfo->response && $twitterInfo->response['error']) {
 	$do_login = false;
 	$duplicate_acccount = false;
 
+
 	if (!$entities || $entities[0]->active == 'no') {
 		if (!$entities) {
-			$entities = get_entities_from_metadata('twitter_screen_name', $twitterInfo->screen_name, 'user');
+
+                        $entities = get_entities_from_metadata('twitter_screen_name', $twitterInfo->screen_name, 'user');
 			if (!$entities) {
 				// this account does not exist, so create it
 				// currently the username is just set to the Twitter name, but this may change
@@ -49,6 +64,8 @@ if ($twitterInfo->response && $twitterInfo->response['error']) {
 				// check to make sure that a non-Twitter account with the same user name
 				// does not already exist
 				$username = $twitterInfo->screen_name;
+
+                                /*
 				if(get_user_by_username($username)) {
 					// oops, try adding a "_twitter" to the end
 					$username .= '_twitter';
@@ -57,6 +74,7 @@ if ($twitterInfo->response && $twitterInfo->response['error']) {
 						register_error(sprintf(elgg_echo("twitterlogin:account_duplicate"),$username));
 					}
 				}
+
 				if (!$duplicate_account) {
 			        $user = new ElggUser();
 				    $user->email = '';

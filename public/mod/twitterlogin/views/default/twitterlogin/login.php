@@ -12,4 +12,4 @@
 	 */
 	 
 ?>
-<div id="twitterlogin-box"><a id="twitterlogin_show" href="<?php echo $vars['url']; ?>action/twitterlogin/login"><img src="<?php echo $vars['url']; ?>mod/twitterlogin/graphics/sign_in_with_twitter.gif" alt="Twitter" /></a></div>
+<div id="twitterlogin-box" style="margin-left: 10px;"><a id="twitterlogin_show" href="<?php echo $vars['url']; ?>action/twitterlogin/login"><img src="<?php echo $vars['url']; ?>mod/twitterlogin/graphics/sign_in_with_twitter.gif" alt="Twitter" /></a></div>

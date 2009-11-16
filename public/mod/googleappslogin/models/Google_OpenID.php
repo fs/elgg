@@ -101,7 +101,11 @@ class Google_OpenID
             array_push($_params, self::encode($key) . '=' . self::encode($value));
         }
 
-        $url = $this->_endpoint_url . '?' . implode('&', $_params);
+        $url = $this->_endpoint_url;
+
+        $url .= (preg_match('/\?/', $url) ? '&' : '?');
+
+        $url .= implode('&', $_params);
 
         // var_dump
 

@@ -1,16 +1,19 @@
 <?php
 
-// get model
+require_once (dirname(dirname(__FILE__)) . "/models/Http.php");
+require_once (dirname(dirname(__FILE__)) . "/models/Google_OpenID.php");
 
-require_once(dirname(dirname(__FILE__)) . "/models/EpiCurl.php");
-require_once(dirname(dirname(__FILE__)) . "/models/EpiOAuth.php");
-require_once(dirname(dirname(__FILE__)) . "/models/EpiGoogleApps.php");
-require_once(dirname(dirname(__FILE__)) . "/models/secret.php");
+$google = new Google_OpenID();
 
-$googleObj = new EpiGoogleApps($consumer_key, $consumer_secret);
+$google->set_home_url("localhost/elgg/");
+$google->set_return_url("localhost/elgg/action/googleappslogin/return");
 
-$au = $googleObj->getAuthorizationUrl();
-forward($au);
+$google->set_start_url("https://www.google.com/accounts/o8/id");
+//$google->set_start_url('https://www.google.com/accounts/o8/site-xrds?ns=2&hd=flatsoft.com');
+
+$url = $google->get_authorization_url();
+
+forward($url);
 
 exit;
 ?>

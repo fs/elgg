@@ -18,15 +18,18 @@ $google = new Google_OpenID();
 $google->set_home_url($home_url);
 $google->set_return_url($home_url . 'action/googleappslogin/return');
 
-if (isset($googleapps_domain)) {
+if ($googleapps_domain) {
     $google->set_start_url('https://www.google.com/accounts/o8/site-xrds?ns=2&hd=' . $googleapps_domain);
 } else {
     $google->set_start_url("https://www.google.com/accounts/o8/id");
 }
 
-$url = $google->get_authorization_url();
-
-forward($url);
+try {
+    $url = $google->get_authorization_url();
+    forward($url);
+} catch(Exception $e) {
+    
+}
 
 exit;
 ?>

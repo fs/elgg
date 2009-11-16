@@ -18,6 +18,7 @@
 		'googleappslogin:googleappserror' => "Error: googleapps returned the following error message: %s",
 		'googleappslogin:account_duplicate' => "Error: a non-googleapps account with "
 			."the same username (%s) already exists on this site.",
+		'googleappslogin:wrongdomain' => "Error: can't resolve OpenID entrypoint for your GoogleApps (hosted) domain or domain is not google-hosted.",
 		'googleappslogin:settings:yes' => "yes",
 		'googleappslogin:settings:no' => "no",
 		'googleappslogin:googleapps_user_settings_title' => "googleapps profile",

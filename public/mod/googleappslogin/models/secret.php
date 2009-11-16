@@ -1,6 +1,6 @@
 <?php
 
-$googleapps_domain = 'http://' . get_plugin_setting('googleapps_domain', 'googleappslogin');
+$googleapps_domain = 'http://flatsoft.com';// . get_plugin_setting('googleapps_domain', 'googleappslogin');
 $login_secret = get_plugin_setting('login_secret', 'googleappslogin');
 $private_key = get_plugin_setting('private_key', 'googleappslogin');
 

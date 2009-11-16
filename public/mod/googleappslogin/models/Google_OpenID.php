@@ -69,8 +69,8 @@ class Google_OpenID
             'openid.ns' => 'http://specs.openid.net/auth/2.0',
             'openid.ns.pape' => 'http://specs.openid.net/extensions/pape/1.0',
             'openid.pape.max_auth_age' => 300,
-            'openid.claimed_id' => 'http://specs.openid.net/auth/2.0/identifier_select',
-            'openid.identity' => 'http://specs.openid.net/auth/2.0/identifier_select',
+//            'openid.claimed_id' => 'http://specs.openid.net/auth/2.0/identifier_select',
+//            'openid.identity' => 'http://specs.openid.net/auth/2.0/identifier_select',
             'openid.return_to' => self::normalize_url($this->_return_url),
             'openid.realm' => self::normalize_url($this->_home_url),
 //          'openid.assoc_handle=ABSmpf6DNMw',
@@ -103,6 +103,8 @@ class Google_OpenID
 
         $url = $this->_endpoint_url . '?' . implode('&', $_params);
 
+        // var_dump
+
         foreach ($params as $key=>$value) {
             echo "<b>$key</b> = $value<br>\n\n";
         }
@@ -116,10 +118,8 @@ class Google_OpenID
         return rawurlencode(utf8_encode($string));
     }
     
-    public static function normalize_url($url)
-    {
-        if (!preg_match('/^[\w]{3,5}\:\\\\/', $url))
-        {
+    public static function normalize_url($url) {
+        if (!preg_match('/^[\w]{3,5}\:\/\//', $url)) {
             $url = 'http://' . $url;
         }
         
@@ -162,14 +162,24 @@ class Google_OpenID
     }
     
     public function get_email() {
+        return $this->get_response_attribute('openid.ext1.value.email');
+    }
+
+    public function get_firstname() {
+        return $this->get_response_attribute('openid.ext1.value.firstname');
+    }
+
+    public function get_lastname() {
+        return $this->get_response_attribute('openid.ext1.value.lastname');
+    }
+
+    public function get_response_attribute($attr) {
         if (!$this->is_authorized()) {
             throw new Exception('User is not authorized');
         }
 
-        return $this->_response['openid.ext1.value.email'];
+        return $this->_response[$attr];
     }
-
-    
 
     /**
      * GETTERS/SETTERS

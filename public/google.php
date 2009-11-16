@@ -30,3 +30,24 @@ echo '<a href=' . $url . '>' . $url . "</a><br><br>\n\n";
 //$end_point_url = $google->resolve_endpoint_url();
 
 //var_dump($end_point_url);
+
+/*
+ RSA-SHA1:
+
+      case 'RSA-SHA1':
+
+        // Pull the private key ID from the certificate
+        $privatekeyid = openssl_get_privatekey($cert);
+
+        // Sign using the key
+        $ok = openssl_sign($base_string, $signature, $privatekeyid);
+
+
+        // Release the key resource
+        openssl_free_key($privatekeyid);
+
+        $retval = base64_encode($signature);
+
+
+        break;
+ */

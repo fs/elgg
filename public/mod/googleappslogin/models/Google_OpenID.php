@@ -107,12 +107,12 @@ class Google_OpenID
 
         $url .= implode('&', $_params);
 
-        // var_dump
-
+        /*
         foreach ($params as $key=>$value) {
             echo "<b>$key</b> = $value<br>\n\n";
         }
         echo "<br>";
+        */
 
         return $url;
     }

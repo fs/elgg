@@ -11,10 +11,7 @@ require_once (dirname(dirname(__FILE__)) . "/models/Google_OpenID.php");
 global $CONFIG;
 
 $google = Google_OpenID::create_from_response($CONFIG->input);
-$google->set_home_url("elgg.flatsourcing.com");
-
-//var_dump($google->get_response());
-//exit(0);
+$google->set_home_url($googleapps_domain);
 
 if (! $google->is_authorized()) {
     //register_error(sprintf(elgg_echo('googleappslogin:googleappserror'), ''));

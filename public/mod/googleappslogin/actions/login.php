@@ -7,6 +7,7 @@ ini_set('pcre.backtrack_limit', 10000000);
 
 require_once (dirname(dirname(__FILE__)) . "/models/Http.php");
 require_once (dirname(dirname(__FILE__)) . "/models/Google_OpenID.php");
+require_once (dirname(dirname(__FILE__)) . "/models/secret.php");
 
 global $CONFIG;
 
@@ -17,8 +18,11 @@ $google = new Google_OpenID();
 $google->set_home_url($home_url);
 $google->set_return_url($home_url . 'action/googleappslogin/return');
 
-//$google->set_start_url("https://www.google.com/accounts/o8/id");
-$google->set_start_url('https://www.google.com/accounts/o8/site-xrds?ns=2&hd=flatsoft.com');
+if (isset($googleapps_domain)) {
+    $google->set_start_url('https://www.google.com/accounts/o8/site-xrds?ns=2&hd=' . $googleapps_domain);
+} else {
+    $google->set_start_url("https://www.google.com/accounts/o8/id");
+}
 
 $url = $google->get_authorization_url();
 

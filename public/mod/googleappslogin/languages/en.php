@@ -4,7 +4,7 @@
 	
 		'item:user:googleapps' => "googleapps users",	
 		'googleappslogin:title' => "Sign in with Google Apps - settings",
-		'googleappslogin:details' => "To use Sign in with Google Apps, you have to enter your Google Apps (hosted) domain in the field below. If you want to provide futher integration with Google you need to register your site with Google Apps and obtain consumer key and secret. Your site should be registered with a high level of security (with a X.509 certificate). You also should enter your private RSA key in the text field below.",
+		'googleappslogin:details' => "To use Sign in with Google Apps, you have to enter your Google Apps (hosted) domain in the field below. Also you can leave it blank to use with username@gmail.com accounts.\nIf you want to provide futher integration with Google you need to register your site with Google Apps and obtain consumer key and secret. Your site should be registered with a high level of security (with a X.509 certificate). You also should enter your private RSA key in the text field below.",
 
 		'googleappslogin:domain' => "Google Apps (hosted) domain name without www, http://, etc (example: flatsoft.com)",
 		'googleappslogin:secret' => "Secret (to use with OAuth)",

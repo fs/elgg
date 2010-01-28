@@ -28,7 +28,8 @@ try {
     $url = $google->get_authorization_url();
     forward($url);
 } catch(Exception $e) {
-    
+    register_error(sprintf(elgg_echo("googleappslogin:wrongdomain"), $username));
+    forward();
 }
 
 exit;

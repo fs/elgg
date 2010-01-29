@@ -5,9 +5,7 @@
 	 * 
 	 * @package Elgg
 	 * @subpackage Core
-	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider Ltd
-	 * @copyright Curverider Ltd 2008-2009
 	 * @link http://elgg.org/
 	 */
 
@@ -59,7 +57,7 @@
 		 */
 		private function parse($xml)
 		{
-			$xml = xml_2_object($xml);
+			$xml = xml_to_object($xml);
 			
 			// sanity check
 			if ((isset($xml->name)) && (strcasecmp($xml->name, "methodCall")!=0))
@@ -440,11 +438,15 @@
 	        case 'struct':
 	            foreach ($object->children as $child)
 	            {
-	                $value[$child->children[0]->content] = xmlrpc_scalar_value($child->children[1]->children[0]);
+	            	if (isset($child->children[1]->children[0]))
+	                	$value[$child->children[0]->content] = xmlrpc_scalar_value($child->children[1]->children[0]);
+	                else
+	                	$value[$child->children[0]->content] = $child->children[1]->content;
 	            }
 	            return $value;
 	        case 'boolean':
 	            return (boolean) $object->content;
+	        case 'i4':
 	        case 'int':
 	            return (int) $object->content;
 	        case 'double':

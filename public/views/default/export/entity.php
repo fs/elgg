@@ -1,24 +1,24 @@
 <?php
-	/**
-	 * Elgg Entity export.
-	 * Displays an entity using the current view.
-	 * 
-	 * @package Elgg
-	 * @subpackage Core
-	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
-	 * @author Curverider Ltd
-	 * @copyright Curverider Ltd 2008-2009
-	 * @link http://elgg.org/
-	 */
+/**
+ * Elgg Entity export.
+ * Displays an entity using the current view.
+ *
+ * @package Elgg
+ * @subpackage Core
+ * @author Curverider Ltd
+ * @link http://elgg.org/
+ */
 
-	$entity = $vars['entity'];
-	if (!$entity) throw new InvalidParameterException(elgg_echo('InvalidParameterException:NoEntityFound'));
-	
-	$metadata = get_metadata_for_entity($entity->guid);
-	$annotations = get_annotations($entity->guid);
-	$relationships = get_entity_relationships($entity->guid);
-	
-	$exportable_values = $entity->getExportableValues();
+$entity = $vars['entity'];
+if (!$entity) {
+	throw new InvalidParameterException(elgg_echo('InvalidParameterException:NoEntityFound'));
+}
+
+$metadata = get_metadata_for_entity($entity->guid);
+$annotations = get_annotations($entity->guid);
+$relationships = get_entity_relationships($entity->guid);
+
+$exportable_values = $entity->getExportableValues();
 ?>
 <div class="contentWrapper">
 <div>
@@ -38,7 +38,7 @@
 
 <?php if ($metadata) { ?>
 <div id="metadata">
-<h2><?php echo elgg_echo('metadata'); ?></h2>	
+<h2><?php echo elgg_echo('metadata'); ?></h2>
 	<?php
 		foreach ($metadata as $m)
 		{
@@ -49,13 +49,13 @@
 <?php
 		}
 	?>
-	
+
 </div>
 <?php } ?>
 
 <?php if ($annotations) { ?>
 <div id="annotations">
-<h2><?php echo elgg_echo('annotations'); ?></h2>	
+<h2><?php echo elgg_echo('annotations'); ?></h2>
 	<?php
 		foreach ($annotations as $a)
 		{
@@ -73,7 +73,7 @@
 
 <?php if ($relationships) { ?>
 <div id="relationship">
-<h2><?php echo elgg_echo('relationships'); ?></h2>	
+<h2><?php echo elgg_echo('relationships'); ?></h2>
 	<?php
 		foreach ($relationships as $r)
 		{

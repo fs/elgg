@@ -1,30 +1,31 @@
 <?php
-	/**
-	 * Elgg fallback pageshell
-	 * Render a few things (like the installation process) in a fallback mode, text only with minimal use
-	 * of functions.
-	 * 
-	 * @package Elgg
-	 * @subpackage Core
-	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
-	 * @author Curverider Ltd
-	 * @copyright Curverider Ltd 2008-2009
-	 * @link http://elgg.org/
-	 * 
-	 * @uses $vars['config'] The site configuration settings, imported
-	 * @uses $vars['title'] The page title
-	 * @uses $vars['body'] The main content of the page
-	 * @uses $vars['messages'] A 2d array of various message registers, passed from system_messages()
-	 */
+/**
+ * Elgg fallback pageshell
+ * Render a few things (like the installation process) in a fallback mode, text only with minimal use
+ * of functions.
+ *
+ * @package Elgg
+ * @subpackage Core
+ * @author Curverider Ltd
+ * @link http://elgg.org/
+ *
+ * @uses $vars['config'] The site configuration settings, imported
+ * @uses $vars['title'] The page title
+ * @uses $vars['body'] The main content of the page
+ * @uses $vars['messages'] A 2d array of various message registers, passed from system_messages()
+ */
 
-	
+// we won't trust server configuration but specify utf-8
+header('Content-type: text/html; charset=utf-8');
+
 ?>
 <html>
 	<head>
 		<title><?php echo $vars['title']; ?></title>
-		
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
 		<style type="text/css">
-		
+
 		body {
 			text-align:left;
 			margin:0;
@@ -62,7 +63,7 @@
 			border-right: 1px solid #666666;
 			border-bottom: 1px solid #666666;
 		}
-		
+
 		label {
 			font-weight: bold;
 			color:#333333;
@@ -91,19 +92,19 @@
 			background: #e4ecf5;
 			color:#333333;
 		}
-		
+
 		input[type="submit"]:hover {
 			background: #0054a7;
 			border: 4px solid #0054a7;
 		}
-		
+
 		input[type="submit"] {
 			font: 16px/100% Arial, Helvetica, sans-serif;
 			font-weight: bold;
 			color: #ffffff;
 			background:#4690d6;
 			border: 4px solid #4690d6;
-			-webkit-border-radius: 4px; 
+			-webkit-border-radius: 4px;
 			-moz-border-radius: 4px;
 			width: auto;
 			height: 35px;
@@ -119,32 +120,32 @@
 			text-align: left;
 			vertical-align: middle;
 		}
-		
+
 		.messages {
-		    border:1px solid #00cc00;
-		    background:#ccffcc;
-		    color:#000000;
-		    padding:3px 10px 3px 10px;
+			border:1px solid #00cc00;
+			background:#ccffcc;
+			color:#000000;
+			padding:3px 10px 3px 10px;
 		}
 		.messages_error {
-		    border:1px solid #D3322A;
-		    background:#F7DAD8;
-		    color:#000000;
-		    padding:3px 10px 3px 10px;
-		  
+			border:1px solid #D3322A;
+			background:#F7DAD8;
+			color:#000000;
+			padding:3px 10px 3px 10px;
+
 		}
 		</style>
-		
-		
-		
+
+
+
 	</head>
 	<body>
 	<div id="startpage_wrapper">
 		<h1><?php echo $vars['title']; ?></h1>
-		
+
 		<!-- display any system messages -->
 		<?php echo elgg_view('messages/list', array('object' => $vars['sysmessages'])); ?>
-		
+
 		<p>
 			<?php echo $vars['body']; ?>
 		</p>

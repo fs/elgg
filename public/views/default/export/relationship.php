@@ -1,22 +1,19 @@
 <?php
-	/**
-	 * Elgg relationship export.
-	 * Displays a relationship using the current view.
-	 * 
-	 * @package Elgg
-	 * @subpackage Core
-	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
-	 * @author Curverider Ltd
-	 * @copyright Curverider Ltd 2008-2009
-	 * @link http://elgg.org/
-	 */
+/**
+ * Elgg relationship export.
+ * Displays a relationship using the current view.
+ *
+ * @package Elgg
+ * @subpackage Core
+ * @author Curverider Ltd
+ * @link http://elgg.org/
+ */
 
-	$r = $vars['relationship'];
-	
-	$e1 = get_entity($r->guid_one);
-	$e2 = get_entity($r->guid_two);
+$r = $vars['relationship'];
 
-	
+$e1 = get_entity($r->guid_one);
+$e2 = get_entity($r->guid_two);
+
 ?>
 <div>
 	<p><?php

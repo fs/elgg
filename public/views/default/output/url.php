@@ -1,26 +1,52 @@
 <?php
+/**
+ * Elgg URL display
+ * Displays a URL as a link
+ *
+ * @package Elgg
+ * @subpackage Core
+ * @author Curverider Ltd
+ * @link http://elgg.org/
+ *
+ * @uses string $vars['href'] The string to display in the <a></a> tags
+ * @uses string $vars['text'] The string between the <a></a> tags.
+ * @uses bool $vars['target'] Set the target="" attribute.
+ * @uses string $vars['class'] what to add in class=""
+ * @uses string $vars['js'] Javascript to insert in <a> tag
+ * @uses bool $vars['is_action'] Is this a link to an action?
+ *
+ */
 
-	/**
-	 * Elgg URL display
-	 * Displays a URL as a link
-	 * 
-	 * @package Elgg
-	 * @subpackage Core
-	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
-	 * @author Curverider Ltd
-	 * @copyright Curverider Ltd 2008-2009
-	 * @link http://elgg.org/
-	 * 
-	 * @uses $vars['value'] The URL to display
-	 * 
-	 */
+$url = trim($vars['href']);
 
-    $val = trim($vars['value']);
-    if (!empty($val)) {
-	    if ((substr_count($val, "http://") == 0) && (substr_count($val, "https://") == 0)) {
-	        $val = "http://" . $val;
-	    }
-	    echo "<a href=\"{$val}\" target=\"_blank\">". htmlentities($val, ENT_QUOTES, 'UTF-8'). "</a>";
-    }
+if (!empty($url)) {
+	if (array_key_exists('is_action', $vars) && $vars['is_action']) {
+		$url = elgg_validate_action_url($url);
+	}
 
-?>
+	if (array_key_exists('target', $vars) && $vars['target']) {
+		$target = "target = \"{$vars['target']}\"";
+	} else {
+		$target = '';
+	}
+
+	if (array_key_exists('class', $vars) && $vars['class']) {
+		$class = "class = \"{$vars['class']}\"";
+	} else {
+		$class = '';
+	}
+
+	if (array_key_exists('js', $vars) && $vars['js']) {
+		$js = "{$vars['target']}";
+	} else {
+		$js = '';
+	}
+
+	if (array_key_exists('text', $vars) && $vars['text']) {
+		$text = htmlentities($vars['text'], ENT_QUOTES, 'UTF-8');
+	} else {
+		$text = htmlentities($url, ENT_QUOTES, 'UTF-8');
+	}
+
+	echo "<a href=\"{$url}\" $target $class $js>$text</a>";
+}

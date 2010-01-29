@@ -3,9 +3,7 @@
 	 * Elgg log browser.
 	 * 
 	 * @package ElggLogBrowser
-	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider Ltd
-	 * @copyright Curverider Ltd 2008-2009
 	 * @link http://elgg.com/
 	 */
 
@@ -21,12 +19,12 @@
 		register_page_handler('logbrowser','logbrowser_page_handler');
 		
 		// Extend CSS
-		extend_view('css','logbrowser/css');
+		elgg_extend_view('css','logbrowser/css');
 		
 		// Extend context menu with admin logbrowsre link
 			if (isadminloggedin())
 			{
-	   			 extend_view('profile/menu/adminlinks','logbrowser/adminlinks',10000);
+	   			 elgg_extend_view('profile/menu/adminlinks','logbrowser/adminlinks',10000);
 			}
 	}
 	

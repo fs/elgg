@@ -28,7 +28,7 @@
 		}
 		
 		// Extend hover-over menu	
-			extend_view('profile/menu/links','pages/menu');
+			elgg_extend_view('profile/menu/links','pages/menu');
 		
 		// Register a page handler, so we can have nice URLs
 		register_page_handler('pages','pages_page_handler');
@@ -43,9 +43,9 @@
 		register_action("pages/delete",false, $CONFIG->pluginspath . "pages/actions/pages/delete.php");
 		
 		// Extend some views
-		extend_view('css','pages/css');
-		extend_view('groups/menu/links', 'pages/menu'); // Add to groups context
-		extend_view('groups/right_column', 'pages/groupprofile_pages'); // Add to groups context
+		elgg_extend_view('css','pages/css');
+		elgg_extend_view('groups/menu/links', 'pages/menu'); // Add to groups context
+		elgg_extend_view('groups/right_column', 'pages/groupprofile_pages'); // Add to groups context
 		
 		// Register entity type
 		register_entity_type('object','page');
@@ -155,7 +155,7 @@
     				if (isset($page[1]))
     					set_input('page_guid', $page[1]);
     					
-    				 extend_view('metatags','pages/metatags');
+    				 elgg_extend_view('metatags','pages/metatags');
     					
     				 $entity = get_entity($page[1]);
     				 //add_submenu_item(elgg_echo('pages:label:view'), $CONFIG->url . "pg/pages/view/{$page[1]}", 'pageslinks');
@@ -168,7 +168,7 @@
     				if (isset($page[1]))
     					set_input('page_guid', $page[1]);
     					
-    				 extend_view('metatags','pages/metatags');
+    				 elgg_extend_view('metatags','pages/metatags');
     					
     				 $entity = get_entity($page[1]);
     				 add_submenu_item(elgg_echo('pages:label:view'), $CONFIG->url . "pg/pages/view/{$page[1]}", 'pageslinks');

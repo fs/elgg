@@ -1,9 +1,9 @@
 <?php
 
-ini_set("display_errors", "1");
-ini_set("display_startup_errors", "1");
-ini_set('error_reporting', E_ALL);
-ini_set('pcre.backtrack_limit', 10000000);
+#ini_set("display_errors", "1");
+#ini_set("display_startup_errors", "1");
+#ini_set('error_reporting', E_ALL);
+#ini_set('pcre.backtrack_limit', 10000000);
 
 require_once (dirname(dirname(__FILE__)) . "/models/Http.php");
 require_once (dirname(dirname(__FILE__)) . "/models/Google_OpenID.php");
@@ -13,16 +13,23 @@ global $CONFIG;
 $google = Google_OpenID::create_from_response($CONFIG->input);
 $google->set_home_url($googleapps_domain);
 
-if (! $google->is_authorized()) {
-    //register_error(sprintf(elgg_echo('googleappslogin:googleappserror'), ''));
+if (!$google->is_authorized()) {
+	//register_error(sprintf(elgg_echo('googleappslogin:googleappserror'), 'No authorised'));
     forward();
 } else {
     $email = $google->get_email();
-
+	//echo '<pre>';print_r($CONFIG->input);exit;
     //echo "user is authorized\n<br>";
 
     $do_login = false;
     $duplicate_account = false;
+	
+	if (empty($email)) {
+		register_error(sprintf(elgg_echo('googleappslogin:googleappserror'), 'No data'));
+		forward();
+	} else {
+		
+	}
 
     $entities = get_entities_from_metadata('googleapps_screen_name', $email, 'user', 'googleapps');
     
@@ -50,7 +57,7 @@ if (! $google->is_authorized()) {
 
             if (!$duplicate_account) {
                 $user = new ElggUser();
-                $user->email = '';
+                $user->email = $email;
                 $user->name = $google->get_firstname() . ' ' . $google->get_lastname();
                 $user->access_id = 2;
                 $user->subtype = 'googleapps';

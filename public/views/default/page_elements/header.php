@@ -78,7 +78,7 @@ $release = get_version(true);
 
 	<?php
 		echo $feedref;
-		echo elgg_view('metatags',$vars);
+		echo elgg_view('metatags', $vars);
 	?>
 	<script type="text/javascript">
 		jQuery(document).ready(function($) {

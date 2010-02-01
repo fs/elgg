@@ -28,7 +28,7 @@
 			// Page handler
 			register_page_handler('riverdashboard','riverdashboard_page_handler');
 			
-			extend_view('css','riverdashboard/css');
+			elgg_extend_view('css','riverdashboard/css');
 			
 			add_widget_type('river_widget',elgg_echo('river:widget:title'), elgg_echo('river:widget:description'));
 			

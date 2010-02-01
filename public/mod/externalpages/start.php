@@ -20,9 +20,9 @@
 		register_entity_url_handler('expages_url','object','expages');
 		
 		// extend views
-		extend_view('footer/links', 'expages/footer_menu');
-		extend_view('index/righthandside', 'expages/front_right');
-		extend_view('index/lefthandside', 'expages/front_left');
+		elgg_extend_view('footer/links', 'expages/footer_menu');
+		elgg_extend_view('index/righthandside', 'expages/front_right');
+		elgg_extend_view('index/lefthandside', 'expages/front_left');
 		
 	}
 	

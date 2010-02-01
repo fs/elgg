@@ -15,7 +15,7 @@
 		    global $CONFIG;
 		    
          // Add our CSS
-				extend_view('css','tinymce/css');
+				elgg_extend_view('css','tinymce/css');
 				
      }
      

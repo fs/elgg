@@ -34,11 +34,11 @@
 				} 
 				
 			// Extend system CSS with our own styles, which are defined in the thewire/css view
-				extend_view('css','thewire/css');
+				elgg_extend_view('css','thewire/css');
 				
 		    //extend views
-				extend_view('activity/thewire', 'thewire/activity_view');
-				extend_view('profile/status', 'thewire/profile_status');
+				elgg_extend_view('activity/thewire', 'thewire/activity_view');
+				elgg_extend_view('profile/status', 'thewire/profile_status');
 				
 			// Register a page handler, so we can have nice URLs
 				register_page_handler('thewire','thewire_page_handler');

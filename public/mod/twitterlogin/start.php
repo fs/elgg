@@ -24,10 +24,10 @@
 
 		function twitterlogin_init() {
 			
-	        extend_view("account/forms/login", "twitterlogin/login");
+	        elgg_extend_view("account/forms/login", "twitterlogin/login");
 	        
 	        // Extend system CSS with our own styles
-			extend_view('css','twitterlogin/css');
+			elgg_extend_view('css','twitterlogin/css');
 			
 			register_plugin_hook('usersettings:save','user','twitterlogin_user_settings_save');
     			
@@ -41,7 +41,7 @@
         		&& ($page_owner_entity->getSubtype() == "twitter")
         		&& ($page_owner_entity->twitter_controlled_profile != 'no')
         	) {
-        		extend_view('metatags','twitterlogin/hide_profile_embed');
+        		elgg_extend_view('metatags','twitterlogin/hide_profile_embed');
         	}
         	
         	extend_elgg_settings_page('twitterlogin/settings/usersettings', 'usersettings/user');

@@ -10,6 +10,6 @@
 	 * @copyright Curverider Ltd 2008-2009
 	 * @link http://elgg.org/
 	 */
-	 
+	 //print_r($GLOBALS);exit;
 ?>
-<div id="googleappslogin-box" style="margin-left: 10px;"><a id="googleappslogin_show" href="<?php echo $vars['url']; ?>action/googleappslogin/login"><img src="<?php echo $vars['url']; ?>mod/googleappslogin/graphics/sign_in_with_googleapps.gif" alt="googleapps" /></a></div>
+<div id="googleappslogin-box" style="margin-left: 10px;"><a id="googleappslogin_show" href="<?php echo $GLOBALS['googleappslogin_url'];?>"><img src="<?php echo $vars['url']; ?>mod/googleappslogin/graphics/sign_in_with_googleapps.gif" alt="googleapps" /></a></div>

@@ -14,7 +14,7 @@
 		function twitter_init() {
     		
     		//extend css if style is required
-    		    extend_view('css','twitter/css');
+    		    elgg_extend_view('css','twitter/css');
     		
     		//add a widget
 			    add_widget_type('twitter',"Twitter","This is your twitter feed");

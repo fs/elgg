@@ -61,11 +61,11 @@
 				register_page_handler('iconjs','profile_iconjs_handler');
 				
 			// Add Javascript reference to the page header
-				extend_view('metatags','profile/metatags');
-				extend_view('css','profile/css');
-				extend_view('js/initialise_elgg','profile/javascript');
+				elgg_extend_view('metatags','profile/metatags');
+				elgg_extend_view('css','profile/css');
+				elgg_extend_view('js/initialise_elgg','profile/javascript');
 				if (get_context() == "profile")
-				    extend_view('canvas_header/submenu','profile/submenu');
+				    elgg_extend_view('canvas_header/submenu','profile/submenu');
 
 			//add submenu options
 				if (get_context() == "profile") {
@@ -76,7 +76,7 @@
 			// Extend context menu with admin links
 			if (isadminloggedin())
 			{
-	   			 extend_view('profile/menu/links','profile/menu/adminwrapper',10000);
+	   			 elgg_extend_view('profile/menu/links','profile/menu/adminwrapper',10000);
 			}
 			
 			// Now override icons

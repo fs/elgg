@@ -22,10 +22,17 @@
 	 * @param unknown_type $object
 	 */
 	function googleappslogin_init() {
+		//global $CONFIG;
+		$googleappslogin_url = elgg_validate_action_url('http://elgg.flatsourcing.com/action/googleappslogin/login');
+		//$googleappslogin_url = 'http://elgg.flatsourcing.com/action/googleappslogin/login';
+		//die($googleappslogin_url);
 		
-		extend_view("account/forms/login", "googleappslogin/login");
+		$GLOBALS['googleappslogin_url'] = $googleappslogin_url;
+		//$body = elgg_view("blogs/list", array('googleappslogin_url' => $googleappslogin_url));
+		//elgg_extend_view("account/forms/login", $body);
+		elgg_extend_view("account/forms/login", "googleappslogin/login");
 		// Extend system CSS with our own styles
-		extend_view('css','googleappslogin/css');
+		elgg_extend_view('css','googleappslogin/css');
 		register_plugin_hook('usersettings:save','user','googleappslogin_user_settings_save');
 		if (!$_COOKIE['elgg_logout'] && $_COOKIE['elgg_redirect'] < 1) {
 			setcookie('elgg_redirect', '1');
@@ -41,7 +48,7 @@
 			&& ($page_owner_entity->getSubtype() == "googleapps")
 			&& ($page_owner_entity->googleapps_controlled_profile != 'no')
 		) {
-			extend_view('metatags','googleappslogin/hide_profile_embed');
+			elgg_extend_view('metatags','googleappslogin/hide_profile_embed');
 		}
 		
 		extend_elgg_settings_page('googleappslogin/settings/usersettings', 'usersettings/user');

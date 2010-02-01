@@ -19,7 +19,7 @@
 			// Get config
 				global $CONFIG;
 				
-			extend_view('css', 'categories/css');
+			elgg_extend_view('css', 'categories/css');
 			
 			// Register action
 				register_action('categories/save',false,$CONFIG->pluginspath . 'categories/actions/save.php',true);

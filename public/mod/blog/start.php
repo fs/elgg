@@ -37,10 +37,10 @@
 				}
 				
 			// Extend system CSS with our own styles, which are defined in the blog/css view
-				extend_view('css','blog/css');
+				elgg_extend_view('css','blog/css');
 				
 			// Extend hover-over menu	
-				extend_view('profile/menu/links','blog/menu');
+				elgg_extend_view('profile/menu/links','blog/menu');
 				
 			// Register a page handler, so we can have nice URLs
 				register_page_handler('blog','blog_page_handler');

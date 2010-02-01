@@ -14,7 +14,7 @@
     function indexCustom_init() {
 	
         // Extend system CSS with our own styles
-				extend_view('css','custom_index/css');
+				elgg_extend_view('css','custom_index/css');
 				
        // Replace the default index page
 			register_plugin_hook('index','system','custom_index');

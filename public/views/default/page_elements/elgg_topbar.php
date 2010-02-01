@@ -36,7 +36,7 @@
 		<div class="toolbarlinks2">
 		<?php
 		//allow people to extend this top menu
-		echo elgg_view('elgg_topbar/extend', $vars);
+		//echo elgg_view('elgg_topbar/extend', $vars);
 		?>
 
 		<a href="<?php echo $vars['url']; ?>pg/settings/" class="usersettings"><?php echo elgg_echo('settings'); ?></a>

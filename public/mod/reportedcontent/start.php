@@ -21,11 +21,11 @@
 		register_page_handler('reportedcontent','reportedcontent_page_handler');
 		
 		// Extend CSS
-		extend_view('css','reportedcontent/css');
+		elgg_extend_view('css','reportedcontent/css');
 		
 		// Extend context menu with reported content link
 		if(isloggedin())
-		    extend_view('profile/menu/links','reportedcontent/user_report');
+		    elgg_extend_view('profile/menu/links','reportedcontent/user_report');
 		
 	}
 	

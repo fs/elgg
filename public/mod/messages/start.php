@@ -34,10 +34,10 @@
 				}
 				
 			// Extend system CSS with our own styles, which are defined in the shouts/css view
-				extend_view('css','messages/css');
+				elgg_extend_view('css','messages/css');
 				
 			// Extend the elgg topbar
-				extend_view('elgg_topbar/extend','messages/topbar');
+				elgg_extend_view('elgg_topbar/extend','messages/topbar');
 			
 			// Register a page handler, so we can have nice URLs
 				register_page_handler('messages','messages_page_handler');
@@ -46,7 +46,7 @@
 				register_entity_url_handler('messages_url','object','messages');
 				
 	        // Extend hover-over and profile menu	
-				extend_view('profile/menu/links','messages/menu');
+				elgg_extend_view('profile/menu/links','messages/menu');
 				
 			// Register a notification handler for site messages
 				register_notification_handler("site", "messages_site_notify_handler");

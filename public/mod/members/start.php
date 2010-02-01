@@ -16,7 +16,7 @@
     		// Load system configuration
 				global $CONFIG;
 								
-				extend_view('css','members/css');
+				elgg_extend_view('css','members/css');
 				
 				
     	    // Set up menu for logged in users

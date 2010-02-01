@@ -161,20 +161,19 @@ class Google_OpenID
         if (!isset($this->_response)) {
             throw new Exception('Response is not set');
         }
-
-        return($this->_response['openid.mode'] == 'id_res');
+        return($this->_response['openid_mode'] == 'id_res');
     }
     
     public function get_email() {
-        return $this->get_response_attribute('openid.ext1.value.email');
+        return $this->get_response_attribute('openid_ext1_value_email');
     }
 
     public function get_firstname() {
-        return $this->get_response_attribute('openid.ext1.value.firstname');
+        return $this->get_response_attribute('openid_ext1_value_firstname');
     }
 
     public function get_lastname() {
-        return $this->get_response_attribute('openid.ext1.value.lastname');
+        return $this->get_response_attribute('openid_ext1_value_lastname');
     }
 
     public function get_response_attribute($attr) {

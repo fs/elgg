@@ -116,7 +116,9 @@ RewriteEngine on
 #
 #RewriteBase /
 
-RewriteRule ^action\/([A-Za-z\_\-\/]+)$ engine/handlers/action_handler.php?action=$1
+RewriteRule ^action\/([A-Za-z0-9\_\-\/]+)$ engine/handlers/action_handler.php?action=$1
+
+RewriteRule ^services\/api\/([A-Za-z0-9\_\-]+)\/(.*)$ engine/handlers/service_handler.php?handler=$1&request=$2
 
 RewriteRule ^export\/([A-Za-z]+)\/([0-9]+)$ services/export/handler.php?view=$1&guid=$2
 RewriteRule ^export\/([A-Za-z]+)\/([0-9]+)\/$ services/export/handler.php?view=$1&guid=$2
@@ -133,3 +135,7 @@ RewriteRule mt/mt-xmlrpc.cgi engine/handlers/xml-rpc_handler.php
 RewriteRule ^tag/(.+)/?$ engine/handlers/pagehandler.php?handler=search&page=$1
 
 </IfModule>
+
+# set cookie life time to 1 year
+php_flag session.gc_maxlifetime 31536000
+php_flag session.cookie_lifetime 31536000

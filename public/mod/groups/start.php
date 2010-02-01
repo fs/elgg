@@ -60,8 +60,8 @@
 		
 		
 		//extend some views
-		extend_view('profile/icon','groups/icon');
-		extend_view('css','groups/css');
+		elgg_extend_view('profile/icon','groups/icon');
+		elgg_extend_view('css','groups/css');
 		
 		// Write access permissions
 		register_plugin_hook('access:collections:write', 'all', 'groups_write_acl_plugin_hook');

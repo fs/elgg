@@ -25,7 +25,7 @@
 		}
 		
 		function notifications_plugin_init() {
-			extend_view('css','notifications/css');
+			elgg_extend_view('css','notifications/css');
 			global $CONFIG;
 			
 			// Unset the default user settings hook

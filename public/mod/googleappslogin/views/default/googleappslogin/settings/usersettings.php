@@ -14,6 +14,7 @@
 	);
 	
 	$user = page_owner_entity();
+	//echo '<pre>';print_r($user->googleapps_controlled_profile);exit;
     if (!$user) {    	
     	$user = $_SESSION['user'];
     }

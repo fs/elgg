@@ -93,7 +93,9 @@ class Google_OpenID
          */
         if ($this->_use_oauth) {
             $params['openid.ns.auth'] = 'http://specs.openid.net/extensions/oauth/1.0';
-            $params['openid.ext2.consumer'] = self::normalize_url($this->_home_url);
+            $params['openid.auth.consumer'] = 'elgg.flatsourcing.com';
+			$params['openid.auth.scope'] = 'http://docs.google.com/feeds/';
+			//echo '<pre>';print_r($params);exit;
         }
 
         $_params = array();
@@ -156,7 +158,12 @@ class Google_OpenID
 
         return $retval;
     }
-
+	
+	public function use_oauth($use = true) {
+        $this->_use_oauth = $use ? true : false;
+        return $this->_use_oauth;
+    }
+	
     public function is_authorized() {
         if (!isset($this->_response)) {
             throw new Exception('Response is not set');

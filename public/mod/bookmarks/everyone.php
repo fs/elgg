@@ -6,7 +6,7 @@
 	 * @package ElggBookmarks
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider <info@elgg.com>
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.org/
 	 */
 
@@ -23,13 +23,13 @@
 	// List bookmarks
 		$area2 = elgg_view_title(elgg_echo('bookmarks:everyone'));
 		set_context('search');
-		$area2 .= list_entities('object','bookmarks');
+		$area2 .= elgg_list_entities(array('type' => 'object', 'subtype' => 'bookmarks', 'limit' => 10, 'full_view' => FALSE, 'view_toggle_type' => FALSE));
 		set_context('bookmarks');
 		
 	// Format page
 		$body = elgg_view_layout('two_column_left_sidebar', $area1, $area2);
 		
 	// Draw it
-		echo page_draw(elgg_echo('bookmarks:everyone'),$body);
+		page_draw(elgg_echo('bookmarks:everyone'),$body);
 
 ?>

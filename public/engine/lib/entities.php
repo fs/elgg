@@ -416,9 +416,21 @@ abstract class ElggEntity implements
 	 *
 	 * @param int $guid Relationship to link to.
 	 * @param string $relationship The type of relationship.
+	 * @return bool
 	 */
 	public function addRelationship($guid, $relationship) {
 		return add_entity_relationship($this->getGUID(), $relationship, $guid);
+	}
+
+	/**
+	 * Remove a relationship
+	 *
+	 * @param int $guid
+	 * @param str $relationship
+	 * @return bool
+	 */
+	public function removeRelationship($guid, $relationship) {
+		return remove_entity_relationship($this->getGUID(), $relationship, $guid);
 	}
 
 	/**
@@ -551,19 +563,29 @@ abstract class ElggEntity implements
 	 * @return array|false An array of entities or false on failure
 	 */
 	function getEntitiesFromRelationship($relationship, $inverse = false, $limit = 50, $offset = 0) {
-		return get_entities_from_relationship($relationship, $this->getGUID(), $inverse,
-			"", "", "", "time_created desc", $limit, $offset);
+		return elgg_get_entities_from_relationship(array(
+			'relationship' => $relationship,
+			'relationship_guid' => $this->getGUID(),
+			'inverse_relationship' => $inverse,
+			'limit' => $limit,
+			'offset' => $offset
+		));
 	}
 
 	/**
 	 * Gets the number of of entities from a specific relationship type
 	 *
 	 * @param string $relationship Relationship type (eg "friends")
+	 * @param bool $inverse_relationship
 	 * @return int|false The number of entities or false on failure
 	 */
-	function countEntitiesFromRelationship($relationship) {
-		return get_entities_from_relationship($relationship, $this->getGUID(), false, "", "", "",
-			"time_created desc", null, null, true);
+	function countEntitiesFromRelationship($relationship, $inverse_relationship = FALSE) {
+		return elgg_get_entities_from_relationship(array(
+			'relationship' => $relationship,
+			'relationship_guid' => $this->getGUID(),
+			'inverse_relationship' => $inverse_relationship,
+			'count' => TRUE
+		));
 	}
 
 	/**
@@ -961,8 +983,10 @@ abstract class ElggEntity implements
 			'type',
 			'subtype',
 			'time_created',
+			'time_updated',
 			'container_guid',
 			'owner_guid',
+			'site_guid'
 		);
 	}
 
@@ -1106,6 +1130,41 @@ abstract class ElggEntity implements
 	 */
 	public function getObjectOwnerGUID() {
 		return $this->owner_guid;
+	}
+
+	/**
+	 * Returns tags for this entity.
+	 *
+	 * @param array $tag_names Optionally restrict by tag metadata names.
+	 * @return array
+	 */
+	public function getTags($tag_names = NULL) {
+		global $CONFIG;
+
+		if ($tag_names && !is_array($tag_names)) {
+			$tag_names = array($tag_names);
+		}
+
+		$valid_tags = elgg_get_registered_tag_metadata_names();
+		$entity_tags = array();
+
+		foreach ($valid_tags as $tag_name) {
+			if (is_array($tag_names) && !in_array($tag_name, $tag_names)) {
+				continue;
+			}
+
+			if ($tags = $this->$tag_name) {
+				// if a single tag, metadata returns a string.
+				// if multiple tags, metadata returns an array.
+				if (is_array($tags)) {
+					$entity_tags = array_merge($entity_tags, $tags);
+				} else {
+					$entity_tags[] = $tags;
+				}
+			}
+		}
+
+		return $entity_tags;
 	}
 
 	// ITERATOR INTERFACE //////////////////////////////////////////////////////////////
@@ -1470,8 +1529,9 @@ function can_write_to_container($user_guid = 0, $container_guid = 0, $entity_typ
 	if (!$container_guid) {
 		$container_guid = page_owner();
 	}
+
 	if (!$container_guid) {
-		return true;
+		$return = TRUE;
 	}
 
 	$container = get_entity($container_guid);
@@ -1479,24 +1539,22 @@ function can_write_to_container($user_guid = 0, $container_guid = 0, $entity_typ
 	if ($container) {
 		// If the user can edit the container, they can also write to it
 		if ($container->canEdit($user_guid)) {
-			return true;
+			$return = TRUE;
 		}
 
 		// Basics, see if the user is a member of the group.
 		if ($user && $container instanceof ElggGroup) {
 			if (!$container->isMember($user)) {
-				return false;
+				$return = FALSE;
 			} else {
-				return true;
+				$return = TRUE;
 			}
 		}
-
-		// See if anyone else has anything to say
-		return trigger_plugin_hook('container_permissions_check', $entity_type,
-			array('container' => $container, 'user' => $user), false);
 	}
 
-	return false;
+	// See if anyone else has anything to say
+	return trigger_plugin_hook('container_permissions_check', $entity_type,
+		array('container' => $container, 'user' => $user), $return);
 }
 
 /**
@@ -1650,15 +1708,17 @@ function get_entity($guid) {
 
 
 /**
- * Get all entities.
+ * Get all entities.  NB: Plural arguments can be written as
+ * singular if only specifying a single element.  (e.g., 'type' => 'object'
+ * vs 'types' => array('object')).
  *
  * @param array $options Array in format:
  *
- * 	types => NULL|STR entity type
+ * 	types => NULL|STR entity type (SQL: type = '$type' OR...see below...)
  *
- * 	subtypes => NULL|STR entity subtype
+ * 	subtypes => NULL|STR entity subtype (SQL: subtype = '$subtype'...see above)
  *
- * 	type_subtype_pairs => NULL|ARR (type = '$type' AND subtype = '$subtype') pairs
+ * 	type_subtype_pairs => NULL|ARR (array('type' => 'subtype')) (SQL: type = '$type' AND subtype = '$subtype') pairs
  *
  * 	owner_guids => NULL|INT entity guid
  *
@@ -1692,34 +1752,30 @@ function get_entity($guid) {
 function elgg_get_entities(array $options = array()) {
 	global $CONFIG;
 
-	//@todo allow use of singular types that rewrite to plural ones.
 	$defaults = array(
-		'type' => NULL,
-		'types' => NULL,
-		'subtypes' => NULL,
-		'subtype' => NULL,
-		'type_subtype_pairs' => NULL,
-		'owner_guids' => NULL,
-		'owner_guid' => NULL,
-		'container_guids' => NULL,
-		'container_guid' => NULL,
-		'site_guids' => $CONFIG->site_guid,
-		'site_guid' => NULL,
+		'types'					=>	ELGG_ENTITIES_ANY_VALUE,
+		'subtypes'				=>	ELGG_ENTITIES_ANY_VALUE,
+		'type_subtype_pairs'	=>	ELGG_ENTITIES_ANY_VALUE,
 
-		'modified_time_lower' => NULL,
-		'modified_time_upper' => NULL,
-		'created_time_lower' => NULL,
-		'created_time_upper' => NULL,
+		'owner_guids'			=>	ELGG_ENTITIES_ANY_VALUE,
+		'container_guids'		=>	ELGG_ENTITIES_ANY_VALUE,
+		'site_guids'			=>	$CONFIG->site_guid,
 
-		'order_by' => 'e.time_created desc',
-		'group_by' => NULL,
-		'limit' => 10,
-		'offset' => 0,
-		'count' => FALSE,
-		'selects' => array(),
-		'wheres' => array(),
-		'joins' => array()
+		'modified_time_lower'	=>	ELGG_ENTITIES_ANY_VALUE,
+		'modified_time_upper'	=>	ELGG_ENTITIES_ANY_VALUE,
+		'created_time_lower'	=>	ELGG_ENTITIES_ANY_VALUE,
+		'created_time_upper'	=>	ELGG_ENTITIES_ANY_VALUE,
+
+		'order_by' 				=>	'e.time_created desc',
+		'group_by'				=>	ELGG_ENTITIES_ANY_VALUE,
+		'limit'					=>	10,
+		'offset'				=>	0,
+		'count'					=>	FALSE,
+		'selects'				=>	array(),
+		'wheres'				=>	array(),
+		'joins'					=>	array()
 	);
+
 
 	$options = array_merge($defaults, $options);
 
@@ -1841,8 +1897,7 @@ function elgg_get_entities(array $options = array()) {
  */
 function get_entities($type = "", $subtype = "", $owner_guid = 0, $order_by = "", $limit = 10, $offset = 0,
 $count = false, $site_guid = 0, $container_guid = null, $timelower = 0, $timeupper = 0) {
-
-	elgg_log('get_entities() was deprecated in 1.7 by elgg_get_entities()!', 'WARNING');
+	elgg_deprecated_notice('get_entities() was deprecated by elgg_get_entities().', 1.7);
 	// rewrite owner_guid to container_guid to emulate old functionality
 	$container_guid = $owner_guid;
 	$owner_guid = NULL;
@@ -1943,66 +1998,104 @@ function elgg_get_entity_type_subtype_where_sql($table, $types, $subtypes, $pair
 			$subtypes = array($subtypes);
 		}
 
+		// decrementer for valid types.  Return FALSE if no valid types
+		$valid_types_count = count($types);
+		$valid_subtypes_count = 0;
+		// remove invalid types to get an accurate count of
+		// valid types for the invalid subtype detection to use
+		// below.
+		// also grab the count of ALL subtypes on valid types to decrement later on
+		// and check against.
+		//
+		// yes this is duplicating a foreach on $types.
+		foreach ($types as $type) {
+			if (!in_array($type, $valid_types)) {
+				$valid_types_count--;
+				unset ($types[array_search($type, $types)]);
+			} else {
+				// do the checking (and decrementing) in the subtype section.
+				$valid_subtypes_count += count($subtypes);
+			}
+		}
+
+		// return false if nothing is valid.
+		if (!$valid_types_count) {
+			return FALSE;
+		}
+
 		// subtypes are based upon types, so we need to look at each
 		// type individually to get the right subtype id.
 		foreach ($types as $type) {
-			if (!in_array($type, $valid_types)) {
-				return FALSE;
-			}
-
 			$subtype_ids = array();
 			if ($subtypes) {
-				// if there is only one subtype and it is is not 0 and it invalid return false.
-				// if the type is 0 or null, let it through.
-				// if the type is set but the subtype is FALSE, return false.
-				if (count($subtypes) === 1) {
-					if ($subtypes[0] && !get_subtype_id($type, $subtypes[0])) {
-						return FALSE;
-					}
-				}
-
-				// subtypes can be NULL or '' or 0, which means "no subtype"
 				foreach ($subtypes as $subtype) {
-					// if a subtype is sent that doesn't exist
-					if (0 === $subtype || $subtype_id = get_subtype_id($type, $subtype)) {
-						$subtype_ids[] = (0 === $subtype) ? 0 : $subtype_id;
+					// check that the subtype is valid (with ELGG_ENTITIES_NO_VALUE being a valid subtype)
+					if (ELGG_ENTITIES_NO_VALUE === $subtype || $subtype_id = get_subtype_id($type, $subtype)) {
+						$subtype_ids[] = (ELGG_ENTITIES_NO_VALUE === $subtype) ? ELGG_ENTITIES_NO_VALUE : $subtype_id;
 					} else {
-						// @todo should return false.
-						//return FALSE;
-
+						$valid_subtypes_count--;
 						elgg_log("Type-subtype $type:$subtype' does not exist!", 'WARNING');
 						continue;
 					}
 				}
+
+				// return false if we're all invalid subtypes in the only valid type
+				if ($valid_subtypes_count <= 0) {
+					return FALSE;
+				}
+			}
+
+			if (is_array($subtype_ids) && count($subtype_ids)) {
+				$subtype_ids_str = implode(',', $subtype_ids);
+				$wheres[] = "({$table}.type = '$type' AND {$table}.subtype IN ($subtype_ids_str))";
+			} else {
+				$wheres[] = "({$table}.type = '$type')";
 			}
 		}
-		//if ($subtype_ids_str = implode(',', $subtype_ids)) {
-		if (is_array($subtype_ids) && count($subtype_ids)) {
-			$subtype_ids_str = implode(',', $subtype_ids);
-			$wheres[] = "({$table}.type = '$type' AND {$table}.subtype IN ($subtype_ids_str))";
-		} else {
-			$wheres[] = "({$table}.type = '$type')";
-		}
-
 	} else {
 		// using type/subtype pairs
-		foreach ($pairs as $paired_type => $paired_subtypes) {
-			if ($paired_subtypes && !is_array($paired_subtypes)) {
-				$paired_subtypes = array($paired_subtypes);
-			}
+		$valid_pairs_count = count($pairs);
+		$valid_pairs_subtypes_count = 0;
 
-			if (is_array($paired_subtypes) && count($paired_subtypes)) {
+		// same deal as above--we need to know how many valid types
+		// and subtypes we have before hitting the subtype section.
+		// also normalize the subtypes into arrays here.
+		foreach ($pairs as $paired_type => $paired_subtypes) {
+			if (!in_array($paired_type, $valid_types)) {
+				$valid_pairs_count--;
+				unset ($pairs[array_search($paired_type, $pairs)]);
+			} else {
+				if ($paired_subtypes && !is_array($paired_subtypes)) {
+					$pairs[$paired_type] = array($paired_subtypes);
+				}
+				$valid_pairs_subtypes_count += count($paired_subtypes);
+			}
+		}
+
+		if ($valid_pairs_count <= 0) {
+			return FALSE;
+		}
+		foreach ($pairs as $paired_type => $paired_subtypes) {
+			// this will always be an array because of line 2027, right?
+			// no...some overly clever person can say pair => array('object' => null)
+			if (is_array($paired_subtypes)) {
 				$paired_subtype_ids = array();
 				foreach ($paired_subtypes as $paired_subtype) {
-					if ($paired_subtype && ($paired_subtype_id = get_subtype_id($paired_type, $paired_subtype))) {
-						$paired_subtype_ids[] = $paired_subtype_id;
+					if (ELGG_ENTITIES_NO_VALUE === $paired_subtype || ($paired_subtype_id = get_subtype_id($paired_type, $paired_subtype))) {
+						$paired_subtype_ids[] = (ELGG_ENTITIES_NO_VALUE === $paired_subtype) ? ELGG_ENTITIES_NO_VALUE : $paired_subtype_id;
 					} else {
-						// @todo should return false.
-						//return FALSE;
-						elgg_log("Paired type-subtype $paired_type:$paired_subtype' does not exist!", 'WARNING');
+						$valid_pairs_subtypes_count--;
+						elgg_log("Type-subtype $paired_type:$paired_subtype' does not exist!", 'WARNING');
+						// return false if we're all invalid subtypes in the only valid type
 						continue;
 					}
 				}
+
+				// return false if there are no valid subtypes.
+				if ($valid_pairs_subtypes_count <= 0) {
+					return FALSE;
+				}
+
 
 				if ($paired_subtype_ids_str = implode(',', $paired_subtype_ids)) {
 					$wheres[] = "({$table}.type = '$paired_type' AND {$table}.subtype IN ($paired_subtype_ids_str))";
@@ -2021,6 +2114,7 @@ function elgg_get_entity_type_subtype_where_sql($table, $types, $subtypes, $pair
 
 	return '';
 }
+
 
 
 /**
@@ -2215,7 +2309,7 @@ function elgg_list_entities($options) {
  * @return unknown_type
  */
 function list_entities($type= "", $subtype = "", $owner_guid = 0, $limit = 10, $fullview = true, $viewtypetoggle = false, $pagination = true) {
-	elgg_log('list_entities() was deprecated in 1.7.  Use elgg_list_entities()!', 'WARNING');
+	elgg_deprecated_notice('list_entities() was deprecated by elgg_list_entities()!', 1.7);
 
 	$options = array();
 
@@ -2274,9 +2368,10 @@ function list_entities_groups($subtype = "", $owner_guid = 0, $container_guid = 
  * @param string $subtype The subtype of entity
  * @param int $container_guid The container GUID that the entinties belong to
  * @param int $site_guid The site GUID
+ * @param str order_by SQL order by clause
  * @return array|false Either an array of timestamps, or false on failure
  */
-function get_entity_dates($type = '', $subtype = '', $container_guid = 0, $site_guid = 0) {
+function get_entity_dates($type = '', $subtype = '', $container_guid = 0, $site_guid = 0, $order_by = 'time_created') {
 	global $CONFIG;
 
 	$site_guid = (int) $site_guid;
@@ -2311,10 +2406,12 @@ function get_entity_dates($type = '', $subtype = '', $container_guid = 0, $site_
 			$where[] = "({$tempwhere})";
 		}
 	} else {
-		if ($subtype AND !$subtype = get_subtype_id($type, $subtype)) {
-			return false;
-		} else {
-			$where[] = "subtype=$subtype";
+		if ($subtype) {
+			if (!$subtype_id = get_subtype_id($type, $subtype)) {
+				return FALSE;
+			} else {
+				$where[] = "subtype=$subtype_id";
+			}
 		}
 	}
 
@@ -2343,7 +2440,7 @@ function get_entity_dates($type = '', $subtype = '', $container_guid = 0, $site_
 		$sql .= " $w and ";
 	}
 
-	$sql .= "1=1";
+	$sql .= "1=1 ORDER BY $order_by";
 	if ($result = get_data($sql)) {
 		$endresult = array();
 		foreach($result as $res) {
@@ -2529,7 +2626,7 @@ function delete_entity($guid, $recursive = true) {
  * @param int $owner_guid The GUID of the owning user
  */
 function delete_entities($type = "", $subtype = "", $owner_guid = 0) {
-	elgg_log('delete_entities() was deprecated in 1.7 because no one should use it.');
+	elgg_deprecated_notice('delete_entities() was deprecated because no one should use it.', 1.7);
 	return false;
 }
 
@@ -3051,7 +3148,7 @@ function entities_page_handler($page) {
  * @return unknown_type
  */
 function list_registered_entities($owner_guid = 0, $limit = 10, $fullview = true, $viewtypetoggle = false, $allowedtypes = true) {
-	elgg_log('list_registered_entities() was deprecated in 1.7 by elgg_list_registered_entities().', 'WARNING');
+	elgg_deprecated_notice('list_registered_entities() was deprecated by elgg_list_registered_entities().', 1.7);
 
 	$options = array();
 
@@ -3576,8 +3673,6 @@ function entities_init() {
 	register_plugin_hook('permissions_check:metadata','all','recursive_delete_permissions_check');
 
 	register_plugin_hook('gc','system','entities_gc');
-
-	register_plugin_hook('search','all','search_list_entities_by_name');
 }
 
 /** Register the import hook */

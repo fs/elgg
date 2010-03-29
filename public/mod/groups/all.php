@@ -5,7 +5,7 @@
 	 * @package ElggGroups
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider Ltd
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.com/
 	 */
 
@@ -16,7 +16,7 @@
 	$tag = get_input("tag");
 	$filter = get_input("filter");
 	if(!$filter)
-		$filter = "newest";
+		$filter = "active";
 	
 	
 	// Get objects
@@ -28,22 +28,22 @@
 	else{
 		switch($filter){
 			case "newest":
-			$objects = list_entities('group',"", 0, $limit, false);
+			$objects = elgg_list_entities(array('types' => 'group', 'owner_guid' => 0, 'limit' => $limit, 'full_view' => false));
 			break;
 			case "pop":
-			$objects = list_entities_by_relationship_count('member');
+			$objects = list_entities_by_relationship_count('member', true, "", "", 0, $limit, false);
 			break;
 			case "active":
 			$objects = list_entities_from_annotations("object", "groupforumtopic", "group_topic_post", "", 40, 0, 0, false, true);
 			break;
 			case 'default':
-			$objects = list_entities('group',"", 0, $limit, false);
+			$objects = elgg_list_entities(array('types' => 'group', 'limit' => $limit, 'full_view' => FALSE));
 			break;
 		}
 	}
 	
 	//get a group count
-	$group_count = get_entities("group", "", 0, "", 10, 0, true, 0, null);
+	$group_count = elgg_get_entities(array('types' => 'group', 'limit' => 10, 'count' => TRUE));
 		
 	//find groups
 	$area1 = elgg_view("groups/find");
@@ -52,7 +52,7 @@
 	$area1 .= elgg_view("groups/side_menu");
 	
 	//featured groups
-	$featured_groups = get_entities_from_metadata("featured_group", "yes", "group", "", 0, 10, false, false, false);	
+	$featured_groups = elgg_get_entities_from_metadata(array('metadata_name' => 'featured_group', 'metadata_value' => 'yes', 'types' => 'group', 'limit' => 10));
 	$area1 .= elgg_view("groups/featured", array("featured" => $featured_groups));
 		
 		

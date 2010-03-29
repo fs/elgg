@@ -38,8 +38,6 @@ if (isset($vars['nonefound'])) {
 $totalpages = ceil($count / $limit);
 $currentpage = ceil($offset / $limit) + 1;
 
-$baseurl = preg_replace('/[\&\?]'.$word.'\=[0-9]*/',"",$vars['baseurl']);
-
 //only display if there is content to paginate through or if we already have an offset
 if (($count > $limit || $offset > 0) && get_context() != 'widget') {
 
@@ -51,17 +49,13 @@ if (($count > $limit || $offset > 0) && get_context() != 'widget') {
 	if ($offset > 0) {
 
 		$prevoffset = $offset - $limit;
-		if ($prevoffset < 0) $prevoffset = 0;
-
-		$prevurl = $baseurl;
-		if (substr_count($baseurl,'?')) {
-			$prevurl .= "&{$word}=" . $prevoffset;
-		} else {
-			$prevurl .= "?{$word}=" . $prevoffset;
+		if ($prevoffset < 0) {
+			$prevoffset = 0;
 		}
 
-		echo "<a href=\"{$prevurl}\" class=\"pagination_previous\">&laquo; ". elgg_echo("previous") ."</a> ";
+		$prevurl = elgg_http_add_url_query_elements($vars['baseurl'], array($word => $prevoffset));
 
+		echo "<a href=\"{$prevurl}\" class=\"pagination_previous\">&laquo; ". elgg_echo("previous") ."</a> ";
 	}
 
 	if ($offset > 0 || $offset < ($count - $limit)) {
@@ -98,13 +92,9 @@ if (($count > $limit || $offset > 0) && get_context() != 'widget') {
 				echo "<span class=\"pagination_more\">...</span>";
 			}
 
-			$counturl = $baseurl;
 			$curoffset = (($i - 1) * $limit);
-			if (substr_count($baseurl,'?')) {
-				$counturl .= "&{$word}=" . $curoffset;
-			} else {
-				$counturl .= "?{$word}=" . $curoffset;
-			}
+			$counturl = elgg_http_add_url_query_elements($vars['baseurl'], array($word => $curoffset));
+
 			if ($curoffset != $offset) {
 				echo " <a href=\"{$counturl}\" class=\"pagination_number\">{$i}</a> ";
 			} else {
@@ -122,12 +112,7 @@ if (($count > $limit || $offset > 0) && get_context() != 'widget') {
 			$nextoffset--;
 		}
 
-		$nexturl = $baseurl;
-		if (substr_count($baseurl,'?')) {
-			$nexturl .= "&{$word}=" . $nextoffset;
-		} else {
-			$nexturl .= "?{$word}=" . $nextoffset;
-		}
+		$nexturl = elgg_http_add_url_query_elements($vars['baseurl'], array($word => $nextoffset));
 
 		echo " <a href=\"{$nexturl}\" class=\"pagination_next\">" . elgg_echo("next") . " &raquo;</a>";
 

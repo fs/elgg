@@ -6,15 +6,15 @@
 	 * @package ElggProfile
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.com/
 	 * 
 	 * @uses $vars['entity'] The user entity
 	 */
 
-		header("Content-type: text/javascript");
-		header("Pragma: public");
-		header("Cache-Control: public");
+//		header("Content-type: text/javascript");
+//		header("Pragma: public");
+//		header("Cache-Control: public");
 
 ?>
 
@@ -25,7 +25,7 @@ function setup_avatar_menu() {
 	// avatar image menu link
 	$("div.usericon img").mouseover(function() {
 		// find nested avatar_menu_button and show
-		$(this.parentNode.parentNode).children("[class=avatar_menu_button]").show();
+		$(this.parentNode.parentNode).children(".avatar_menu_button").show();
 		$(this.parentNode.parentNode).children("div.avatar_menu_button").addClass("avatar_menu_arrow");
 		//$(this.parentNode.parentNode).css("z-index", submenuLayer);
 	})
@@ -34,13 +34,13 @@ function setup_avatar_menu() {
 			$(this.parentNode.parentNode).children("div.avatar_menu_button").removeClass("avatar_menu_arrow");
 			$(this.parentNode.parentNode).children("div.avatar_menu_button").removeClass("avatar_menu_arrow_on");
 			$(this.parentNode.parentNode).children("div.avatar_menu_button").removeClass("avatar_menu_arrow_hover");
-			$(this.parentNode.parentNode).children("[class=avatar_menu_button]").hide();
+			$(this.parentNode.parentNode).children(".avatar_menu_button").hide();
 		}
 		else {
 			$(this.parentNode.parentNode).children("div.avatar_menu_button").removeClass("avatar_menu_arrow");
 			$(this.parentNode.parentNode).children("div.avatar_menu_button").removeClass("avatar_menu_arrow_on");
 			$(this.parentNode.parentNode).children("div.avatar_menu_button").removeClass("avatar_menu_arrow_hover");
-			$(this.parentNode.parentNode).children("[class=avatar_menu_button]").show();
+			$(this.parentNode.parentNode).children(".avatar_menu_button").show();
 			$(this.parentNode.parentNode).children("div.avatar_menu_button").addClass("avatar_menu_arrow");
 		}
 	});

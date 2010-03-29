@@ -6,7 +6,7 @@
 	 * @package ElggBlog
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider Ltd <info@elgg.com>
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.com/
 	 */
 
@@ -20,7 +20,7 @@
 		
 		$area2 = elgg_view_title(elgg_echo('blog:everyone'));
 
-		$area2 .= list_entities('object','blog',0,10,false);
+		$area2 .= "<div id='blogs'>" . elgg_list_entities(array('type' => 'object', 'subtype' => 'blog', 'limit' => 10, 'full_view' => FALSE)) . "<div class='clearfloat'></div></div>";
 
 		// get tagcloud
 		// $area3 = "This will be a tagcloud for all blog posts";

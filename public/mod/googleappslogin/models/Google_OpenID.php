@@ -68,7 +68,7 @@ class Google_OpenID
         $params = array(
             'openid.ns' => 'http://specs.openid.net/auth/2.0',
             'openid.ns.pape' => 'http://specs.openid.net/extensions/pape/1.0',
-            'openid.pape.max_auth_age' => 300,
+            /* 'openid.pape.max_auth_age' => 300, */
             'openid.claimed_id' => 'http://specs.openid.net/auth/2.0/identifier_select',
             'openid.identity' => 'http://specs.openid.net/auth/2.0/identifier_select',
             'openid.return_to' => self::normalize_url($this->_return_url),
@@ -78,8 +78,8 @@ class Google_OpenID
 //            'openid.ns.ui' => 'http://specs.openid.net/extensions/ui/1.0',
 //            'openid.ui.mode' => 'popup',
 //            'openid.ui.icon' => 'true',
-            'openid.ns.ax' => 'http://openid.net/srv/ax/1.0',
-            'openid.ax.mode' => 'fetch_request',
+			'openid.ns.ax' => 'http://openid.net/srv/ax/1.0',
+			'openid.ax.mode' => 'fetch_request',
             'openid.ax.required' => 'email,language,country,firstname,lastname',
             'openid.ax.type.email' => 'http://axschema.org/contact/email',
             'openid.ax.type.language' => 'http://axschema.org/pref/language',
@@ -87,17 +87,16 @@ class Google_OpenID
             'openid.ax.type.firstname' => 'http://axschema.org/namePerson/first',
             'openid.ax.type.lastname' => 'http://axschema.org/namePerson/last'
         );
+		
+		
+		if ($this->_use_oauth) {
+			 $params['openid.ns.oauth'] = 'http://specs.openid.net/extensions/oauth/1.0';
+			$params['openid.oauth.consumer'] = get_plugin_setting('googleapps_domain', 'googleappslogin');
+			$params['openid.oauth.scope'] = 'https://mail.google.com/mail/feed/atom https://sites.google.com/feeds http://docs.google.com/feeds/ http://spreadsheets.google.com/feeds/';
+			///echo '<pre>';print_r($params);exit;
+		}
 
-        /**
-         * @TODO using OAuth in the future
-         */
-        if ($this->_use_oauth) {
-            $params['openid.ns.auth'] = 'http://specs.openid.net/extensions/oauth/1.0';
-            $params['openid.auth.consumer'] = 'elgg.flatsourcing.com';
-			$params['openid.auth.scope'] = 'http://docs.google.com/feeds/';
-			//echo '<pre>';print_r($params);exit;
-        }
-
+		
         $_params = array();
         foreach ($params as $key => $value) {
             array_push($_params, self::encode($key) . '=' . self::encode($value));
@@ -115,7 +114,6 @@ class Google_OpenID
         }
         echo "<br>";
         */
-
         return $url;
     }
 
@@ -126,8 +124,10 @@ class Google_OpenID
     
     public static function normalize_url($url) {
         if (!preg_match('/^[\w]{3,5}\:\/\//', $url)) {
-            $url = 'http://' . $url;
+            $url = 'https://' . $url;
+			
         }
+		$url = preg_replace('/^http:(.*)/', 'https:$1', $url);
         
         if (!$urlParts = parse_url($url)) {
             throw new Exception("can't parse");
@@ -168,19 +168,38 @@ class Google_OpenID
         if (!isset($this->_response)) {
             throw new Exception('Response is not set');
         }
-        return($this->_response['openid_mode'] == 'id_res');
+		if (!empty($this->_response['openid_mode']) && $this->_response['openid_mode'] == 'id_res') {
+			return true;
+		}
+		if (!empty($this->_response['openid.mode']) && $this->_response['openid.mode'] == 'id_res') {
+			return true;
+		}
+		return false;
+		
     }
     
     public function get_email() {
-        return $this->get_response_attribute('openid_ext1_value_email');
+		$email = $this->get_response_attribute('openid_ext1_value_email');
+		if (empty($email)) {
+			$email = $this->get_response_attribute('openid.ext1.value.email');
+		}
+        return $email;
     }
 
     public function get_firstname() {
-        return $this->get_response_attribute('openid_ext1_value_firstname');
+		$firstname = $this->get_response_attribute('openid_ext1_value_firstname');
+		if (empty($firstname)) {
+			$firstname = $this->get_response_attribute('openid.ext1.value.firstname');
+		}
+        return $firstname;
     }
 
     public function get_lastname() {
-        return $this->get_response_attribute('openid_ext1_value_lastname');
+		$lastname = $this->get_response_attribute('openid_ext1_value_lastname');
+		if (empty($lastname)) {
+			$lastname = $this->get_response_attribute('openid.ext1.value.lastname');
+		}
+        return $lastname;
     }
 
     public function get_response_attribute($attr) {

@@ -1,6 +1,6 @@
 <?php
 /**
- * Elgg v1.6 Default Theme
+ * Elgg Default Theme
  * core CSS file
  *
  * Updated 30 Sept 09
@@ -822,6 +822,10 @@ input {
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 }
+input[type="checkbox"] {
+	padding: 1px;
+	border-style: none;
+}
 textarea {
 	font: 120% Arial, Helvetica, sans-serif;
 	border: solid 1px #cccccc;
@@ -886,6 +890,7 @@ input[type="submit"] {
 	background: #cccccc;
 }
 
+.input-password,
 .input-text,
 .input-tags,
 .input-url,

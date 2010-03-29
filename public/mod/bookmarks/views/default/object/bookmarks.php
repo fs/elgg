@@ -6,7 +6,7 @@
 	 * @package ElggBookmarks
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider <info@elgg.com>
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.org/
 	 */
 
@@ -66,7 +66,7 @@
 	
 		<div class="sharing_item_title">
 			<h3>
-				<a href="<?php echo $vars['entity']->getURL(); ?>"><?php echo $vars['entity']->title; ?></a>
+				<a href="<?php echo $vars['entity']->address; ?>"><?php echo $vars['entity']->title; ?></a>
 			</h3>
 		</div>
 		<div class="sharing_item_owner">
@@ -76,7 +76,7 @@
 			</p>
 		</div>
 		<div class="sharing_item_description">
-				<?php echo autop($vars['entity']->description); ?>
+				<?php echo elgg_view('output/longtext', array('value' => $vars['entity']->description)); ?>
 		</div>
 <?php
 

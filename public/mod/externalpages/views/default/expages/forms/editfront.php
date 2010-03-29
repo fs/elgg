@@ -6,7 +6,7 @@
 	 * @package ElggExpages
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider Ltd <info@elgg.com>
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.com/
 	 * 
 	 */
@@ -15,7 +15,7 @@
 	 $action = "expages/addfront";
 	 
 	 //grab the required entity
-	 $page_contents = get_entities("object", "front", 0, "", 1);
+	 $page_contents = elgg_get_entities(array('type' => 'object', 'subtype' => 'front', 'limit' => 1));
 	 
 	if($page_contents){
 		 foreach($page_contents as $pc){

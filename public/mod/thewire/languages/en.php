@@ -55,15 +55,15 @@
 		 */
 	
 			'thewire:posted' => "Your message was successfully posted to the wire.",
-			'thewire:deleted' => "Your note was successfully deleted.",
+			'thewire:deleted' => "Your wire post was successfully deleted.",
 	
 		/**
 		 * Error messages
 		 */
 	
 			'thewire:blank' => "Sorry; you need to actually put something in the textbox before we can save it.",
-			'thewire:notfound' => "Sorry; we could not find the specified note.",
-			'thewire:notdeleted' => "Sorry; we could not delete this shout.",
+			'thewire:notfound' => "Sorry; we could not find the specified wire post.",
+			'thewire:notdeleted' => "Sorry; we could not delete this wire post.",
 	
 	
 		/**

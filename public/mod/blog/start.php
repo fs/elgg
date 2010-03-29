@@ -6,7 +6,7 @@
 	 * @package ElggBlog
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider Ltd <info@elgg.com>
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.com/
 	 */
 
@@ -32,8 +32,7 @@
 					
 			// And for logged out users
 				} else {
-					add_menu(elgg_echo('blog'), $CONFIG->wwwroot . "mod/blog/everyone.php",array(
-					));
+					add_menu(elgg_echo('blogs'), $CONFIG->wwwroot . "mod/blog/everyone.php");
 				}
 				
 			// Extend system CSS with our own styles, which are defined in the blog/css view
@@ -64,6 +63,12 @@
 				
 			// Register entity type
 				register_entity_type('object','blog');
+				
+			// Register an annotation handler for comments etc
+				register_plugin_hook('entity:annotate', 'object', 'blog_annotate_comments');
+				
+			// Add group menu option
+				add_group_tool_option('blog',elgg_echo('blog:enableblog'),true);
 		}
 		
 		function blog_pagesetup() {
@@ -72,13 +77,14 @@
 
 			//add submenu options
 				if (get_context() == "blog") {
+					$page_owner = page_owner_entity();
+						
 					if ((page_owner() == $_SESSION['guid'] || !page_owner()) && isloggedin()) {
 						add_submenu_item(elgg_echo('blog:your'),$CONFIG->wwwroot."pg/blog/" . $_SESSION['user']->username);
 						add_submenu_item(elgg_echo('blog:friends'),$CONFIG->wwwroot."pg/blog/" . $_SESSION['user']->username . "/friends/");
 						add_submenu_item(elgg_echo('blog:everyone'),$CONFIG->wwwroot."mod/blog/everyone.php");
-						add_submenu_item(elgg_echo('blog:addpost'),$CONFIG->wwwroot."mod/blog/add.php");
+						
 					} else if (page_owner()) {
-						$page_owner = page_owner_entity();
 						add_submenu_item(sprintf(elgg_echo('blog:user'),$page_owner->name),$CONFIG->wwwroot."pg/blog/" . $page_owner->username);
 						if ($page_owner instanceof ElggUser) { // Sorry groups, this isn't for you.
 							add_submenu_item(sprintf(elgg_echo('blog:user:friends'),$page_owner->name),$CONFIG->wwwroot."pg/blog/" . $page_owner->username . "/friends/");
@@ -88,6 +94,9 @@
 						add_submenu_item(elgg_echo('blog:everyone'),$CONFIG->wwwroot."mod/blog/everyone.php");
 					}
 					
+					if (can_write_to_container(0, page_owner()) && isloggedin())
+						add_submenu_item(elgg_echo('blog:addpost'),$CONFIG->wwwroot."pg/blog/{$page_owner->username}/new/");
+						
 					if (!defined('everyoneblog') && page_owner()) {
 						
 						if ($dates = get_entity_dates('object','blog',page_owner())) {
@@ -103,7 +112,15 @@
 					}
 					
 				}
-			
+				
+			// Group submenu
+				$page_owner = page_owner_entity();
+				
+				if ($page_owner instanceof ElggGroup && get_context() == 'groups') {
+	    			if($page_owner->blog_enable != "no"){
+					    add_submenu_item(sprintf(elgg_echo("blog:group"),$page_owner->name), $CONFIG->wwwroot . "pg/blog/" . $page_owner->username );
+				    }
+				}
 		}
 		
 		/**
@@ -138,14 +155,44 @@
 										break;
 					case "friends":		include(dirname(__FILE__) . "/friends.php"); return true;
 										break;
+					case "new":			include(dirname(__FILE__) . "/add.php"); return true;
+										break;
+					
 				}
 			// If the URL is just 'blog/username', or just 'blog/', load the standard blog index
 			} else {
-				@include(dirname(__FILE__) . "/index.php");
+				include(dirname(__FILE__) . "/index.php");
 				return true;
 			}
 			
 			return false;
+			
+		}
+		
+		/**
+		 * Hook into the framework and provide comments on blog entities.
+		 *
+		 * @param unknown_type $hook
+		 * @param unknown_type $entity_type
+		 * @param unknown_type $returnvalue
+		 * @param unknown_type $params
+		 * @return unknown
+		 */
+		function blog_annotate_comments($hook, $entity_type, $returnvalue, $params)
+		{
+			$entity = $params['entity'];
+			$full = $params['full'];
+			
+			if (
+				($entity instanceof ElggEntity) &&	// Is the right type 
+				($entity->getSubtype() == 'blog') &&  // Is the right subtype
+				($entity->comments_on!='Off') && // Comments are enabled
+				($full) // This is the full view
+			)
+			{
+				// Display comments
+				return elgg_view_comments($entity);
+			}
 			
 		}
 
@@ -168,11 +215,11 @@
 				$title = $entity->title;
 				if ($method == 'sms') {
 					$owner = $entity->getOwnerEntity();
-					return $owner->username . ' via blog: ' . $title;
+					return $owner->name . ' via blog: ' . $title;
 				}
 				if ($method == 'email') {
 					$owner = $entity->getOwnerEntity();
-					return $owner->username . ' via blog: ' . $title . "\n\n" . $descr . "\n\n" . $entity->getURL();
+					return $owner->name . ' via blog: ' . $title . "\n\n" . $descr . "\n\n" . $entity->getURL();
 				}
 			}
 			return null;

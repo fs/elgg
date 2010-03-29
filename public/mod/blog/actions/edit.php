@@ -6,15 +6,12 @@
 	 * @package ElggBlog
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider Ltd <info@elgg.com>
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.org/
 	 */
 
 	// Make sure we're logged in (send us to the front page if not)
 		gatekeeper();
-
-        // make sure action is secure
-        action_gatekeeper();
 
 	// Get input data
 		$guid = (int) get_input('blogpost');
@@ -75,7 +72,12 @@
 				remove_metadata($_SESSION['user']->guid,'blogbody');
 				remove_metadata($_SESSION['user']->guid,'blogtags');
 		// Forward to the main blog page
-				forward("pg/blog/" . $owner->username);
+			$page_owner = get_entity($blog->container_guid);
+			if ($page_owner instanceof ElggUser)
+				$username = $page_owner->username;
+			else if ($page_owner instanceof ElggGroup)
+				$username = "group:" . $page_owner->guid;
+			forward("pg/blog/$username");
 					
 			}
 		

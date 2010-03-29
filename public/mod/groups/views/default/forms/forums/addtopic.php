@@ -6,7 +6,7 @@
 	 * @package ElggGroups
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider <info@elgg.com>
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.com/
 	 * 
 	 * @uses $vars['object'] Optionally, the topic to edit
@@ -20,6 +20,7 @@
 			$message = "";
 			$message_id = "";
 			$status = "";
+			$access_id = ACCESS_DEFAULT;
 	    
     // get the group guid
         $group_guid = (int) get_input('group_guid');
@@ -31,6 +32,7 @@
 <div class="contentWrapper">
 	<!-- display the input form -->
 	<form action="<?php echo $vars['url']; ?>action/<?php echo $action; ?>" method="post">
+	<?php echo elgg_view('input/securitytoken'); ?>
 	
 		<p>
 			<label><?php echo elgg_echo("title"); ?><br />
@@ -55,6 +57,7 @@
 													));
 			
 			?>
+			</label>
 		</p>
 		
 		<!-- topic message input -->

@@ -6,7 +6,7 @@
 	 * @package ElggBlog
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider Ltd <info@elgg.com>
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.com/
 	 */
 
@@ -16,6 +16,12 @@
 	// Get the current page's owner
 		$page_owner = page_owner_entity();
 		if ($page_owner === false || is_null($page_owner)) {
+			
+			// guess that logged in user is the owner - if no logged in send to all blogs page
+			if (!isloggedin()) {
+				forward('mod/blog/everyone.php');
+			}
+			
 			$page_owner = $_SESSION['user'];
 			set_page_owner($_SESSION['guid']);
 		}
@@ -28,7 +34,9 @@
 		}
 		
 	// Get a list of blog posts
-		$area2 .= list_user_objects($page_owner->getGUID(),'blog',10,false);
+		$area2 .= "<div id=\"blogs\">";
+		$area2 .= elgg_list_entities(array('type' => 'object', 'subtype' => 'blog', 'container_guid' => page_owner(), 'limit' => 10, 'full_view' => FALSE, 'view_type_toggle' => FALSE));
+		$area2 .= "<div class='clearfloat'></div></div>";
 
 	// Get blog tags
 

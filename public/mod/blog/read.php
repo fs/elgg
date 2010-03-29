@@ -6,7 +6,7 @@
 	 * @package ElggBlog
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider Ltd <info@elgg.com>
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.com/
 	 */
 
@@ -20,22 +20,26 @@
 		if ($blogpost = get_entity($post)) {
 			
 	// Get any comments
-			$comments = $blogpost->getAnnotations('comments');
+			//$comments = $blogpost->getAnnotations('comments');
 		
 	// Set the page owner
-			set_page_owner($blogpost->getOwner());
-			$page_owner = get_entity($blogpost->getOwner());
+			if ($blogpost->container_guid) {
+				set_page_owner($blogpost->container_guid);
+			} else {
+				set_page_owner($blogpost->owner_guid);
+			}
 			
 	// Display it
-			$area2 = elgg_view("object/blog",array(
+			$area2 = elgg_view_entity($blogpost, true);
+			/*$area2 = elgg_view("object/blog",array(
 											'entity' => $blogpost,
 											'entity_owner' => $page_owner,
 											'comments' => $comments,
 											'full' => true
 											));
-											
+			*/								
 	// Set the title appropriately
-		//$title = sprintf(elgg_echo("blog:posttitle"),$page_owner->name,$blogpost->title);
+		$title = sprintf(elgg_echo("blog:posttitle"),$page_owner->name,$blogpost->title);
 
 	// Display through the correct canvas area
 		$body = elgg_view_layout("two_column_left_sidebar", '', $area1 . $area2);

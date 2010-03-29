@@ -18,11 +18,11 @@
 			'messages:title' => "Title",
 			'messages:to' => "To",
             'messages:from' => "From",
-			'messages:fly' => "Let it fly",
+			'messages:fly' => "Send",
 			'messages:replying' => "Message replying to",
 			'messages:inbox' => "Inbox",
 			'messages:sendmessage' => "Send a message",
-			'messages:compose' => "Send a message",
+			'messages:compose' => "Compose a message",
 			'messages:sentmessages' => "Sent messages",
 			'messages:recent' => "Recent messages",
             'messages:original' => "Original message",
@@ -78,6 +78,7 @@ You cannot reply to this email.",
 			'messages:nopermission' => "You do not have permission to alter that message.",
 			'messages:nomessages' => "There are no messages to display.",
 			'messages:user:nonexist' => "We could not find the recipient in the user database.",
+			'messages:user:blank' => "You did not select someone to send this to.",
 	
 	);
 					

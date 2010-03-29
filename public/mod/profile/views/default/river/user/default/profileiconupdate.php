@@ -4,8 +4,9 @@
 	
 	$url = "<a href=\"{$performed_by->getURL()}\">{$performed_by->name}</a>";
 	$string = sprintf(elgg_echo("profile:river:iconupdate"),$url);
-	$string .= "<div class=\"river_content\">" . elgg_view("profile/icon",array('entity' => $performed_by, 'size' => 'small', 'override' => 'true')) . "</div>";		
-	
+	$string .= "<div class=\"river_content_display\">";
+	$string .= elgg_view("profile/icon",array('entity' => $performed_by, 'size' => 'small', 'override' => 'true'));		
+	$string .= "</div>";
 ?>
 
 <?php echo $string; ?>

@@ -6,7 +6,7 @@
 	 * @package Elggthewire
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider <info@elgg.com>
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.org/
 	 */
 
@@ -16,7 +16,9 @@
 	// Get input data
 		$body = get_input('note');
 		$tags = get_input('thewiretags');
-		$access_id = get_default_access();
+		$access_id = (int)get_default_access();
+		if ($access_id == ACCESS_PRIVATE)
+			$access_id = ACCESS_LOGGED_IN; // Private wire messages are pointless
 		$location = get_input('location');
 		$method = get_input('method');
 		$parent = (int)get_input('parent', 0);

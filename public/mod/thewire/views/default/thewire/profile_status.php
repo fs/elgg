@@ -8,7 +8,7 @@
 	$url_to_wire = $vars['url'] . "pg/thewire/" . $vars['entity']->username;
 	
 	//grab the users latest from the wire
-	$latest_wire = get_entities("object", "thewire", $owner, "", 1, 0, false, 0, null); 
+	$latest_wire = elgg_get_entities(array('types' => 'object', 'subtypes' => 'thewire', 'owner_guid' => $owner, 'limit' => 1)); 
 
 	if($latest_wire){
 		foreach($latest_wire as $lw){

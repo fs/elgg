@@ -5,7 +5,7 @@
 	 * @package ElggProfile
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider Ltd <info@elgg.com>
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.com/
 	 */
 
@@ -29,6 +29,7 @@
 			$submit_control</p>
 END;
 	echo "<div class=\"contentWrapper\">";
+	echo "<p>" . elgg_echo('profile:explainchangefields') . "</p>";
 	echo elgg_view('input/form', array('body' => $formbody, 'action' => $vars['url'] . 'action/profile/editdefault'));
 	echo "</div>";
 ?>

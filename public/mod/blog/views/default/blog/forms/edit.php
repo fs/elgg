@@ -6,7 +6,7 @@
 	 * @package ElggBlog
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider Ltd <info@elgg.com>
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.com/
 	 * 
 	 * @uses $vars['object'] Optionally, the blog post to edit
@@ -36,6 +36,8 @@
 				$access_id = ACCESS_DEFAULT;
 			else
 				$access_id = 0;
+				
+			$container = $vars['container_guid'] ? elgg_view('input/hidden', array('internalname' => 'container_guid', 'value' => $vars['container_guid'])) : "";
 		}
 
 	// Just in case we have some cached details
@@ -118,6 +120,8 @@
 		</div>
 
 		{$extras}
+		
+		$container
 
 	</div><!-- /two_column_left_sidebar_210 -->
 
@@ -165,13 +169,16 @@ EOT;
 <script type="text/javascript">
 	setInterval( "saveDraft(false)", 120000);
 	function saveDraft(preview) {
-		
 		temppreview = preview;
+
+		if (typeof(tinyMCE) != 'undefined') {
+			tinyMCE.triggerSave();
+		}
 		
 		var drafturl = "<?php echo $vars['url']; ?>mod/blog/savedraft.php";
-		var temptitle = $("input[@name='blogtitle']").val();
-		var tempbody = $("textarea[@name='blogbody']").val();
-		var temptags = $("input[@name='blogtags']").val();
+		var temptitle = $("input[name='blogtitle']").val();
+		var tempbody = $("textarea[name='blogbody']").val();
+		var temptags = $("input[name='blogtags']").val();
 		
 		var postdata = { blogtitle: temptitle, blogbody: tempbody, blogtags: temptags };
 		
@@ -182,7 +189,7 @@ EOT;
 			$("span#draftSavedCounter").html(d.getHours() + ":" + mins);
 			if (temppreview == true) {
 				$("form#blogPostForm").attr("action","<?php echo $vars['url']; ?>mod/blog/preview.php");
-				$("input[@name='submit']").click();
+				$("input[name='submit']").click();
 				//$("form#blogPostForm").submit();
 				//document.blogPostForm.submit();
 			}

@@ -6,7 +6,7 @@
 	 * @package ElggProfile
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider Ltd <info@elgg.com>
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.com/
 	 * 
 	 * @uses $vars['entity'] The user entity. If none specified, the current user is assumed.
@@ -51,7 +51,7 @@
 <div class="avatar_menu_button"><img src="<?php echo $vars['url']; ?>_graphics/spacer.gif" border="0" width="15px" height="15px" /></div>
 
 	<div class="sub_menu">
-		<a href="<?php echo $vars['entity']->getURL(); ?>"><h3><?php echo $vars['entity']->name; ?></h3></a>
+		<h3><a href="<?php echo $vars['entity']->getURL(); ?>"><?php echo $vars['entity']->name; ?></a></h3>
 		<?php
 			if (isloggedin()) {
 				$actions = elgg_view('profile/menu/actions',$vars);
@@ -77,7 +77,7 @@
 		
 	} 
 	
-	?><img src="<?php echo $vars['entity']->getIcon($vars['size']); ?>" border="0" <?php echo $align; ?> title="<?php echo htmlentities($vars['entity']->name, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $vars['js']; ?> /><?php
+	?><img src="<?php echo $vars['entity']->getIcon($vars['size']); ?>" border="0" <?php echo $align; ?> alt="<?php echo htmlentities($vars['entity']->name, ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo htmlentities($vars['entity']->name, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $vars['js']; ?> /><?php
 
 		if (!$override) {
 	

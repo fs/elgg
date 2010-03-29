@@ -7,15 +7,12 @@
 	 * @package ElggExPages
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider Ltd <info@elgg.com>
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.org/
 	 */
 
 	// Make sure we're logged as admin
 		admin_gatekeeper();
-
-   // Make sure action is secure
-        action_gatekeeper();
 
 	// Get input data
 		$contents_left = get_input('front_left', '', false);

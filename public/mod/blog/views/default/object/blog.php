@@ -6,7 +6,7 @@
 	 * @package ElggBlog
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Ben Werdmuller <ben@curverider.co.uk>
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.com/
 	 * 
 	 * @uses $vars['entity'] Optionally, the blog post to view
@@ -118,10 +118,10 @@
 					<?php
 					
 						echo elgg_view("output/confirmlink", array(
-																	'href' => $vars['url'] . "action/blog/delete?blogpost=" . $vars['entity']->getGUID(),
-																	'text' => elgg_echo('delete'),
-																	'confirm' => elgg_echo('deleteconfirm'),
-																));
+							'href' => $vars['url'] . "action/blog/delete?blogpost=" . $vars['entity']->getGUID(),
+							'text' => elgg_echo('delete'),
+							'confirm' => elgg_echo('deleteconfirm'),
+						));
 	
 						// Allow the menu to be extended
 						echo elgg_view("editmenu",array('entity' => $vars['entity']));
@@ -137,10 +137,11 @@
 
 <?php
 
-			// If we've been asked to display the full view
-				if (isset($vars['full']) && $vars['full'] == true && $comments_on == 'on' && $vars['entity'] instanceof ElggEntity) {
+			// If we've been asked to display the full view 
+			// Now handled by annotation framework
+				/*if (isset($vars['full']) && $vars['full'] == true && $comments_on == 'on' && $vars['entity'] instanceof ElggEntity) {
 					echo elgg_view_comments($vars['entity']);
-				}
+				}*/
 				
 			}
 

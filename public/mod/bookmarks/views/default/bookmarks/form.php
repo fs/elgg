@@ -6,7 +6,7 @@
 	 * @package ElggBookmarks
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider <info@elgg.com>
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.org/
 	 */
 
@@ -47,7 +47,7 @@
 ?>
 <div class="contentWrapper">
 	<form action="<?php echo $vars['url']; ?>action/bookmarks/add" method="post">
-	
+		<?php echo elgg_view('input/securitytoken'); ?>
 		<p>
 			<label>
 				<?php 	echo elgg_echo('title'); ?>
@@ -101,17 +101,21 @@
 				?>
 			</label>
 		</p>
-		<p>
-			<label><?php echo elgg_echo("bookmarks:with"); ?></label><br />
 			<?php
 
 				//echo elgg_view('bookmarks/sharing',array('shares' => $shares, 'owner' => $owner));
-				if ($friends = get_entities_from_relationship('friend',$owner->getGUID(),false,'user','', 0, "", 9999)) {
+				if ($friends = elgg_get_entities_from_relationship(array('relationship' => 'friend', 'relationship_guid' => $owner->getGUID(), 'inverse_relationship' => FALSE, 'type' => 'user', 'limit' => 9999))) {
+?>
+		<p>
+					<label><?php echo elgg_echo("bookmarks:with"); ?></label><br />
+<?php
 					echo elgg_view('friends/picker',array('entities' => $friends, 'internalname' => 'shares', 'highlight' => $highlight));
+?>
+		</p>
+<?php
 				}
 			
 			?>
-		</p>
 		<p>
 			<label>
 				<?php 	echo elgg_echo('access'); ?>
@@ -126,6 +130,7 @@
 			</label>
 		</p>
 		<p>
+			<?php echo $vars['container_guid'] ? elgg_view('input/hidden', array('internalname' => 'container_guid', 'value' => $vars['container_guid'])) : ""; ?>
 			<input type="hidden" name="bookmark_guid" value="<?php echo $guid; ?>" />
 			<input type="submit" value="<?php echo elgg_echo('save'); ?>" />
 		</p>

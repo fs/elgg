@@ -7,12 +7,14 @@
 		 */
 	
 			'bookmarks' => "Bookmarks",
-			'bookmarks:add' => "Bookmark something",
-			'bookmarks:read' => "Bookmarked items",
+			'bookmarks:add' => "Add bookmark",
+			'bookmarks:read' => "%s's bookmarked items",
 			'bookmarks:friends' => "Friends' bookmarks",
 			'bookmarks:everyone' => "All site bookmarks",
 			'bookmarks:this' => "Bookmark this",
+			'bookmarks:this:group' => "Bookmark in %s",
 			'bookmarks:bookmarklet' => "Get bookmarklet",
+			'bookmarks:bookmarklet:group' => "Get group bookmarklet",
 			'bookmarks:inbox' => "Bookmarks inbox",
 			'bookmarks:more' => "More",
 			'bookmarks:shareditem' => "Bookmarked item",
@@ -30,10 +32,13 @@
 			'bookmarks:recent' => "Recent bookmarks",
 	
 			'bookmarks:river:created' => '%s bookmarked',
-			'bookmarks:river:annotate' => 'posted a comment on this bookmarked item',
+			'bookmarks:river:annotate' => 'a comment on this bookmarked item',
 			'bookmarks:river:item' => 'an item',
 	
 			'item:object:bookmarks' => 'Bookmarked items',
+	
+			'bookmarks:group' => 'Group bookmarks',
+			'bookmarks:enablebookmarks' => 'Enable group bookmarks',
 	
 	
 		/**

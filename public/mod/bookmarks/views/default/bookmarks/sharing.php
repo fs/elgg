@@ -1,7 +1,7 @@
 <?php
 
 	$owner = $vars['owner'];
-	if ($friends = get_entities_from_relationship('friend',$owner->getGUID(),false,'user','', 0, "", 9999)) {
+	if ($friends = elgg_get_entities_from_relationship(array('relationship' => 'friend', 'relationship_guid' => $owner->getGUID(), 'inverse_relationship' => FALSE, 'type' => 'user', 'limit' => 9999))) {
 		
 ?>
 	

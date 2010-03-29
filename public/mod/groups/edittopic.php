@@ -6,7 +6,7 @@
 	 * @package ElggGroups
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider <info@elgg.com>
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.com/
 	 */
 
@@ -31,6 +31,6 @@
 	    $body = elgg_view_layout('two_column_left_sidebar', '', $area2);
 		
 	// Display page
-		page_draw(elgg_echo('groups:addtopic'),$body);
+		page_draw(elgg_echo('groups:edittopic'),$body);
 		
 ?>

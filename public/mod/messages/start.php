@@ -7,7 +7,7 @@
 	 * @package ElggMessages
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider Ltd <info@elgg.com>
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.com/
 	 */
 
@@ -28,8 +28,8 @@
 				
 			//add submenu options
 				if (get_context() == "messages") {
-					add_submenu_item(elgg_echo('messages:inbox'), $CONFIG->wwwroot . "pg/messages/" . $_SESSION['user']->username);
 					add_submenu_item(elgg_echo('messages:compose'), $CONFIG->wwwroot . "mod/messages/send.php");
+					add_submenu_item(elgg_echo('messages:inbox'), $CONFIG->wwwroot . "pg/messages/" . $_SESSION['user']->username);
 					add_submenu_item(elgg_echo('messages:sentmessages'), $CONFIG->wwwroot . "mod/messages/sent.php");
 				}
 				
@@ -265,13 +265,13 @@
 			if (isset($page[1])) {
 				switch($page[1]) {
 					case "read":		set_input('message',$page[2]);
-										@include(dirname(__FILE__) . "/read.php");
+										include(dirname(__FILE__) . "/read.php");
 										return true;
 										break;
 				}
 			// If the URL is just 'messages/username', or just 'messages/', load the standard messages index
 			} else {
-				@include(dirname(__FILE__) . "/index.php");
+				include(dirname(__FILE__) . "/index.php");
 				return true;
 			}
 			
@@ -291,11 +291,11 @@
             
             //get the users inbox messages
 		    //$num_messages = get_entities_from_metadata("toId", $_SESSION['user']->getGUID(), "object", "messages", 0, 10, 0, "", 0, false);
-		    $num_messages = get_entities_from_metadata_multi(array(
+		    $num_messages = elgg_get_entities_from_metadata(array('metadata_name_value_pairs' => array(
 		    							'toId' => $_SESSION['user']->guid,
 		    							'readYet' => 0,
 		    							'msg' => 1
-		    									   ),"object", "messages", $_SESSION['user']->guid, 9999, 0, "", 0, false);
+		    									   ), 'types' => 'object', 'subtypes' => 'messages', 'owner_guid' => $_SESSION['user']->guid, 'limit' => 9999));
 		
 			if (is_array($num_messages))
 				$counter = sizeof($num_messages);

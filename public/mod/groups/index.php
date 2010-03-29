@@ -5,7 +5,7 @@
 	 * @package ElggGroups
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider Ltd
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.com/
 	 */
 
@@ -20,7 +20,7 @@
 	$area2 = elgg_view_title($title);
 	
 	set_context('search');
-	$objects = list_entities("group", "", page_owner(), $limit, false);
+	$objects = elgg_list_entities(array('types' => 'group', 'owner_guid' => page_owner(), 'limit' => $limit, 'full_view' => FALSE));
 	set_context('groups');
 	
 	$area2 .= $objects;

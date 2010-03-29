@@ -177,6 +177,8 @@ function elgg_view($view, $vars = array(), $bypass = false, $debug = false, $vie
 	global $CONFIG;
 	static $usercache;
 
+	$view = (string)$view;
+
 	// basic checking for bad paths
 	if (strpos($view, '..') !== false) {
 		return false;
@@ -375,6 +377,14 @@ function elgg_view_register_simplecache($viewname) {
 function elgg_view_regenerate_simplecache() {
 	global $CONFIG;
 
+	// @todo elgg_view() checks if the page set is done (isset($CONFIG->pagesetupdone)) and
+	// triggers an event if it's not. Calling elgg_view() here breaks submenus
+	// (at least) because the page setup hook is called before any
+	// contexts can be correctly set (since this is called before page_handler()).
+	// To avoid this, lie about $CONFIG->pagehandlerdone to force
+	// the trigger correctly when the first view is actually being output.
+	$CONFIG->pagesetupdone = TRUE;
+
 	if (isset($CONFIG->views->simplecache)) {
 		if (!file_exists($CONFIG->dataroot . 'views_simplecache')) {
 			@mkdir($CONFIG->dataroot . 'views_simplecache');
@@ -391,8 +401,10 @@ function elgg_view_regenerate_simplecache() {
 			}
 		}
 
-	datalist_set('simplecache_lastupdate', 0);
+		datalist_set('simplecache_lastupdate', 0);
 	}
+
+	unset($CONFIG->pagesetupdone);
 }
 
 /**
@@ -551,7 +563,7 @@ function elgg_get_views($dir, $base) {
  * @param $base
  */
 function get_views($dir, $base) {
-	elgg_log('get_views() was deprecated in 1.7 by elgg_get_views()!', 'WARNING');
+	elgg_deprecated_notice('get_views() was deprecated by elgg_get_views()!', 1.7);
 	elgg_get_views($dir, $base);
 }
 
@@ -931,11 +943,11 @@ function get_submenu() {
 						$item_params = array();
 						if (isset($uri_info['query'])) {
 							$uri_info['query'] = html_entity_decode($uri_info['query']);
-							parse_str($uri_info['query'], $uri_params);
+							$uri_params = elgg_parse_str($uri_info['query']);
 						}
 						if (isset($item_info['query'])) {
 							$item_info['query'] = html_entity_decode($item_info['query']);
-							parse_str($item_info['query'], $item_params);
+							$item_params = elgg_parse_str($item_info['query']);
 						}
 
 						$uri_info['path'] = trim($uri_info['path'], '/');
@@ -1102,7 +1114,7 @@ function elgg_extend_view($view, $view_name, $priority = 501, $viewtype = '') {
  * @param $viewtype
  */
 function extend_view($view, $view_name, $priority = 501, $viewtype = '') {
-	elgg_log('extend_view() was deprecated in 1.7 by elgg_extend_view()!', 'WARNING');
+	elgg_deprecated_notice('extend_view() was deprecated by elgg_extend_view()!', 1.7);
 	elgg_extend_view($view, $view_name, $priority, $viewtype);
 }
 
@@ -1214,37 +1226,49 @@ function page_draw($title, $body, $sidebar = "") {
 function friendly_time($time) {
 	$diff = time() - ((int) $time);
 
-	if ($diff < 60) {
-		return elgg_echo("friendlytime:justnow");
-	} else if ($diff < 3600) {
-		$diff = round($diff / 60);
+	$minute = 60;
+	$hour = $minute * 60;
+	$day = $hour * 24;
+
+	if ($diff < $minute) {
+		$friendly_time = elgg_echo("friendlytime:justnow");
+	} else if ($diff < $hour) {
+		$diff = round($diff / $minute);
 		if ($diff == 0) {
 			$diff = 1;
-		}
-		if ($diff > 1) {
-			return sprintf(elgg_echo("friendlytime:minutes"),$diff);
-		}
-		return sprintf(elgg_echo("friendlytime:minutes:singular"),$diff);
-	} else if ($diff < 86400) {
-		$diff = round($diff / 3600);
-		if ($diff == 0) {
-			$diff = 1;
-		}
-		if ($diff > 1) {
-			return sprintf(elgg_echo("friendlytime:hours"),$diff);
-		}
-		return sprintf(elgg_echo("friendlytime:hours:singular"),$diff);
-	} else {
-		$diff = round($diff / 86400);
-		if ($diff == 0) {
-			$diff = 1;
-		}
-		if ($diff > 1) {
-			return sprintf(elgg_echo("friendlytime:days"),$diff);
 		}
 
-		return sprintf(elgg_echo("friendlytime:days:singular"),$diff);
+		if ($diff > 1) {
+			$friendly_time = sprintf(elgg_echo("friendlytime:minutes"), $diff);
+		} else {
+			$friendly_time = sprintf(elgg_echo("friendlytime:minutes:singular"), $diff);
+		}
+	} else if ($diff < $day) {
+		$diff = round($diff / $hour);
+		if ($diff == 0) {
+			$diff = 1;
+		}
+
+		if ($diff > 1) {
+			$friendly_time = sprintf(elgg_echo("friendlytime:hours"), $diff);
+		} else {
+			$friendly_time = sprintf(elgg_echo("friendlytime:hours:singular"), $diff);
+		}
+	} else {
+		$diff = round($diff / $day);
+		if ($diff == 0) {
+			$diff = 1;
+		}
+
+		if ($diff > 1) {
+			$friendly_time = sprintf(elgg_echo("friendlytime:days"), $diff);
+		} else {
+			$friendly_time = sprintf(elgg_echo("friendlytime:days:singular"), $diff);
+		}
 	}
+
+	$timestamp = htmlentities(date(elgg_echo('friendlytime:date_format'), $time));
+	return "<acronym title=\"$timestamp\">$friendly_time</acronym>";
 }
 
 /**
@@ -1267,29 +1291,40 @@ function friendly_title($title) {
  */
 
 /**
- * Recursive function designed to load library files on start
- * (NB: this does not include plugins.)
- *
- * @param string $directory Full path to the directory to start with
- * @param string $file_exceptions A list of filenames (with no paths) you don't ever want to include
- * @param string $file_list A list of files that you know already you want to include
- * @return array Array of full filenames
+ * @deprecated 1.7
  */
-function get_library_files($directory, $file_exceptions = array(), $file_list = array()) {
-	$extensions_allowed = array('.php');
-	/*if (is_file($directory) && !in_array($directory,$file_exceptions)) {
-		$file_list[] = $directory;
-	} else */
+function get_library_files($directory, $exceptions = array(), $list = array()) {
+	elgg_deprecated_notice('get_library_files() deprecated by elgg_get_file_list()', 1.7);
+	return elgg_get_file_list($directory, $exceptions, $list, array('.php'));
+}
+
+/**
+ * Returns a list of files in $directory
+ *
+ * @param str $directory
+ * @param array $exceptions Array of filenames to ignore
+ * @param array $list Array of files to append to
+ * @param mixed $extensions Array of extensions to allow, NULL for all. (With a dot: array('.php'))
+ * @return array
+ */
+function elgg_get_file_list($directory, $exceptions = array(), $list = array(), $extensions = NULL) {
 	if ($handle = opendir($directory)) {
-		while ($file = readdir($handle)) {
-			if (in_array(strrchr($file, '.'), $extensions_allowed) && !in_array($file,$file_exceptions)) {
-				$file_list[] = $directory . "/" . $file;
-				//$file_list = get_library_files($directory . "/" . $file, $file_exceptions, $file_list);
+		while (($file = readdir($handle)) !== FALSE) {
+			if (!is_file($file) || in_array($file, $exceptions)) {
+				continue;
+			}
+
+			if (is_array($extensions)) {
+				if (in_array(strrchr($file, '.'), $extensions)) {
+					$list[] = $directory . "/" . $file;
+				}
+			} else {
+				$list[] = $directory . "/" . $file;
 			}
 		}
 	}
 
-	return $file_list;
+	return $list;
 }
 
 /**
@@ -1381,6 +1416,7 @@ function add_to_register($register_name, $subregister_name, $subregister_value, 
  * @return false|stdClass Depending on success
  */
 function make_register_object($register_name, $register_value, $children_array = array()) {
+	elgg_deprecated_notice('make_register_object() is deprecated by add_submenu_item()', 1.7);
 	if (empty($register_name) || empty($register_value)) {
 		return false;
 	}
@@ -1443,6 +1479,7 @@ function add_menu($menu_name, $menu_url, $menu_children = array(), $context = ""
  * @return stdClass|false Depending on success
  */
 function menu_item($menu_name, $menu_url) {
+	elgg_deprecated_notice('menu_item() is deprecated by add_submenu_item', 1.7);
 	return make_register_object($menu_name, $menu_url);
 }
 
@@ -1917,11 +1954,8 @@ function elgg_dump($value, $to_screen = TRUE, $level = 'NOTICE') {
 		echo '<pre>';
 		print_r($value);
 		echo '</pre>';
-	}
-	else
-	{
-		// this currently chokes on arrays and objects
-		error_log($value);
+	} else {
+		error_log(print_r($value, TRUE));
 	}
 }
 
@@ -1936,6 +1970,11 @@ function __elgg_php_exception_handler($exception) {
 	error_log("*** FATAL EXCEPTION *** : " . $exception);
 
 	ob_end_clean(); // Wipe any existing output buffer
+
+	// make sure the error isn't cached
+	header("Cache-Control: no-cache, must-revalidate", true);
+	header('Expires: Fri, 05 Feb 1982 00:00:00 -0500', true);
+	//header("Internal Server Error", true, 500);
 
 	$body = elgg_view("messages/exceptions/exception",array('object' => $exception));
 	page_draw(elgg_echo('exception:title'), $body);
@@ -2066,6 +2105,62 @@ function run_function_once($functionname, $timelastupdatedcheck = 0) {
 	}
 }
 
+/**
+ * Sends a notice about deprecated use of a function, view, etc.
+ * Note: This will ALWAYS at least log a warning.  Don't use to pre-deprecate things.
+ * This assumes we are releasing in order and deprecating according to policy.
+ *
+ * @param str $msg Message to log / display.
+ * @param str $version human-readable *release* version the function was deprecated. No bloody A, B, (R)C, or D.
+ *
+ * @return bool
+ */
+function elgg_deprecated_notice($msg, $dep_version) {
+	// if it's a major release behind, visual and logged
+	// if it's a 2 minor releases behind, visual and logged
+	// if it's 1 minor release behind, logged.
+	// bugfixes don't matter because you're not deprecating between them, RIGHT?
+
+	if (!$dep_version) {
+		return FALSE;
+	}
+
+	$elgg_version = get_version(TRUE);
+	$elgg_version_arr = explode('.', $elgg_version);
+	$elgg_major_version = $elgg_version_arr[0];
+	$elgg_minor_version = $elgg_version_arr[1];
+
+	$dep_version_arr = explode('.', $dep_version);
+	$dep_major_version = $dep_version_arr[0];
+	$dep_minor_version = $dep_version_arr[1];
+
+	$last_working_version = $dep_minor_version - 1;
+
+	$visual = FALSE;
+
+	// use version_compare to account for 1.7a < 1.7
+	if (($dep_major_version < $elgg_major_version)
+	|| (($elgg_minor_version - $last_working_version) > 1)) {
+		$visual = TRUE;
+	}
+
+	$msg = "Deprecated in $dep_version: $msg";
+
+	if ($visual) {
+		register_error($msg);
+	}
+
+	// Get a file and line number for the log. Never show this in the UI.
+	// Skip over the function that sent this notice and see who called the deprecated
+	// function itself.
+	$backtrace = debug_backtrace();
+	$caller = $backtrace[1];
+	$msg .= " (Called from {$caller['file']}:{$caller['line']})";
+
+	elgg_log($msg, 'WARNING');
+
+	return TRUE;
+}
 
 
 /**
@@ -2251,7 +2346,10 @@ function elgg_normalise_plural_options_array($options, $singulars) {
 		$plural = $singular . 's';
 
 		// normalize the singular to plural
-		if (isset($options[$singular]) && $options[$singular] !== NULL && $options[$singular] !== FALSE) {
+		// isset() returns FALSE for array values of NULL, so they are ignored.
+		// everything else falsy is included.
+		//if (isset($options[$singular]) && $options[$singular] !== NULL && $options[$singular] !== FALSE) {
+		if (isset($options[$singular])) {
 			if (isset($options[$plural])) {
 				if (is_array($options[$plural])) {
 					$options[$plural][] = $options[$singlar];
@@ -2262,7 +2360,7 @@ function elgg_normalise_plural_options_array($options, $singulars) {
 				$options[$plural] = array($options[$singular]);
 			}
 		}
-		$options[$singular] = NULL;
+		unset($options[$singular]);
 	}
 
 	return $options;
@@ -2452,38 +2550,115 @@ interface Friendable {
 }
 
 /**
- * Rebuilds the parsed URL
+ * Rebuilds a parsed (partial) URL
  *
  * @param array $parts Associative array of URL components like parse_url() returns
  * @return str Full URL
  * @since 1.7
  */
 function elgg_http_build_url(array $parts) {
-	$port = (array_key_exists('port', $parts)) ? ":{$parts['port']}" : '';
-	return "{$parts['scheme']}://{$parts['host']}{$port}{$parts['path']}?{$parts['query']}";
+	// build only what's given to us.
+	$scheme = isset($parts['scheme']) ? "{$parts['scheme']}://" : '';
+	$host = isset($parts['host']) ? "{$parts['host']}" : '';
+	$port = isset($parts['port']) ? ":{$parts['port']}" : '';
+	$path = isset($parts['path']) ? "{$parts['path']}" : '';
+	$query = isset($parts['query']) ? "?{$parts['query']}" : '';
+
+	$string = $scheme . $host . $port . $path . $query;
+
+	return $string;
 }
 
+
 /**
- * Ensures action tokens are present in the given link
+ * Adds action tokens to URL
  *
  * @param str $link Full action URL
- * @return str Validated URL
+ * @return str URL with action tokens
  * @since 1.7
  */
-function elgg_validate_action_url($link) {
-	$url = parse_url($link);
-	parse_str($url['query'], $query);
-	if (array_key_exists('__elgg_ts', $query) && array_key_exists('__elgg_token', $query)) {
-		return $link;
+function elgg_add_action_tokens_to_url($url) {
+	$components = parse_url($url);
+
+	if (isset($components['query'])) {
+		$query = elgg_parse_str($components['query']);
+	} else {
+		$query = array();
+	}
+
+	if (isset($query['__elgg_ts']) && isset($query['__elgg_token'])) {
+		return $url;
 	}
 
 	// append action tokens to the existing query
 	$query['__elgg_ts'] = time();
 	$query['__elgg_token'] = generate_action_token($query['__elgg_ts']);
-	$url['query'] = http_build_query($query);
+	$components['query'] = http_build_query($query);
 
 	// rebuild the full url
-	return elgg_http_build_url($url);
+	return elgg_http_build_url($components);
+}
+
+/**
+ * @deprecated 1.7 final
+ */
+function elgg_validate_action_url($url) {
+	elgg_deprecated_notice('elgg_validate_action_url had a short life. Use elgg_add_action_tokens_to_url() instead.', '1.7b');
+
+	return elgg_add_action_tokens_to_url($url);
+}
+
+/**
+ * Removes a single elementry from a (partial) url query.
+ *
+ * @param string $url
+ * @param string $element
+ * @return string
+ */
+function elgg_http_remove_url_query_element($url, $element) {
+	$url_array = parse_url($url);
+
+	if (isset($url_array['query'])) {
+		$query = elgg_parse_str($url_array['query']);
+	} else {
+		// nothing to remove. Return original URL.
+		return $url;
+	}
+
+	if (array_key_exists($element, $query)) {
+		unset($query[$element]);
+	}
+
+	$url_array['query'] = http_build_query($query);
+	$string = elgg_http_build_url($url_array);
+	return $string;
+}
+
+
+/**
+ * Adds get params to $url
+ *
+ * @param str $url
+ * @param array $elements k/v pairs.
+ * @return str
+ */
+function elgg_http_add_url_query_elements($url, array $elements) {
+	$url_array = parse_url($url);
+
+	if (isset($url_array['query'])) {
+		$query = elgg_parse_str($url_array['query']);
+	} else {
+		$query = array();
+	}
+
+	foreach ($elements as $k => $v) {
+		$query[$k] = $v;
+	}
+
+	$url_array['query'] = http_build_query($query);
+	$string = elgg_http_build_url($url_array);
+
+	return $string;
 }
 
 /**
@@ -2557,7 +2732,6 @@ function __elgg_shutdown_hook() {
 function elgg_init() {
 	// Page handler for JS
 	register_page_handler('js','js_page_handler');
-	elgg_extend_view('js/initialise_elgg','embed/js');
 
 	// Register an event triggered at system shutdown
 	register_shutdown_function('__elgg_shutdown_hook');
@@ -2578,13 +2752,27 @@ function elgg_boot() {
 }
 
 /**
+ * Runs unit tests for the API.
+ */
+function elgg_api_test($hook, $type, $value, $params) {
+	global $CONFIG;
+	$value[] = $CONFIG->path . 'engine/tests/api/entity_getter_functions.php';
+	$value[] = $CONFIG->path . 'engine/tests/regression/trac_bugs.php';
+	return $value;
+}
+
+/**
  * Some useful constant definitions
  */
-define('ACCESS_DEFAULT',-1);
-define('ACCESS_PRIVATE',0);
-define('ACCESS_LOGGED_IN',1);
-define('ACCESS_PUBLIC',2);
-define('ACCESS_FRIENDS',-2);
+define('ACCESS_DEFAULT', -1);
+define('ACCESS_PRIVATE', 0);
+define('ACCESS_LOGGED_IN', 1);
+define('ACCESS_PUBLIC', 2);
+define('ACCESS_FRIENDS', -2);
 
-register_elgg_event_handler('init','system','elgg_init');
-register_elgg_event_handler('boot','system','elgg_boot',1000);
+define('ELGG_ENTITIES_ANY_VALUE', NULL);
+define('ELGG_ENTITIES_NO_VALUE', 0);
+
+register_elgg_event_handler('init', 'system', 'elgg_init');
+register_elgg_event_handler('boot', 'system', 'elgg_boot', 1000);
+register_plugin_hook('unit_test', 'system', 'elgg_api_test');

@@ -7,7 +7,7 @@
 	 * @package ElggTheWire
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider <info@elgg.com>
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.com/
 	 */
 
@@ -153,6 +153,9 @@
 		 */
 		function thewire_save_post($post, $access_id, $parent=0, $method = "site")
 		{
+			
+			global $SESSION; 
+			
 			// Initialise a new ElggObject
 			$thewire = new ElggObject();
 			
@@ -166,7 +169,11 @@
 			$thewire->access_id = $access_id;
 			
 			// Set its description appropriately
-			$thewire->description = $post;
+			$thewire->description = elgg_substr(strip_tags($post), 0, 160);
+			/*if (is_callable('mb_substr'))
+				$thewire->description = mb_substr(strip_tags($post), 0, 160);
+			else
+				$thewire->description = substr(strip_tags($post), 0, 160);*/
 			
 		    // add some metadata
 	        $thewire->method = $method; //method, e.g. via site, sms etc
@@ -176,7 +183,7 @@
 			$save = $thewire->save();
 
 			if($save)
-				add_to_river('river/object/thewire/create','create',$_SESSION['user']->guid,$thewire->guid);
+				add_to_river('river/object/thewire/create','create',$SESSION['user']->guid,$thewire->guid);
 	        
 	        return $save;
 
@@ -193,7 +200,7 @@
 				if ((is_plugin_enabled('smsclient')) && (is_plugin_enabled('smslogin')))
 				{
 					// By this stage the owner should be logged in (requires SMS Login)
-					if (thewire_save_post($object->description, 2, 0, 'sms'))
+					if (thewire_save_post($object->description, get_default_access(), 0, 'sms'))
 						return false;
 					
 				}

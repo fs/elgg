@@ -188,7 +188,7 @@ $english = array(
  * API
  */
 	'system.api.list' => "List all available API calls on the system.",
-	'auth.gettoken' => "This API call lets a user log in, returning an authentication token which can be used in leu of a username and password for authenticating further calls.",
+	'auth.gettoken' => "This API call lets a user obtain a user authentication token which can be used for authenticating future API calls. Pass it as the parameter auth_token",
 
 /**
  * User details
@@ -422,6 +422,8 @@ To remove a widget drag it back to the <b>Widget gallery</b>.",
 	'user:password:fail' => "Could not change your password on the system.",
 	'user:password:fail:notsame' => "The two passwords are not the same!",
 	'user:password:fail:tooshort' => "Password is too short!",
+	'user:resetpassword:unknown_user' => 'Invalid user.',
+	'user:resetpassword:reset_password_confirm' => 'Resetting your password will email a new password to your registered email address.',
 
 	'user:set:language' => "Language settings",
 	'user:language:label' => "Your language",
@@ -528,7 +530,7 @@ To remove a widget drag it back to the <b>Widget gallery</b>.",
 	'usersettings:plugins:opt:linktext' => "Configure your tools",
 
 	'usersettings:plugins:description' => "This panel allows you to control and configure the personal settings for the tools installed by your system administrator.",
-	'usersettings:statistics:label:numentities' => "Your entities",
+	'usersettings:statistics:label:numentities' => "Your content",
 
 	'usersettings:statistics:yourdetails' => "Your details",
 	'usersettings:statistics:label:name' => "Full name",
@@ -675,6 +677,7 @@ Once you have logged in, we highly recommend that you change your password.
 	'friendlytime:hours:singular' => "an hour ago",
 	'friendlytime:days' => "%s days ago",
 	'friendlytime:days:singular' => "yesterday",
+	'friendlytime:date_format' => 'j F Y @ g:ia',
 
 	'date:month:01' => 'January %s',
 	'date:month:02' => 'February %s',
@@ -733,15 +736,13 @@ Alternatively, you can enter your database settings below and we will try and do
 	'installation:dataroot:warning' => "You must create this directory manually. It should sit in a different directory to your Elgg installation.",
 	'installation:sitepermissions' => "The default access permissions:",
 	'installation:language' => "The default language for your site:",
-	'installation:debug' => "Debug mode provides extra information which can be used to diagnose faults, however it can slow your system down so should only be used if you are having problems:",
+	'installation:debug' => "Debug mode provides extra information which can be used to diagnose faults. However, it can slow your system down so should only be used if you are having problems:",
 	'installation:debug:none' => 'Turn off debug mode (recommended)',
 	'installation:debug:error' => 'Display only critical errors',
 	'installation:debug:warning' => 'Display errors and warnings',
 	'installation:debug:notice' => 'Log all errors, warnings and notices',
 	'installation:httpslogin' => "Enable this to have user logins performed over HTTPS. You will need to have https enabled on your server for this to work.",
 	'installation:httpslogin:label' => "Enable HTTPS logins",
-	'installation:usage' => "This option lets Elgg send anonymous usage statistics back to Curverider.",
-	'installation:usage:label' => "Send anonymous usage statistics",
 	'installation:view' => "Enter the view which will be used as the default for your site or leave this blank for the default view (if in doubt, leave as default):",
 
 	'installation:siteemail' => "Site email address (used when sending system emails)",
@@ -758,9 +759,9 @@ Alternatively, you can enter your database settings below and we will try and do
 	'installation:viewpathcache:description' => "The view filepath cache decreases the loading times of plugins by caching the location of their views.",
 	'installation:viewpathcache:label' => "Use view filepath cache (recommended)",
 
-	'upgrading' => 'Upgrading',
+	'upgrading' => 'Upgrading...',
 	'upgrade:db' => 'Your database was upgraded.',
-	'upgrade:core' => 'Your elgg installation was upgraded',
+	'upgrade:core' => 'Your elgg installation was upgraded.',
 
 /**
  * Welcome
@@ -876,6 +877,12 @@ You cannot reply to this email.",
  * Word blacklists
  */
 	'word:blacklist' => 'and, the, then, but, she, his, her, him, one, not, also, about, now, hence, however, still, likewise, otherwise, therefore, conversely, rather, consequently, furthermore, nevertheless, instead, meanwhile, accordingly, this, seems, what, whom, whose, whoever, whomever',
+
+/**
+ * Tag labels
+ */
+
+	'tag_names:tags' => 'Tags',
 
 /**
  * Languages according to ISO 639-1

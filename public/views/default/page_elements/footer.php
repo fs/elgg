@@ -27,7 +27,7 @@
 		<td width="748" height="50" align="right">
 		<p class="footer_toolbar_links">
 		<?php
-			//echo elgg_view('footer/links');
+			echo elgg_view('footer/links');
 		?>
 		</p>
 		</td>

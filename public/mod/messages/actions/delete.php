@@ -8,7 +8,7 @@
 	 * @package ElggMessages
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider Ltd <info@elgg.com>
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.com/
 	 */
 	 
@@ -17,7 +17,7 @@
  
     // grab details sent from the form
         $message_id_array = get_input('message_id');
-        if (!array($message_id_array)) $message_id_array = array($message_id_array);
+        if (!is_array($message_id_array)) $message_id_array = array($message_id_array);
         $type = get_input('type'); // sent message or inbox
         $success = true;
         $submit = get_input('submit');
@@ -29,7 +29,7 @@
 	        $message = get_entity($message_id);
 	        
 	    // Make sure we actually have permission to edit and that the object is of sub-type messages
-			if ($message->getSubtype() == "messages") {
+			if ($message && $message->getSubtype() == "messages") {
 	    		
 				if ($submit == elgg_echo('delete')) {
 					if ($message->delete()) {
@@ -65,8 +65,8 @@
     		    forward("mod/messages/?username=" . $_SESSION['user']->username . "&offset={$offset}");
 		    }
         } else {
-        	register_error(elgg_echo("messages:nopermission"));
-        	forward("mod/messages/?offset={$offset}&username=" . $_SESSION['user']->username);
+        	register_error(elgg_echo("messages:notfound"));
+        	forward($_SERVER['HTTP_REFERER']);
         }
                  
     

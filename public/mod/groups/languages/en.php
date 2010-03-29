@@ -1,20 +1,20 @@
 <?php
 	/**
 	 * Elgg groups plugin language pack
-	 * 
+	 *
 	 * @package ElggGroups
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider Ltd
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.com/
 	 */
 
 	$english = array(
-	
+
 		/**
 		 * Menu items and titles
 		 */
-			
+
 			'groups' => "Groups",
 			'groups:owned' => "Groups you own",
 			'groups:yours' => "Your groups",
@@ -24,21 +24,22 @@
 			'groups:edit' => "Edit group",
 			'groups:delete' => 'Delete group',
 			'groups:membershiprequests' => 'Manage join requests',
-	
+			'groups:invitations' => 'Group invitations',
+
 			'groups:icon' => 'Group icon (leave blank to leave unchanged)',
 			'groups:name' => 'Group name',
 			'groups:username' => 'Group short name (displayed in URLs, alphanumeric characters only)',
 			'groups:description' => 'Description',
 			'groups:briefdescription' => 'Brief description',
-			'groups:interests' => 'Interests',
+			'groups:interests' => 'Tags',
 			'groups:website' => 'Website',
 			'groups:members' => 'Group members',
 			'groups:membership' => "Group membership permissions",
 			'groups:access' => "Access permissions",
 			'groups:owner' => "Owner",
-	        'groups:widget:num_display' => 'Number of groups to display',
-	        'groups:widget:membership' => 'Group membership',
-	        'groups:widgets:description' => 'Display the groups you are a member of on your profile',
+			'groups:widget:num_display' => 'Number of groups to display',
+			'groups:widget:membership' => 'Group membership',
+			'groups:widgets:description' => 'Display the groups you are a member of on your profile',
 			'groups:noaccess' => 'No access to group',
 			'groups:cantedit' => 'You can not edit this group',
 			'groups:saved' => 'Group saved',
@@ -55,48 +56,52 @@
 			'groups:nofriends' => "You have no friends left who have not been invited to this group.",
 			'groups:viagroups' => "via groups",
 			'groups:group' => "Group",
-	
+			'groups:search:tags' => "tag",
+
 			'groups:notfound' => "Group not found",
 			'groups:notfound:details' => "The requested group either does not exist or you do not have access to it",
-			
+
 			'groups:requests:none' => 'There are no outstanding membership requests at this time.',
-	
+
+			'groups:invitations:none' => 'There are no oustanding invitations at this time.',
+
 			'item:object:groupforumtopic' => "Discussion topics",
-	
+
 			'groupforumtopic:new' => "New discussion post",
-			
+
 			'groups:count' => "groups created",
 			'groups:open' => "open group",
 			'groups:closed' => "closed group",
 			'groups:member' => "members",
 			'groups:searchtag' => "Search for groups by tag",
-	
-			
+
+
 			/*
 			 * Access
 			 */
 			'groups:access:private' => 'Closed - Users must be invited',
 			'groups:access:public' => 'Open - Any user may join',
 			'groups:closedgroup' => 'This group has a closed membership. To ask to be added, click the "request membership" menu link.',
-	
+			'groups:visibility' => 'Who can see this group?',
+
 			/*
-			   Group tools
+			Group tools
 			*/
 			'groups:enablepages' => 'Enable group pages',
 			'groups:enableforum' => 'Enable group discussion',
 			'groups:enablefiles' => 'Enable group files',
 			'groups:yes' => 'yes',
 			'groups:no' => 'no',
-	
+
 			'group:created' => 'Created %s with %d posts',
 			'groups:lastupdated' => 'Last updated %s by %s',
 			'groups:pages' => 'Group pages',
 			'groups:files' => 'Group files',
-	
+
 			/*
-			  Group forum strings
+			Group forum strings
 			*/
-			
+
 			'group:replies' => 'Replies',
 			'groups:forum' => 'Group discussion',
 			'groups:addtopic' => 'Add a topic',
@@ -131,11 +136,12 @@
 			'groups:cantjoin' => 'Can not join group',
 			'groups:cantleave' => 'Could not leave group',
 			'groups:addedtogroup' => 'Successfully added the user to the group',
-			'groups:joinrequestnotmade' => 'Join request could not be made',
-			'groups:joinrequestmade' => 'Request to join group successfully made',
+			'groups:joinrequestnotmade' => 'Could not request to join group',
+			'groups:joinrequestmade' => 'Requested to join group',
 			'groups:joined' => 'Successfully joined group!',
 			'groups:left' => 'Successfully left group',
 			'groups:notowner' => 'Sorry, you are not the owner of this group.',
+			'groups:notmember' => 'Sorry, you are not a member of this group.',
 			'groups:alreadymember' => 'You are already a member of this group!',
 			'groups:userinvited' => 'User has been invited.',
 			'groups:usernotinvited' => 'User could not be invited.',
@@ -146,17 +152,17 @@
 			'groups:joinrequest:remove:check' => 'Are you sure you want to remove this join request?',
 			'groups:invite:body' => "Hi %s,
 
-You have been invited to join the '%s' group, click below to confirm:
+%s invited you to join the '%s' group, click below to confirm:
 
 %s",
 
 			'groups:welcome:subject' => "Welcome to the %s group!",
 			'groups:welcome:body' => "Hi %s!
-		
+
 You are now a member of the '%s' group! Click below to begin posting!
 
 %s",
-	
+
 			'groups:request:subject' => "%s has requested to join %s",
 			'groups:request:body' => "Hi %s,
 
@@ -167,11 +173,11 @@ You are now a member of the '%s' group! Click below to begin posting!
 or click below to confirm request:
 
 %s",
-	
-            /*
+
+			/*
 				Forum river items
 			*/
-	
+
 			'groups:river:member' => 'is now a member of',
 			'groupforum:river:updated' => '%s has updated',
 			'groupforum:river:update' => 'this discussion topic',
@@ -181,37 +187,42 @@ or click below to confirm request:
 			'groupforum:river:annotate:create' => 'on this discussion topic',
 			'groupforum:river:postedtopic' => '%s has started a new discussion topic titled',
 			'groups:river:member' => '%s is now a member of',
-	
+			'groups:river:togroup' => 'to the group',
+
 			'groups:nowidgets' => 'No widgets have been defined for this group.',
-	
-	
+
+
 			'groups:widgets:members:title' => 'Group members',
 			'groups:widgets:members:description' => 'List the members of a group.',
 			'groups:widgets:members:label:displaynum' => 'List the members of a group.',
 			'groups:widgets:members:label:pleaseedit' => 'Please configure this widget.',
-	
+
 			'groups:widgets:entities:title' => "Objects in group",
 			'groups:widgets:entities:description' => "List the objects saved in this group",
 			'groups:widgets:entities:label:displaynum' => 'List the objects of a group.',
 			'groups:widgets:entities:label:pleaseedit' => 'Please configure this widget.',
-		
+
 			'groups:forumtopic:edited' => 'Forum topic successfully edited.',
-	
+
+			'groups:allowhiddengroups' => 'Do you want to allow private (invisible) groups?',
+
 			/**
 			 * Action messages
 			 */
 			'group:deleted' => 'Group and group contents deleted',
 			'group:notdeleted' => 'Group could not be deleted',
-	
+
 			'grouppost:deleted' => 'Group posting successfully deleted',
 			'grouppost:notdeleted' => 'Group posting could not be deleted',
 			'groupstopic:deleted' => 'Topic deleted',
 			'groupstopic:notdeleted' => 'Topic not deleted',
 			'grouptopic:blank' => 'No topic',
+			'grouptopic:notfound' => 'Could not find the topic',
+			'grouppost:nopost' => 'Empty post',
 			'groups:deletewarning' => "Are you sure you want to delete this group? There is no undo!",
-	
+
 			'groups:joinrequestkilled' => 'The join request has been deleted.',
 	);
-					
+
 	add_translation("en",$english);
 ?>

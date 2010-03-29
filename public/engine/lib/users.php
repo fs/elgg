@@ -75,8 +75,8 @@ class ElggUser extends ElggEntity
 
 			// Is $guid is an ElggUser? Use a copy constructor
 			else if ($guid instanceof ElggUser) {
-				elgg_log('This type of usage of the ElggUser constructor was deprecated in 1.7. Please use the clone method.', 'WARNING');
-				
+				elgg_deprecated_notice('This type of usage of the ElggUser constructor was deprecated. Please use the clone method.', 1.7);
+
 				foreach ($guid->attributes as $key => $value) {
 					$this->attributes[$key] = $value;
 				}
@@ -90,7 +90,7 @@ class ElggUser extends ElggEntity
 			// We assume if we have got this far, $guid is an int
 			else if (is_numeric($guid)) {
 				if (!$this->load($guid)) {
-					IOException(sprintf(elgg_echo('IOException:FailedToLoadGUID'), get_class(), $guid));
+					throw new IOException(sprintf(elgg_echo('IOException:FailedToLoadGUID'), get_class(), $guid));
 				}
 			}
 
@@ -488,6 +488,16 @@ function ban_user($user_guid, $reason = "") {
 			$user->code = "";
 			$user->save();
 
+			// invalidate memcache for this user
+			static $newentity_cache;
+			if ((!$newentity_cache) && (is_memcache_available())) {
+				$newentity_cache = new ElggMemcache('new_entity_cache');
+			}
+
+			if ($newentity_cache) {
+				$newentity_cache->delete($user_guid);
+			}
+
 			// Set ban flag
 			return update_data("UPDATE {$CONFIG->dbprefix}users_entity set banned='yes' where guid=$user_guid");
 		}
@@ -511,6 +521,17 @@ function unban_user($user_guid) {
 	if (($user) && ($user->canEdit()) && ($user instanceof ElggUser)) {
 		if (trigger_elgg_event('unban', 'user', $user)) {
 			create_metadata($user_guid, 'ban_reason', '','', 0, ACCESS_PUBLIC);
+
+			// invalidate memcache for this user
+			static $newentity_cache;
+			if ((!$newentity_cache) && (is_memcache_available())) {
+				$newentity_cache = new ElggMemcache('new_entity_cache');
+			}
+
+			if ($newentity_cache) {
+				$newentity_cache->delete($user_guid);
+			}
+
 			return update_data("UPDATE {$CONFIG->dbprefix}users_entity set banned='no' where guid=$user_guid");
 		}
 	}
@@ -544,7 +565,14 @@ function get_user_sites($user_guid, $limit = 10, $offset = 0) {
 	$limit = (int)$limit;
 	$offset = (int)$offset;
 
-	return get_entities_from_relationship("member_of_site", $user_guid, false, "site", "", 0, "time_created desc", $limit, $offset);
+	return elgg_get_entities_from_relationship(array(
+		'relationship' => 'member_of_site',
+		'relationship_guid' => $user_guid,
+		'inverse_relationship' => FALSE,
+		'types' => 'site',
+		'limit' => $limit,
+		'offset' => $offset)
+	);
 }
 
 /**
@@ -614,8 +642,15 @@ function user_is_friend($user_guid, $friend_guid) {
  * @param int $offset Indexing offset, if any
  * @return false|array Either an array of ElggUsers or false, depending on success
  */
-function get_user_friends($user_guid, $subtype = "", $limit = 10, $offset = 0) {
-	return get_entities_from_relationship("friend",$user_guid,false,"user",$subtype,0,"time_created desc",$limit,$offset);
+function get_user_friends($user_guid, $subtype = ELGG_ENTITIES_ANY_VALUE, $limit = 10, $offset = 0) {
+	return elgg_get_entities_from_relationship(array(
+		'relationship' => 'friend',
+		'relationship_guid' => $user_guid,
+		'types' => 'user',
+		'subtypes' => $subtype,
+		'limit' => $limit,
+		'offset' => $offset
+	));
 }
 
 /**
@@ -627,8 +662,16 @@ function get_user_friends($user_guid, $subtype = "", $limit = 10, $offset = 0) {
  * @param int $offset Indexing offset, if any
  * @return false|array Either an array of ElggUsers or false, depending on success
  */
-function get_user_friends_of($user_guid, $subtype = "", $limit = 10, $offset = 0) {
-	return get_entities_from_relationship("friend",$user_guid,true,"user",$subtype,0,"time_created desc",$limit,$offset);
+function get_user_friends_of($user_guid, $subtype = ELGG_ENTITIES_ANY_VALUE, $limit = 10, $offset = 0) {
+	return elgg_get_entities_from_relationship(array(
+		'relationship' => 'friend',
+		'relationship_guid' => $user_guid,
+		'inverse_relationship' => TRUE,
+		'types' => 'user',
+		'subtypes' => $subtype,
+		'limit' => $limit,
+		'offset' => $offset
+	));
 }
 
 /**
@@ -642,8 +685,17 @@ function get_user_friends_of($user_guid, $subtype = "", $limit = 10, $offset = 0
  * @param int $timeupper The latest time the entity can have been created. Default: all
  * @return false|array An array of ElggObjects or false, depending on success
  */
-function get_user_objects($user_guid, $subtype = "", $limit = 10, $offset = 0, $timelower = 0, $timeupper = 0) {
-	$ntt = get_entities('object',$subtype, $user_guid, "time_created desc", $limit, $offset,false,0,$user_guid,$timelower, $timeupper);
+function get_user_objects($user_guid, $subtype = ELGG_ENTITIES_ANY_VALUE, $limit = 10, $offset = 0, $timelower = 0, $timeupper = 0) {
+	$ntt = elgg_get_entities(array(
+		'type' => 'object',
+		'subtype' => $subtype,
+		'owner_guid' => $user_guid,
+		'limit' => $limit,
+		'offset' => $offset,
+		'container_guid' => $user_guid,
+		'created_time_lower' => $timelower,
+		'created_time_upper' => $timeupper
+	));
 	return $ntt;
 }
 
@@ -656,8 +708,16 @@ function get_user_objects($user_guid, $subtype = "", $limit = 10, $offset = 0, $
  * @param int $timeupper The latest time the entity can have been created. Default: all
  * @return int The number of objects the user owns (of this subtype)
  */
-function count_user_objects($user_guid, $subtype = "", $timelower = 0, $timeupper = 0) {
-	$total = get_entities('object', $subtype, $user_guid, "time_created desc", null, null, true, 0, $user_guid,$timelower,$timeupper);
+function count_user_objects($user_guid, $subtype = ELGG_ENTITIES_ANY_VALUE, $timelower = 0, $timeupper = 0) {
+	$total = elgg_get_entities(array(
+		'type' => 'object',
+		'subtype' => $subtype,
+		'owner_guid' => $user_guid,
+		'count' => TRUE,
+		'container_guid' => $user_guid,
+		'created_time_lower' => $timelower,
+		'created_time_upper' => $timeupper
+	));
 	return $total;
 }
 
@@ -676,7 +736,7 @@ function count_user_objects($user_guid, $subtype = "", $timelower = 0, $timeuppe
  * @param int $timeupper The latest time the entity can have been created. Default: all
  * @return string The list in a form suitable to display
  */
-function list_user_objects($user_guid, $subtype = "", $limit = 10, $fullview = true, $viewtypetoggle = true, $pagination = true, $timelower = 0, $timeupper = 0) {
+function list_user_objects($user_guid, $subtype = ELGG_ENTITIES_ANY_VALUE, $limit = 10, $fullview = true, $viewtypetoggle = true, $pagination = true, $timelower = 0, $timeupper = 0) {
 	$offset = (int) get_input('offset');
 	$limit = (int) $limit;
 	$count = (int) count_user_objects($user_guid, $subtype,$timelower,$timeupper);
@@ -696,15 +756,24 @@ function list_user_objects($user_guid, $subtype = "", $limit = 10, $fullview = t
  * @param int $timeupper The latest time the entity can have been created. Default: all
  * @return false|array An array of ElggObjects or false, depending on success
  */
-function get_user_friends_objects($user_guid, $subtype = "", $limit = 10, $offset = 0, $timelower = 0, $timeupper = 0) {
+function get_user_friends_objects($user_guid, $subtype = ELGG_ENTITIES_ANY_VALUE, $limit = 10, $offset = 0, $timelower = 0, $timeupper = 0) {
 	if ($friends = get_user_friends($user_guid, "", 999999, 0)) {
 		$friendguids = array();
 		foreach($friends as $friend) {
 			$friendguids[] = $friend->getGUID();
 		}
-		return get_entities('object',$subtype,$friendguids, "time_created desc", $limit, $offset, false, 0, $friendguids, $timelower, $timeupper);
+		return elgg_get_entities(array(
+			'type' => 'object',
+			'subtype' => $subtype,
+			'owner_guids' => $friendguids,
+			'limit' => $limit,
+			'offset' => $offset,
+			'container_guids' => $friendguids,
+			'created_time_lower' => $timelower,
+			'created_time_upper' => $timeupper
+		));
 	}
-	return false;
+	return FALSE;
 }
 
 /**
@@ -716,13 +785,21 @@ function get_user_friends_objects($user_guid, $subtype = "", $limit = 10, $offse
  * @param int $timeupper The latest time the entity can have been created. Default: all
  * @return int The number of objects
  */
-function count_user_friends_objects($user_guid, $subtype = "", $timelower = 0, $timeupper = 0) {
+function count_user_friends_objects($user_guid, $subtype = ELGG_ENTITIES_ANY_VALUE, $timelower = 0, $timeupper = 0) {
 	if ($friends = get_user_friends($user_guid, "", 999999, 0)) {
 		$friendguids = array();
 		foreach($friends as $friend) {
 			$friendguids[] = $friend->getGUID();
 		}
-		return get_entities('object',$subtype,$friendguids, "time_created desc", null, null, true, 0, $friendguids, $timelower, $timeupper);
+		return elgg_get_entities(array(
+			'type' => 'object',
+			'subtype' => $subtype,
+			'owner_guids' => $friendguids,
+			'count' => TRUE,
+			'container_guids' => $friendguids,
+			'created_time_lower' => $timelower,
+			'created_time_upper' => $timeupper
+		));
 	}
 	return 0;
 }
@@ -869,8 +946,10 @@ function get_user_by_email($email) {
  * @param int $offset Offset.
  * @param string $order_by The order.
  * @param boolean $count Whether to return the count of results or just the results.
+ * @deprecated 1.7
  */
 function search_for_user($criteria, $limit = 10, $offset = 0, $order_by = "", $count = false) {
+	elgg_deprecated_notice('search_for_user() was deprecated by new search.', 1.7);
 	global $CONFIG;
 
 	$criteria = sanitise_string($criteria);
@@ -913,8 +992,10 @@ function search_for_user($criteria, $limit = 10, $offset = 0, $order_by = "", $c
  * @param string $tag Search criteria
  * @param int $limit The number of entities to display on a page
  * @return string The list in a form suitable to display
+ * @deprecated 1.7
  */
 function list_user_search($tag, $limit = 10) {
+	elgg_deprecated_notice('list_user_search() deprecated by new search', 1.7);
 	$offset = (int) get_input('offset');
 	$limit = (int) $limit;
 	$count = (int) search_for_user($tag, 10, 0, '', true);
@@ -965,7 +1046,7 @@ function send_new_password_request($user_guid) {
 		set_private_setting($user_guid, 'passwd_conf_code', $code);
 
 		// generate link
-		$link = $CONFIG->site->url . "action/user/passwordreset?u=$user_guid&c=$code";
+		$link = $CONFIG->site->url . "pg/resetpassword?u=$user_guid&c=$code";
 
 		// generate email
 		$email = sprintf(elgg_echo('email:resetreq:body'), $user->name, $_SERVER['REMOTE_ADDR'], $link);
@@ -1013,13 +1094,14 @@ function execute_new_password_request($user_guid, $conf_code) {
 	global $CONFIG;
 
 	$user_guid = (int)$user_guid;
-
 	$user = get_entity($user_guid);
-	if (($user) && (get_private_setting($user_guid, 'passwd_conf_code') == $conf_code)) {
+
+	$saved_code = get_private_setting($user_guid, 'passwd_conf_code');
+
+	if ($user && $saved_code && $saved_code == $conf_code) {
 		$password = generate_random_cleartext_password();
 
 		if (force_user_password_reset($user_guid, $password)) {
-			//remove_metadata($user_guid, 'conf_code');
 			remove_private_setting($user_guid, 'passwd_conf_code');
 
 			$email = sprintf(elgg_echo('email:resetpassword:body'), $user->name, $password);
@@ -1028,7 +1110,54 @@ function execute_new_password_request($user_guid, $conf_code) {
 		}
 	}
 
-	return false;
+	return FALSE;
+}
+
+/**
+ * Handles pages for password reset requests.
+ *
+ * @param unknown_type $page
+ * @return unknown_type
+ */
+function elgg_user_resetpassword_page_handler($page) {
+	global $CONFIG;
+
+	$user_guid = get_input('u');
+	$code = get_input('c');
+
+	$user = get_entity($user_guid);
+
+	// don't check code here to avoid automated attacks
+	if (!$user instanceof ElggUser) {
+		register_error(elgg_echo('user:passwordreset:unknown_user'));
+		forward();
+	}
+
+	$form_body = elgg_echo('user:resetpassword:reset_password_confirm') . "<br />";
+
+	$form_body .= elgg_view('input/hidden', array(
+		'internalname' => 'u',
+		'value' => $user_guid
+	));
+
+	$form_body .= elgg_view('input/hidden', array(
+		'internalname' => 'c',
+		'value' => $code
+	));
+
+	$form_body .= elgg_view('input/submit', array(
+		'value' => elgg_echo('resetpassword')
+	));
+
+	$form .= elgg_view('input/form', array(
+		'body' => $form_body,
+		'action' => $CONFIG->site->url . 'action/user/passwordreset'
+	));
+
+	$content = elgg_view_title(elgg_echo('resetpassword'));
+	$content .= elgg_view('page_elements/contentwrapper', array('body' => $form));
+
+	page_draw($title, $content);
 }
 
 /**
@@ -1291,6 +1420,10 @@ function register_user($username, $password, $name, $email, $allow_multiple_emai
 			if ($invitecode == generate_invite_code($friend_user->username)) {
 				$user->addFriend($friend_guid);
 				$friend_user->addFriend($user->guid);
+
+				// @todo Should this be in addFriend?
+				add_to_river('friends/river/create', 'friend', $user->getGUID(), $friend_guid);
+				add_to_river('friends/river/create', 'friend', $friend_guid, $user->getGUID());
 			}
 		}
 	}
@@ -1391,6 +1524,14 @@ function dashboard_page_handler($page_elements) {
 	require_once(dirname(dirname(dirname(__FILE__))) . "/dashboard/index.php");
 }
 
+
+/**
+ * Page handler for registration
+ */
+function registration_page_handler($page_elements) {
+	require_once(dirname(dirname(dirname(__FILE__))) . "/account/register.php");
+}
+
 /**
  * Sets the last action time of the given user to right now.
  *
@@ -1446,6 +1587,20 @@ function new_user_enable_permissions_check($hook, $entity_type, $returnvalue, $p
 }
 
 /**
+ * Creates a relationship between this site and the user.
+ *
+ * @param $event
+ * @param $object_type
+ * @param $object
+ * @return bool
+ */
+function user_create_hook_add_site_relationship($event, $object_type, $object) {
+	global $CONFIG;
+
+	add_entity_relationship($object->getGUID(), 'member_of_site', $CONFIG->site->getGUID());
+}
+
+/**
  * Sets up user-related menu items
  *
  */
@@ -1474,12 +1629,15 @@ function users_init() {
 		add_menu(elgg_echo('friends'), $CONFIG->wwwroot . "pg/friends/" . $user->username);
 	}
 
-	register_page_handler('friends','friends_page_handler');
-	register_page_handler('friendsof','friends_of_page_handler');
-	register_page_handler('collections','collections_page_handler');
-	register_page_handler('dashboard','dashboard_page_handler');
-	register_action("register",true);
-	register_action("useradd",true);
+	register_page_handler('friends', 'friends_page_handler');
+	register_page_handler('friendsof', 'friends_of_page_handler');
+	register_page_handler('collections', 'collections_page_handler');
+	register_page_handler('dashboard', 'dashboard_page_handler');
+	register_page_handler('register', 'registration_page_handler');
+	register_page_handler('resetpassword', 'elgg_user_resetpassword_page_handler');
+
+	register_action("register", true);
+	register_action("useradd", true);
 	register_action("friends/add");
 	register_action("friends/remove");
 	register_action('friends/addcollection');
@@ -1517,6 +1675,8 @@ function users_init() {
 
 	register_plugin_hook('usersettings:save','user','users_settings_save');
 
+	register_elgg_event_handler('create', 'user', 'user_create_hook_add_site_relationship');
+
 	// Handle a special case for newly created users when the user is not logged in
 	// TODO: handle this better!
 	register_plugin_hook('permissions_check','all','new_user_enable_permissions_check');
@@ -1524,9 +1684,10 @@ function users_init() {
 
 /**
  * Returns a formatted list of users suitable for injecting into search.
- *
+ * @deprecated 1.7
  */
 function search_list_users_by_name($hook, $user, $returnvalue, $tag) {
+	elgg_deprecated_notice('search_list_users_by_name() was deprecated by new search', 1.7);
 	// Change this to set the number of users that display on the search page
 	$threshold = 4;
 

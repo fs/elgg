@@ -26,18 +26,12 @@
 
 	if ($vars['pagination'] !== false) {
 		$baseurl = $_SERVER['REQUEST_URI'];
-		$baseurl = $baseurl = preg_replace('/[\&\?]offset\=[0-9]*/',"",$baseurl);
 
 		$nav = '';
 
 		if (sizeof($vars['items']) > $vars['limit']) {
 			$newoffset = $vars['offset'] + $vars['limit'];
-			$urladdition = 'offset='.$newoffset;
-			if (substr_count($baseurl,'?')) {
-				$nexturl = $baseurl . '&' . $urladdition;
-			} else {
-				$nexturl=$baseurl . '?' . $urladdition;
-			}
+			$nexturl = elgg_http_add_url_query_elements($baseurl, array('offset' => $newoffset));
 
 			$nav .= '<a class="back" href="'.$nexturl.'">&laquo; ' . elgg_echo('previous') . '</a> ';
 		}
@@ -47,12 +41,7 @@
 			if ($newoffset < 0) {
 				$newoffset = 0;
 			}
-			$urladdition = 'offset='.$newoffset;
-			if (substr_count($baseurl,'?')) {
-				$prevurl=$baseurl . '&' . $urladdition;
-			} else {
-				$prevurl=$baseurl . '?' . $urladdition;
-			}
+			$prevurl = elgg_http_add_url_query_elements($baseurl, array('offset' => $newoffset));
 
 			$nav .= '<a class="forward" href="'.$prevurl.'">' . elgg_echo('next') . ' &raquo;</a> ';
 		}

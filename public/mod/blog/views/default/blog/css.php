@@ -6,12 +6,19 @@
 	 * @package ElggBlog
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider Ltd <info@elgg.com>
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.com/
 	 */
 
 ?>
-
+#blogs .pagination {
+	margin:5px 10px 0 10px;
+	padding:5px;
+	display:block;
+}
+#blogs #two_column_left_sidebar_maincontent {
+	padding-bottom:10px;
+}
 
 .singleview {
 	margin-top:10px;

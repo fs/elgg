@@ -5,7 +5,7 @@
 	 * @package ElggGroups
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider Ltd
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.com/
 	 */
 
@@ -23,7 +23,7 @@
 	if (($group) && ($group->canEdit()))
 	{	
 		
-		$requests = get_entities_from_relationship('membership_request',$group_guid,true,'','',0,'',9999);
+		$requests = elgg_get_entities_from_relationship(array('relationship' => 'membership_request', 'relationship_guid' => $group_guid, 'inverse_relationship' => TRUE, 'limit' => 9999));
 		$area2 .= elgg_view('groups/membershiprequests',array('requests' => $requests, 'entity' => $group));
 			 
 	} else {

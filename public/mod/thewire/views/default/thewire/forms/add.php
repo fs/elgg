@@ -6,7 +6,7 @@
 	 * @package ElggTheWire
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider <info@elgg.com>
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.com/
 	 * 
 	 */
@@ -35,8 +35,10 @@ function textCounter(field,cntfield,maxlimit) {
                 $display .= "<div class='thewire_characters_remaining'><input readonly type=\"text\" name=\"remLen1\" size=\"3\" maxlength=\"3\" value=\"140\" class=\"thewire_characters_remaining_field\">";
                 echo $display;
                 echo elgg_echo("thewire:charleft") . "</div>";
+				echo elgg_view('input/securitytoken');
 			?>
 			<input type="hidden" name="method" value="site" />
 			<input type="submit" value="<?php echo elgg_echo('save'); ?>" />
 	</form>
 </div>
+<?php echo elgg_view('input/urlshortener'); ?>

@@ -8,7 +8,6 @@ ini_set('pcre.backtrack_limit', 10000000);
 require_once (dirname(dirname(__FILE__)) . "/models/Http.php");
 require_once (dirname(dirname(__FILE__)) . "/models/Google_OpenID.php");
 require_once (dirname(dirname(__FILE__)) . "/models/secret.php");
-//require_once ("ex.php");
 
 global $CONFIG;
 
@@ -24,6 +23,8 @@ if ($googleapps_domain) {
 } else {
     $google->set_start_url("https://www.google.com/accounts/o8/id");
 }
+
+//$google->set_start_url("https://www.google.com/accounts/o8/id");
 
 try {
     $url = $google->get_authorization_url();

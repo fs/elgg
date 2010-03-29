@@ -5,7 +5,7 @@
 	 * @package ElggReportedContent
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Curverider Ltd
-	 * @copyright Curverider Ltd 2008-2009
+	 * @copyright Curverider Ltd 2008-2010
 	 * @link http://elgg.com/
 	 */
 
@@ -19,7 +19,7 @@
 		
 	$title = elgg_view_title(elgg_echo('reportedcontent'));
 	
-	$reported = get_entities("object", "reported_content", 0, "", 9999);
+	$reported = elgg_get_entities(array('types' => 'object', 'subtypes' => 'reported_content', 'limit' => 9999));
 	
 	$area2 = elgg_view("reportedcontent/listing", array('entity' => $reported));
 	

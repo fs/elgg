@@ -38,6 +38,9 @@
 			'blog:preview:description' => 'This is an unsaved preview of your blog post.',
 			'blog:preview:description:link' => 'To continue editing or save your post, click here.',
 	
+			'blog:enableblog' => 'Enable group blog',
+	
+			'blog:group' => 'Group blog',
 			
          /**
 	     * Blog river

@@ -80,7 +80,7 @@
 				$lat = get_input('latitude');
 				$lang = get_input('longitude');
 				if ($lat && $lang) {
-					$object->setLatLong($lat, $long);
+					$object->setLatLong($lat, $lang);
 					return;
 				}
 			}

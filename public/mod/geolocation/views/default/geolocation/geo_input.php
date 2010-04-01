@@ -11,6 +11,7 @@ if ($vars['entity']) {
 ?>
 <script type="text/javascript" src="http://www.google.com/jsapi?key=<?= $GLOBALS['google_api'] ?>"></script>
 <script type="text/javascript" src="http://j.maxmind.com/app/geoip.js"></script>
+
 <script type="text/javascript">
 
 var $form = null;

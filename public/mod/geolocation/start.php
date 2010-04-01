@@ -14,6 +14,7 @@
 		
 		// Listen to create events on a low priority
 		register_elgg_event_handler('create','all','geolocation_tagger', 1000);
+		register_elgg_event_handler('update','all','geolocation_tagger', 1000);
 		
 		$GLOBALS['google_api'] = get_plugin_setting('google_api', 'geolocation');
 		// extend some views
@@ -27,7 +28,6 @@
 	 */
 	function geolocation_geocode($hook, $entity_type, $returnvalue, $params)
 	{ 
-		die('a');
 		if (isset($params['location']))
 		{
 			$google_api = get_plugin_setting('google_api', 'geolocation');
@@ -52,10 +52,16 @@
 	 */ 
 	function geolocation_tagger($event, $object_type, $object)
 	{
+		if ($object_type == 'metadata') {
+			$object = $object->getEntity();
+		}
+		if (isset($GLOBALS['stop_recursion']) && $GLOBALS['stop_recursion'] == $object->guid) {
+			return;
+		}
 		if ($object instanceof Locatable)
 		{
 			$location = false;
-			// See if object has a specific location
+			/* // See if object has a specific location
 			if (isset($object->location))
 				$location = $object->location;
 				
@@ -66,12 +72,13 @@
 					$user = get_entity($object->owner_guid);
 					if (isset($user->location)) $location = $user->location;
 				}
-			}
+			} */
 			
 			// Nope, so use input params
 			if (!$location) {
+				$GLOBALS['stop_recursion'] = $object->guid;
 				$lat = get_input('latitude');
-				$lang = get_input('langitude');
+				$lang = get_input('longitude');
 				if ($lat && $lang) {
 					$object->setLatLong($lat, $long);
 					return;
@@ -101,7 +108,8 @@
 				}
 			}
 		}
-		
+		//} else
+		//die('gotcha!');
 	}
 	
 

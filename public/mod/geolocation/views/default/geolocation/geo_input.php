@@ -1,3 +1,14 @@
+<?php
+if ($vars['entity']) {
+	$lg = $vars['entity']->getLongitude() or
+	$lg = 0;
+	$lt = $vars['entity']->getLatitude() or
+	$lt = 0;
+} else {
+	$lg = 0;
+	$lt = 0;
+}
+?>
 <script type="text/javascript" src="http://www.google.com/jsapi?key=<?= $GLOBALS['google_api'] ?>"></script>
 <script type="text/javascript" src="http://j.maxmind.com/app/geoip.js"></script>
 <script type="text/javascript">
@@ -8,14 +19,14 @@ $(function () {
 	$form = $('#blogPostForm');
 	$form.append(
 		'<input type="hidden" value="" name="latitude" id="geolocation_latitude" />' +
-		'<input type="hidden" value="" name="latitude" id="geolocation_longitude" />'
+		'<input type="hidden" value="" name="longitude" id="geolocation_longitude" />'
 	);
 });
 
 google.load("maps", "2.x");
 google.setOnLoadCallback(function () {
-	var lt = geoip_latitude();
-	var lg = geoip_longitude();
+	var lt = <?= $lt ?> || geoip_latitude();
+	var lg = <?= $lg ?> || geoip_longitude();
 	
 	var map = new google.maps.Map2(document.getElementById("map"));
 	var center = new GLatLng(lt, lg);

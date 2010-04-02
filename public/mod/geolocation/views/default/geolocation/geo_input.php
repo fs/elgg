@@ -67,5 +67,7 @@ google.setOnLoadCallback(function () {
 });
 
 </script>
-
-<div id="map" style="height:400px"></div>
+<div class="map-container">
+  <label>Location</label>
+  <div id="map"></div>
+</div>

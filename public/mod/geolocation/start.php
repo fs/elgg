@@ -18,6 +18,7 @@
 		
 		$GLOBALS['google_api'] = get_plugin_setting('google_api', 'geolocation');
 		// extend some views
+		elgg_extend_view('css','geolocation/css');
 		elgg_extend_view('blog/forms/edit','geolocation/geo_input');
 	}
 	
@@ -27,7 +28,7 @@
 	 * Listen for an Elgg Geocode request and use google maps to geocode it.
 	 */
 	function geolocation_geocode($hook, $entity_type, $returnvalue, $params)
-	{ 
+	{
 		if (isset($params['location']))
 		{
 			$google_api = get_plugin_setting('google_api', 'geolocation');

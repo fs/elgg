@@ -63,8 +63,8 @@
 		}
 		
 		// Register widgets
-		add_widget_type('google_docs', elgg_echo("googleappslogin:google_docs"),
-						elgg_echo("googleappslogin:google_docs:description"));	
+		add_widget_type('google_docs', elgg_echo('googleappslogin:google_docs'),
+						elgg_echo('googleappslogin:google_docs:description'));	
 	}
 	
 	function googleappslogin_pagesetup() {

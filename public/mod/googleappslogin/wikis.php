@@ -37,10 +37,54 @@
 	// Get a list of google sites
 	$area2 .= '<div id="googleappslogin">';
 	$area2 .= '<div class="contentWrapper singleview">';
-	foreach ($sites as $site) {
+	
+	$site_list = array();
+	
+	foreach ($sites as $number => $site) {
 		
+		if (isset($site_list[$site->site_id])) {
+			$actual_site = $site_list[$site->site_id];
+			if ($actual_site->owner_guid != $site->owner_guid) {
+				if ($actual_site->other_owners == null) {
+					$other_owners = array();
+				} else {
+					$other_owners = unserialize($actual_site->other_owners);
+				}
+				
+				$other_owners[$site->owner_guid] = $site->owner_guid;
+				$actual_site->other_owners = serialize(array_unique($other_owners));
+				unset($sites[$number]);
+			}
+		} else {
+			$site_list[$site->site_id] = $site;
+		}
+	}
+	
+	foreach ($site_list as $number => $site) {
+		
+		//echo '<pre>';print_r($site->other_owners);
 		$owner = get_entity($site->owner_guid);
-		//echo '<pre>';print_r($owner);exit;
+		$owners = array();
+		$owners[] = $owner;
+		
+		$other_owners = array();
+		if (!empty($site->other_owners)) {
+			$other_owners = unserialize($site->other_owners);
+			foreach ($other_owners as $owner) {
+				$owners[] = get_entity($owner);
+			}
+		}
+		$c = 0;
+		$owners_string = '';
+		foreach ($owners as $owner) {
+			
+			$owners_string .= '<a href="/pg/profile/' . $owner->username . '">' . $owner->name . '</a>';
+			if ($c + 1 < count($owners)) {
+				$owners_string .= ', ';
+			}
+			$c++;
+		}
+		
 		$area2 .= '
 			<div class="search_listing">
 				<div class="search_listing_icon">
@@ -61,7 +105,7 @@
 		}
 		$area2 .= '
 					<div>
-						Owner: <a href="/pg/profile/' . $owner->username . '">' . $owner->name . '</a>
+						Owners: ' . $owners_string . '
 					</div>
 				</div>
 			</div>

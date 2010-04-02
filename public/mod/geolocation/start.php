@@ -17,6 +17,7 @@
 		register_elgg_event_handler('update','all','geolocation_tagger', 1000);
 		
 		$GLOBALS['google_api'] = get_plugin_setting('google_api', 'geolocation');
+		elgg_extend_view('blog/forms/edit', 'geolocation/scripts');
 		// extend some views
 		elgg_extend_view('css','geolocation/css');
 		elgg_extend_view('blog/forms/edit','geolocation/geo_input');

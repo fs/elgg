@@ -29,11 +29,13 @@ google.setOnLoadCallback(function () {
 	var lt = <?= $lt ?> || geoip_latitude();
 	var lg = <?= $lg ?> || geoip_longitude();
 	
-	var map = new google.maps.Map2(document.getElementById("map"));
+  $('div.map').show();
+  var map = new google.maps.Map2(document.getElementById("map"));
 	var center = new GLatLng(lt, lg);
 	map.setCenter(center, 13);
 	map.setUIToDefault();
 	
+  $('div.map').hide();
 	// Create our "tiny" marker icon
 	// var blueIcon = new GIcon(G_DEFAULT_ICON);
 	// blueIcon.image = "images/label.png";
@@ -68,6 +70,8 @@ google.setOnLoadCallback(function () {
 
 </script>
 <div class="map-container">
-  <label>Location</label>
-  <div id="map"></div>
+  <label>Location <a href="#" class="view-map-link">view map</a></label>
+  <div class="map">
+		<div id="map"></div>
+  </div>
 </div>

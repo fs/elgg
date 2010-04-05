@@ -6,38 +6,82 @@
 	
 	jQuery(function() {
 		if (GBrowserIsCompatible()) {
+			<?php
+				$lt = $vars['entities'][0]->getLatitude();
+				$lg = $vars['entities'][0]->getLongitude();
+			?>
+			var lt = <?= $lt ?> || geoip_latitude();
+			var lg = <?= $lg ?> || geoip_longitude();
 			
-			var map = new GMap2(document.getElementById("map_canvas"));
-			map.setCenter(new GLatLng(37.4328, -122.077), 13);
-			map.addControl(new GSmallMapControl());
+			var map = new google.maps.Map2(document.getElementById("map"));
+			var center = new GLatLng(lt, lg);
+			map.setCenter(center, 5);
+			map.setUIToDefault();
 			
-			var marker_1 = new GMarker(new GLatLng(37.4268, -122.065));
-			GEvent.addListener(marker_1, "click", function() {
-				var html = '<div style="width: 210px; padding-right: 10px"><a href="/apis/maps/signup.html">Sign up<\/a> for a Google Maps API key, or <a href="/apis/maps/documentation/index.html">read more about the API<\/a>.<\/div>';
-				marker_1.openInfoWindowHtml(html);
-			});
-			map.addOverlay(marker_1);
-			GEvent.trigger(marker_1, "click");
-			markers[1] = marker_1;
+			<?php
 			
-			var marker_2 = new GMarker(new GLatLng(37.4228, -122.085));
-			GEvent.addListener(marker_2, "click", function() {
-				var html = '<div style="width: 210px; padding-right: 10px"><a href="/apis/maps/signup.html">Sign up<\/a> for a Google Maps API key, or <a href="/apis/maps/documentation/index.html">read more about the API<\/a>.<\/div>';
-				marker_2.openInfoWindowHtml(html);
-			});
-			marker_2
-			map.addOverlay(marker_2);
-			GEvent.trigger(marker_2, "click");
-			markers[2] = marker_2;
+			$i = 1;
+			foreach ($vars['entities'] as $entity) {
+				
+				$lt = $entity->getLatitude();
+				$lg = $entity->getLongitude();
+				
+				$type = $entity->getType();
+				$subtype = $entity->getSubtype();
+				switch ($type) {
+					
+					case 'user':
+						
+						$link = '<a href="' . $entity->getURL() . '">' . $entity->name . '</a>';
+						break;
+					
+					default:
+						
+						$link = '<a href="' . $entity->getURL() . '">' . $entity->title . '</a>';
+						break;
+				}
+				
+				
+				switch ($subtype) {
+					
+					/*
+					case 'album':
+						
+						$images = get_entities("object", "image", $entity->guid, '', 999);
+						print_r($images);exit;
+						$desc = '<p>' . $entity->description . '</p>';
+						break;
+					*/
+					
+					default:
+						
+						$desc = '<p>' . $entity->description . '</p>';
+						break;
+					
+				}
+				
+				echo '
+				var marker_' . $i . ' = new GMarker(new GLatLng(' . $lt . ', ' . $lg .'));
+				GEvent.addListener(marker_' . $i . ', "click", function() {
+					var html = \'<div style="width: 210px; padding-right: 10px">\'+
+							\'' . $link .'<br>\'+
+							\'' . $desc . '\'+
+							\'<\/div>\';
+					marker_' . $i . '.openInfoWindowHtml(html);
+				});
+				map.addOverlay(marker_' . $i . ');
+				GEvent.trigger(marker_' . $i . ', "click");
+				markers[' . $i . '] = marker_' . $i . ';
+				';
 			
-			var marker_3 = new GMarker(new GLatLng(37.4178, -122.115));
-			GEvent.addListener(marker_3, "click", function() {
-				var html = '<div style="width: 210px; padding-right: 10px"><a href="/apis/maps/signup.html">Sign up<\/a> for a Google Maps API key, or <a href="/apis/maps/documentation/index.html">read more about the API<\/a>.<\/div>';
-				marker_3.openInfoWindowHtml(html);
-			});
-			map.addOverlay(marker_3);
-			GEvent.trigger(marker_3, "click");
-			markers[3] = marker_3;
+				$i++;
+			}
+			
+			?>
+			window.set_center = function (lt, lg) {
+				map.setCenter(new GLatLng(lt, lg), 1);
+				return false;
+			}
 			
 		}
 	});
@@ -48,6 +92,7 @@
 
 </script>
 
-<div id="map_canvas" style="border: 1px solid #979797; background-color: #e5e3df; width: 500px; height: 300px; margin:0 4em;">
+<div id="map">
 	<div style="padding: 1em; color: gray">Loading...</div>
 </div>
+

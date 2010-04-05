@@ -55,7 +55,7 @@
 					
 					default:
 						
-						$desc = '<p>' . $entity->description . '</p>';
+						$desc = '<p>' . nl2br($entity->description) . '</p>';
 						break;
 					
 				}

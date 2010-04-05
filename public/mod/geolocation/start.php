@@ -11,6 +11,7 @@
 	function geolocation_init()
 	{
 		global $CONFIG;
+		
 		// Register geocoder hook
 		register_plugin_hook('geolocation', 'location', 'geolocation_geocode');
 		
@@ -20,6 +21,8 @@
 		register_page_handler('map_search','geolocation_page_handler');
 		
 		elgg_extend_view('search/listing', 'geolocation/search_link');
+		elgg_extend_view('search/entity_list', 'geolocation/search_map');
+		
 		// Register geocoder hook
 		register_plugin_hook('geolocation', 'location', 'geolocation_geocode');
 		
@@ -28,11 +31,19 @@
 		register_elgg_event_handler('update','all','geolocation_tagger', 1000);
 		
 		$GLOBALS['google_api'] = get_plugin_setting('google_api', 'geolocation');
-		elgg_extend_view('blog/forms/edit', 'geolocation/scripts');
-		// extend some views
 		elgg_extend_view('css','geolocation/css');
+		
+		// extend some views
+		elgg_extend_view('blog/forms/edit', 'geolocation/scripts');
 		elgg_extend_view('blog/forms/edit','geolocation/geo_input');
 		
+		elgg_extend_view('canvas_header/submenu_group','geolocation/search_all_link');
+		
+		// extend user functionality
+		extend_elgg_settings_page('geolocation/scripts','usersettings/user', 1000);
+		extend_elgg_settings_page('geolocation/geo_input', 'usersettings/user', 1000);
+		
+		register_plugin_hook('usersettings:save','user','geolocation_user_settings_save');
 	}
 	
 	function geolocation_page_handler($page) {
@@ -41,7 +52,6 @@
 		
 		// The second part dictates what we're doing
 		//$screen = $page[0];
-		
 		
 		// Load Elgg engine
 		
@@ -77,6 +87,35 @@
 		
 		page_draw(elgg_echo('geolocation:googlemaps'), $body);
 
+	}
+	
+	function geolocation_user_settings_save() {
+		
+		gatekeeper();
+		
+		$user_id = get_input('guid');
+		$user = "";
+		$error = false;
+		
+		if (!$user_id) {
+			$user = get_loggedin_user();
+		} else {
+			$user = get_entity($user_id);
+		}
+		
+		if (($user) && ($user->canEdit())) {
+			$lat = get_input('latitude');
+			$lang = get_input('longitude');
+			$user->setLatLong($lat, $lang);
+			$user->location = null;
+			if (!$user->save()) {
+				$error = true;
+			}
+		
+		} else {
+			$error = true;
+		}
+		
 	}
 	
 	/** 

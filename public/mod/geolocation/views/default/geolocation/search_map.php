@@ -1,4 +1,9 @@
-<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<?= $vars['map_api'] ?>" 
+<?php
+//die('1');
+$show_map = get_input('show_map', 0);
+if ($show_map) {
+	
+?><script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<?= $GLOBALS['google_api'] ?>" 
 		type="text/javascript"></script>
 <script type="text/javascript">
 
@@ -96,3 +101,6 @@
 	<div style="padding: 1em; color: gray">Loading...</div>
 </div>
 
+<?php
+}
+?>

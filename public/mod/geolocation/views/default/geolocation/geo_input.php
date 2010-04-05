@@ -4,6 +4,11 @@ if ($vars['entity']) {
 	$lg = 0;
 	$lt = $vars['entity']->getLatitude() or
 	$lt = 0;
+} else if ($vars['user']) {
+	$lg = $vars['user']->getLongitude() or
+	$lg = 0;
+	$lt = $vars['user']->getLatitude() or
+	$lt = 0;
 } else {
 	$lg = 0;
 	$lt = 0;
@@ -17,7 +22,13 @@ if ($vars['entity']) {
 var $form = null;
 
 $(function () {
-	$form = $('#blogPostForm');
+	$form = $('input.submit_button').parents()
+									.map(function () {
+											if (this.tagName == 'FORM') {
+												return this;
+											}
+									});
+;
 	$form.append(
 		'<input type="hidden" value="" name="latitude" id="geolocation_latitude" />' +
 		'<input type="hidden" value="" name="longitude" id="geolocation_longitude" />'
@@ -56,6 +67,7 @@ google.setOnLoadCallback(function () {
 		var point = marker.getLatLng();
 		$form.find('#geolocation_latitude').val(point.y);
 		$form.find('#geolocation_longitude').val(point.x);
+		//alert(point.x + ' ' + point.y);
 	}
 	
 	store_point_location();

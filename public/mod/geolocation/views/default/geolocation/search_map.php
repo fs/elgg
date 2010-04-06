@@ -1,6 +1,19 @@
 <?php
 //die('1');
 $show_map = get_input('show_map', 0);
+
+$lt = 0;
+$lg = 0;
+
+foreach ($vars['entities'] as $entity) {
+	$lt = $entity->getLatitude();
+	$lg = $entity->getLongitude();
+	
+	if ($lg && $lg) {
+		break;
+	}
+}
+
 if ($show_map) {
 	
 ?><script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<?= $GLOBALS['google_api'] ?>" 
@@ -11,10 +24,7 @@ if ($show_map) {
 	
 	jQuery(function() {
 		if (GBrowserIsCompatible()) {
-			<?php
-				$lt = $vars['entities'][0]->getLatitude();
-				$lg = $vars['entities'][0]->getLongitude();
-			?>
+			
 			var lt = <?= $lt ?> || geoip_latitude();
 			var lg = <?= $lg ?> || geoip_longitude();
 			
@@ -30,6 +40,10 @@ if ($show_map) {
 				
 				$lt = $entity->getLatitude();
 				$lg = $entity->getLongitude();
+				
+				if (!$lt || !$lg) {
+					continue;
+				}
 				
 				$type = $entity->getType();
 				$subtype = $entity->getSubtype();

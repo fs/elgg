@@ -94,7 +94,7 @@
 		gatekeeper();
 		
 		$user_id = get_input('guid');
-		$user = "";
+		$user = null;
 		$error = false;
 		
 		if (!$user_id) {

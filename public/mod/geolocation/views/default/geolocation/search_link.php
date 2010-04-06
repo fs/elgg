@@ -52,7 +52,9 @@ if ($is_location) {
 		//echo elgg_view('geolocation/search_map', array('entities' => $entities, 'map_api' => $map_api));
 	} else {
 		?>
+		<div class="search_listing">
 		<a href="?<?= $adv_query?>">view on a map</a>
+		</div>
 		<?
 	}
 }

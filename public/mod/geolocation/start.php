@@ -12,16 +12,7 @@
 	{
 		global $CONFIG;
 		
-		// Register geocoder hook
-		register_plugin_hook('geolocation', 'location', 'geolocation_geocode');
-		
-		// Listen to create events on a low priority
-		register_elgg_event_handler('create','all','geolocation_tagger', 1000);
-		
-		register_page_handler('map_search','geolocation_page_handler');
-		
-		elgg_extend_view('search/listing', 'geolocation/search_link');
-		elgg_extend_view('search/entity_list', 'geolocation/search_map');
+		$GLOBALS['google_api'] = get_plugin_setting('google_api', 'geolocation');
 		
 		// Register geocoder hook
 		register_plugin_hook('geolocation', 'location', 'geolocation_geocode');
@@ -30,20 +21,23 @@
 		register_elgg_event_handler('create','all','geolocation_tagger', 1000);
 		register_elgg_event_handler('update','all','geolocation_tagger', 1000);
 		
-		$GLOBALS['google_api'] = get_plugin_setting('google_api', 'geolocation');
-		elgg_extend_view('css','geolocation/css');
-		
-		// extend some views
-		elgg_extend_view('blog/forms/edit', 'geolocation/scripts');
-		elgg_extend_view('blog/forms/edit','geolocation/geo_input');
-		
-		elgg_extend_view('canvas_header/submenu_group','geolocation/search_all_link');
-		
 		// extend user functionality
 		extend_elgg_settings_page('geolocation/scripts','usersettings/user', 1000);
 		extend_elgg_settings_page('geolocation/geo_input', 'usersettings/user', 1000);
-		
 		register_plugin_hook('usersettings:save','user','geolocation_user_settings_save');
+		
+		//register_page_handler('map_search','geolocation_page_handler');
+		
+		// extend some views
+		elgg_extend_view('search/listing', 'geolocation/search_link');
+		//elgg_extend_view('search/entity_list', 'geolocation/search_map');
+		elgg_extend_view('css','geolocation/css');
+		elgg_extend_view('blog/forms/edit', 'geolocation/scripts');
+		elgg_extend_view('blog/forms/edit','geolocation/geo_input');
+		elgg_extend_view('canvas_header/submenu_group','geolocation/search_all_link');
+		
+		elgg_extend_view('canvas/layouts/two_column_left_sidebar', 'geolocation/search');
+		
 	}
 	
 	function geolocation_page_handler($page) {

@@ -29,7 +29,7 @@ $url_params['show_map'] = 1;
 array_walk($url_params, 'params_to_url');
 $adv_query = implode('&', $url_params);
 
-//echo '<pre>'; print_r($entities[0]->image); echo '</pre>';
+//echo '<pre>'; print_r($request); echo '</pre>';
 
 foreach ($entities as $entity) {
 	
@@ -45,7 +45,11 @@ foreach ($entities as $entity) {
 }
 if ($is_location) {
 	if ($show_map) {
-		echo elgg_view('geolocation/search_map', array('entities' => $entities, 'map_api' => $map_api));
+		if (empty($GLOBALS['search_results'])) {
+			$GLOBALS['search_results'] = array();
+		}
+		$GLOBALS['search_results'] = array_merge($GLOBALS['search_results'], $entities);
+		//echo elgg_view('geolocation/search_map', array('entities' => $entities, 'map_api' => $map_api));
 	} else {
 		?>
 		<a href="?<?= $adv_query?>">view on a map</a>

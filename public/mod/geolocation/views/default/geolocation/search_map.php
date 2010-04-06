@@ -1,5 +1,5 @@
 <?php
-//die('1');
+
 $show_map = get_input('show_map', 0);
 
 $lt = 0;
@@ -110,7 +110,7 @@ if ($show_map) {
 	}
 
 </script>
-
+<div style="clear:both;"></div>
 <div id="map">
 	<div style="padding: 1em; color: gray">Loading...</div>
 </div>

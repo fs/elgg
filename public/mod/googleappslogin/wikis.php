@@ -59,7 +59,7 @@
 			$site_list[$site->site_id] = $site;
 		}
 	}
-	//echo '<pre>';print_r($site_list);exit;
+	
 	foreach ($site_list as $number => $site) {
 		
 		//echo '<pre>';print_r($site->other_owners);

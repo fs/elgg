@@ -21,12 +21,15 @@
 		register_elgg_event_handler('create','all','geolocation_tagger', 1000);
 		register_elgg_event_handler('update','all','geolocation_tagger', 1000);
 		
+		register_plugin_hook('search', 'all', 'my_subtype_search_hook');
+		
 		// extend user functionality
 		extend_elgg_settings_page('geolocation/scripts','usersettings/user', 1000);
 		extend_elgg_settings_page('geolocation/geo_input', 'usersettings/user', 1000);
 		register_plugin_hook('usersettings:save','user','geolocation_user_settings_save');
 		
 		//register_page_handler('map_search','geolocation_page_handler');
+		register_page_handler('geolocation','geolocation_page_handler');
 		
 		// extend some views
 		elgg_extend_view('search/listing', 'geolocation/search_link');
@@ -35,52 +38,51 @@
 		elgg_extend_view('blog/forms/edit', 'geolocation/scripts');
 		elgg_extend_view('blog/forms/edit','geolocation/geo_input');
 		elgg_extend_view('canvas_header/submenu_group','geolocation/search_all_link');
+		elgg_extend_view('canvas_header/submenu_group','geolocation/search_kml_link');
 		
 		elgg_extend_view('canvas/layouts/two_column_left_sidebar', 'geolocation/search');
 		
 	}
-	
+	function my_subtype_search_hook($hook, $entity_type, $returnvalue, $params) {
+		
+		if (!isset($GLOBALS['my_search_result'])) {
+			$GLOBALS['my_search_result'] = array();
+		}
+		if (empty($GLOBALS['search_count'])) {
+			$GLOBALS['search_count'] = 0;
+		}
+		
+		if (is_array($returnvalue['entities'])) {
+			$GLOBALS['my_search_result'] = array_merge($GLOBALS['my_search_result'], $returnvalue['entities']);
+		}
+		
+		$GLOBALS['search_count'] = (int) $returnvalue['count'] + $GLOBALS['search_count'];
+		
+		// Change search results
+		//return array('count' => count($entities), 'entities' => $entities);
+		
+	}
 	function geolocation_page_handler($page) {
 		
 		global $CONFIG;
 		
 		// The second part dictates what we're doing
-		//$screen = $page[0];
+		$screen = $page[0];
 		
-		// Load Elgg engine
-		
-		$user = $_SESSION['user'];
-		
-		// Get the current page's owner
-		$page_owner = page_owner_entity();
-		if ($page_owner === false || is_null($page_owner)) {
-			$page_owner = $_SESSION['user'];
-			set_page_owner($_SESSION['guid']);
+		switch ($screen) {
+			
+			case 'kml':
+				echo elgg_extend_view('blog/forms/edit','geolocation/geo_input');
+				break;
+			
+			default:
+				
+				break;
+			
 		}
 		
-		$params = array(
-			'baseurl' => $CONFIG->wwwroot,
-			'subtype' => 'blog',
-			'map_api' => get_plugin_setting('google_api', 'geolocation')
-			
-		);
+		exit;
 		
-		$area2 = elgg_view_title(elgg_echo('geolocation:googlemaps'));
-		$area2 .= elgg_view('geolocation/search_map', $params);
-		
-		$area3 = elgg_view('geolocation/search_map_sidebar', $params);
-		
-		$body = elgg_view_layout("two_column_left_sidebar", '', $area2, $area3);
-		
-		// Get categories, if they're installed
-		//global $CONFIG;
-		//$area3 = elgg_view('blog/categorylist',array('baseurl' => $CONFIG->wwwroot . 'search/?subtype=blog&owner_guid='.$page_owner->guid.'&tagtype=universal_categories&tag=','subtype' => 'blog', 'owner_guid' => $page_owner->guid));
-		
-		// Display them in the page
-		$body = elgg_view_layout("two_column_left_sidebar", '', $area1 . $area2, $area3);
-		
-		page_draw(elgg_echo('geolocation:googlemaps'), $body);
-
 	}
 	
 	function geolocation_user_settings_save() {

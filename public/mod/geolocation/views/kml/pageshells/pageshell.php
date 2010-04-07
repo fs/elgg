@@ -10,7 +10,9 @@
 
 $entities = $GLOBALS['my_search_result'];
 
-header("Content-type: application/xml; charset=UTF-8");
+//header("Content-type: application/xml; charset=UTF-8");
+header("Content-type: application/force-download");
+header("Content-disposition: attachment; filename=search_results_locations.kml"); 
 
 echo '<?xml version="1.0" encoding="UTF-8"?>';
 ?>

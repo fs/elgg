@@ -33,7 +33,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 	<![CDATA[<?= $entity->description ?>]]>
     </description>
     <Point>
-      <coordinates><?=$lt?>,<?=$lg?>,0</coordinates>
+      <coordinates><?=$lg?>,<?=$lt?>,0</coordinates>
     </Point>
   </Placemark>
 <?php

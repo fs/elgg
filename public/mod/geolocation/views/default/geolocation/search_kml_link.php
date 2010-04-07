@@ -23,7 +23,7 @@ if ($path == '/pg/search/') {
 	
 	?>
 	<ul>
-	<li><a href="?<?= $adv_query?>">View in KML format</a></li>
+	<li><a href="?<?= $adv_query?>">Export Results to Google Earth</a></li>
 	</ul>
 	
 	<?

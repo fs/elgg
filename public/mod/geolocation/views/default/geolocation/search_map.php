@@ -111,10 +111,14 @@ if ($show_map) {
 
 </script>
 <div style="clear:both;"></div>
-<div id="map">
-	<div style="padding: 1em; color: gray">Loading...</div>
+<div class="search-results-sidebar">
+	<div id="content_area_user_title"><h2>Locations on map</h2></div>
+	<div class="search_listing">
+		<div id="map">
+			<div style="padding: 1em; color: gray;">Loading...</div>
+		</div>
+	</div>
 </div>
-
 <?php
 }
 ?>

@@ -14,7 +14,7 @@ $url = parse_url($request);
 $query = $url['query'];
 $path = explode('&', $query);
 
-if ($path == '/pg/search/') {
+if ($url['path'] == '/pg/search/') {
 	
 	$url_params = array();
 	foreach ($path as $part) {

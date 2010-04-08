@@ -1,6 +1,7 @@
 <?php
 
-$show_map = get_input('show_map', 0);
+//$show_map = get_input('show_map', 0);
+$show_map = 1;
 
 $lt = 0;
 $lg = 0;
@@ -20,105 +21,70 @@ if ($show_map) {
 		type="text/javascript"></script>
 <script type="text/javascript">
 
-	var markers = new Array();
+	var map = null;
+	var all_markers = Array();
 	
-	jQuery(function() {
+	function show_map(points) {
+		
+		if (points == 'all') {
+			
+			var all_markers_array = new Array();
+			
+			for (i in all_markers) {
+				all_markers_array = all_markers_array.concat(all_markers[i]);
+			}
+			
+			show_map(all_markers_array);
+			
+			return;
+		}
+		
 		if (GBrowserIsCompatible()) {
+			
+			$('#layout_map').show();
+			$.facebox($('#layout_map'));
 			
 			var lt = <?= $lt ?> || geoip_latitude();
 			var lg = <?= $lg ?> || geoip_longitude();
 			
-			var map = new google.maps.Map2(document.getElementById("map"));
-			var center = new GLatLng(lt, lg);
+			map.clearOverlays();
+			
+			for (i in points) {
+				map.addOverlay(points[i]);
+				GEvent.trigger(points[i], "click");
+				//alert(points[i].getLatLng());
+			}
+			
+			var center = points[i].getLatLng();
+			
+			//alert(getLatLng());
+			
+			//points
+			//map.getBoundsZoomLevel();
+			
 			map.setCenter(center, 5);
-			map.setUIToDefault();
-			
-			<?php
-			
-			$i = 1;
-			foreach ($vars['entities'] as $entity) {
-				
-				$lt = $entity->getLatitude();
-				$lg = $entity->getLongitude();
-				
-				if (!$lt || !$lg) {
-					continue;
-				}
-				
-				$type = $entity->getType();
-				$subtype = $entity->getSubtype();
-				switch ($type) {
-					
-					case 'user':
-						
-						$link = '<a href="' . $entity->getURL() . '">' . $entity->name . '</a>';
-						break;
-					
-					default:
-						
-						$link = '<a href="' . $entity->getURL() . '">' . $entity->title . '</a>';
-						break;
-				}
-				
-				
-				switch ($subtype) {
-					
-					/*
-					case 'album':
-						
-						$images = get_entities("object", "image", $entity->guid, '', 999);
-						print_r($images);exit;
-						$desc = '<p>' . $entity->description . '</p>';
-						break;
-					*/
-					
-					default:
-						
-						$desc = '<p>' . str_replace("'","\\'", str_replace("\r","", str_replace("\n","", nl2br($entity->description)))) . '</p>';
-						break;
-					
-				}
-				
-				echo '
-				var marker_' . $i . ' = new GMarker(new GLatLng(' . $lt . ', ' . $lg .'));
-				GEvent.addListener(marker_' . $i . ', "click", function() {
-					var html = \'<div style="width: 210px; padding-right: 10px">\'+
-							\'' . $link .'<br>\'+
-							\'' . $desc . '\'+
-							\'<\/div>\';
-					marker_' . $i . '.openInfoWindowHtml(html);
-				});
-				map.addOverlay(marker_' . $i . ');
-				GEvent.trigger(marker_' . $i . ', "click");
-				markers[' . $i . '] = marker_' . $i . ';
-				';
-			
-				$i++;
-			}
-			
-			?>
-			window.set_center = function (lt, lg) {
-				map.setCenter(new GLatLng(lt, lg), 1);
-				return false;
-			}
 			
 		}
-	});
-
-	function selectMarker(n) {
-		GEvent.trigger(markers[n], "click");
 	}
+	
+	jQuery(function() {
+		
+		map = new google.maps.Map2(document.getElementById("map"));
+		map.setUIToDefault();
+		$('#layout_map').hide();
+		
+	});
 
 </script>
 <div style="clear:both;"></div>
-<div class="search-results-sidebar">
+
+<div id="layout_map">
 	<div id="content_area_user_title"><h2>Locations on map</h2></div>
-	<div class="search_listing">
-		<div id="map">
-			<div style="padding: 1em; color: gray;">Loading...</div>
-		</div>
+	<div id="map" style="left:30px;">
+		<div style="padding: 1em; color: gray">Loading...</div>
 	</div>
 </div>
+
 <?php
 }
 ?>

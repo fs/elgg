@@ -18,14 +18,14 @@
 		register_plugin_hook('geolocation', 'location', 'geolocation_geocode');
 		
 		// Listen to create events on a low priority
-		register_elgg_event_handler('create','all','geolocation_tagger', 1000);
-		register_elgg_event_handler('update','all','geolocation_tagger', 1000);
+		register_elgg_event_handler('create','all','geolocation_tagger', 900);
+		register_elgg_event_handler('update','all','geolocation_tagger', 900);
 		
 		register_plugin_hook('search', 'all', 'my_subtype_search_hook');
 		
 		// extend user functionality
-		extend_elgg_settings_page('geolocation/scripts','usersettings/user', 1000);
-		extend_elgg_settings_page('geolocation/geo_input', 'usersettings/user', 1000);
+		extend_elgg_settings_page('geolocation/scripts','usersettings/user', 900);
+		extend_elgg_settings_page('geolocation/geo_input', 'usersettings/user', 900);
 		register_plugin_hook('usersettings:save','user','geolocation_user_settings_save');
 		
 		//register_page_handler('map_search','geolocation_page_handler');
@@ -40,9 +40,14 @@
 		elgg_extend_view('canvas_header/submenu_group','geolocation/search_all_link');
 		elgg_extend_view('canvas_header/submenu_group','geolocation/search_kml_link');
 		
-		elgg_extend_view('canvas/layouts/two_column_left_sidebar', 'geolocation/search');
+		elgg_extend_view('canvas/layouts/two_column_left_sidebar', 'geolocation/search', 1000);
+		
+		elgg_extend_view('profile/edit','geolocation/profile_links');
+		
+		register_elgg_event_handler('profileupdate','all','geolocation_profile_update');
 		
 	}
+	
 	function my_subtype_search_hook($hook, $entity_type, $returnvalue, $params) {
 		
 		if (!isset($GLOBALS['my_search_result'])) {
@@ -62,6 +67,38 @@
 		//return array('count' => count($entities), 'entities' => $entities);
 		
 	}
+	
+	function geolocation_profile_update($event, $object_type, $object) {
+		if ($object instanceof ElggUser) {
+			
+			if ($object_type == 'metadata') {
+				$object = $object->getEntity();
+			}
+			if (isset($GLOBALS['profile_stop_recursion']) && $GLOBALS['profile_stop_recursion'] == $object->guid) {
+				return;
+			}
+			
+			$GLOBALS['profile_stop_recursion'] = $object->guid;
+			
+			$home_latitude = get_input('home_latitude');
+			$home_longitude = get_input('home_longitude');
+			
+			$current_latitude = get_input('current_latitude');
+			$current_longitude = get_input('current_longitude');
+			
+			if ($current_latitude && $current_longitude) {
+				$object->setLatLong($current_latitude, $current_longitude);
+				$object->current_latitude = $current_latitude;
+				$object->current_longitude = $current_longitude;
+			}
+			if ($home_latitude && $home_longitude) {
+				$object->home_latitude = $home_latitude;
+				$object->home_longitude = $home_longitude;
+			}
+			
+		}
+	}
+	
 	function geolocation_page_handler($page) {
 		
 		global $CONFIG;

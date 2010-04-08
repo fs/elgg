@@ -1,12 +1,12 @@
 <?php
 
 $request = $_SERVER['REQUEST_URI'];
-$show_map = get_input('show_map', 0);
+//$show_map = get_input('show_map', 0);
 $map_api = get_plugin_setting('google_api', 'geolocation');
 
 $url = parse_url($request);
 $path = $url['path'];
-$results = $GLOBALS['search_results'];
+$results = $GLOBALS['my_search_result'];
 //print_r($results);exit;
 if ($path == '/pg/search/' && !empty($results)) {
 	?>

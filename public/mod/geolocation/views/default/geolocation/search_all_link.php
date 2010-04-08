@@ -22,24 +22,27 @@ if ($url['path'] == '/pg/search/') {
 		$url_params[$v[0]] = $v[1];
 	}
 	
-	if ($url_params['search_type'] == 'all' && $url_params['show_map']) {
+	if ($url_params['search_type'] == 'all') {
 		$selected = true;
 	}
 	
 	unset($url_params['entity_type']);
 	unset($url_params['entity_subtype']);
 	unset($url_params['view']);
-	$url_params['search_type'] = 'all';
-	$url_params['show_map'] = 1;
+	//$url_params['search_type'] = 'all';
+	//$url_params['show_map'] = 1;
 	
 	array_walk($url_params, 'params_to_url');
 	$adv_query = implode('&', $url_params);
 	
-	?>
-	<ul>
-	<li<?= $selected ? ' class="selected"' : ''?>><a href="?<?= $adv_query?>">All results on a map</a></li>
-	</ul>
+	if ($selected) {
+		?>
+		<ul>
+		<li class="selected"><a href="#" onclick="show_map('all');return false;">All results on a map</a></li>
+		</ul>
+		
+		<?
+	}
 	
-	<?
 }
 ?>

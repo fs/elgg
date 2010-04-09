@@ -11,26 +11,52 @@
 	 * 
 	 * @uses $vars['entity'] The user entity. If none specified, the current user is assumed. 
 	 */
-	/*
+	
 	$user = $_SESSION['user'];
 	
 	if (isloggedin() && $user->getGUID() == $vars['entity']->getGUID()) {
 		
+		/*
 		if (empty($user->home_latitude)) {
 			create_metadata($user->guid, 'home_latitude', 0, 'text', $user->guid, $access_id);
 		}
 		
 		if (empty($vars['entity']->home_latitude)) {
-		//	$vars['entity']->home_latitude = '0';
+			$vars['entity']->home_latitude = '0';
 		}
 		if (empty($vars['entity']->home_longitude)) {
-		//	$vars['entity']->home_longitude = '0';
+			$vars['entity']->home_longitude = '0';
 		}
-		?>
 		
+		if (empty($vars['entity']->home_latitude)) {
+			$vars['entity']->home_latitude = '0';
+		}
+		if (empty($vars['entity']->home_longitude)) {
+			$vars['entity']->home_longitude = '0';
+		}
+		*/
+		
+		$h_lt = $vars['entity']->home_latitude or
+		$h_lt = 0;
+		$h_lg = $vars['entity']->home_longitude or
+		$h_lg = 0;
+		
+		$c_lt = $vars['entity']->current_latitude or
+		$c_lt = 0;
+		$c_lg = $vars['entity']->current_longitude or
+		$c_lg = 0;
+		
+		?>
+		<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<?= $GLOBALS['google_api'] ?>"></script>
 		<script type="text/javascript">
 		
 		var $form = null;
+		var points = new Array();
+		var map = null;
+		var current_type = null;
+		
+		points['home'] = {'lt':<?=$h_lt?>, 'lg':<?=$h_lg?>};
+		points['current'] = {'lt':<?=$c_lt?>, 'lg':<?=$c_lg?>};
 		
 		$(function () {
 			$form = $('input.submit_button').parents()
@@ -39,26 +65,92 @@
 														return this;
 													}
 											});
-			$form.append(
-				'<input type="text" value="<?=$vars['entity']->home_latitude?>" name="home_latitude" id="home_geolocation_latitude" />' +
-				'<input type="text" value="<?=$vars['entity']->home_longitude?>" name="home_longitude" id="home_geolocation_longitude" />'+
-				'<input type="text" value="<?=$vars['entity']->current_latitude?>" name="current_latitude" id="current_geolocation_latitude" />' +
-				'<input type="text" value="<?=$vars['entity']->current_longitude?>" name="current_longitude" id="current_geolocation_longitude" />'
+			$form.prepend(
+				'<p><a href="#" onclick="show_user_map(\'home\');return false;">Edit home location</a></p>'+
+				'<p><a href="#" onclick="show_user_map();return false;">Edit current location</a></p>'+
+				'<p>'+
+				'<input type="hidden" value="<?=$h_lt?>" name="home_latitude" id="home_geolocation_latitude" />' +
+				'<input type="hidden" value="<?=$h_lg?>" name="home_longitude" id="home_geolocation_longitude" />'+
+				'<input type="hidden" value="<?=$c_lt?>" name="current_latitude" id="current_geolocation_latitude" />' +
+				'<input type="hidden" value="<?=$c_lg?>" name="current_longitude" id="current_geolocation_longitude" />'+
+				'</p>'
 			);
+
+			map = new google.maps.Map2(document.getElementById("map"));
+			map.setUIToDefault();
+			$('#layout_map').hide();
+			
+			// Create our "tiny" marker icon
+			// var blueIcon = new GIcon(G_DEFAULT_ICON);
+			// blueIcon.image = "images/label.png";
+			
+			// Set up our GMarkerOptions object
+			//markerOptions = { icon:blueIcon };
+			
+			window.set_center = function (lt, lg) {
+				map.setCenter(new GLatLng(lt, lg), 1);
+				return false;
+			};
+			
 		});
+		
+		function store_point_location(point) {
+			
+			$form.find('#' + current_type + '_geolocation_latitude').val(point.y);
+			$form.find('#' + current_type + '_geolocation_longitude').val(point.x);
+			
+		}
+		
+		function show_user_map(type) {
+			
+			if (type != 'home') {
+				type = 'current';
+			}
+			
+			current_type = type;
+			
+			if (GBrowserIsCompatible()) {
+			
+				$('#layout_map div h2').html(type.substr(0, 1).toUpperCase() + type.substr(1) + ' location on a map');
+				$('#layout_map').show();
+				$.facebox($('#layout_map'));
+				
+				map.clearOverlays();
+				
+				var lt = $form.find('#' + current_type + '_geolocation_latitude').val();
+				var lg = $form.find('#' + current_type + '_geolocation_longitude').val();
+				var p = new GLatLng(lt, lg);
+				var marker = new GMarker(p, {draggable: true});
+				
+				map.setCenter(p, 11);
+				map.addOverlay(marker);
+				
+				store_point_location(p);
+				
+				GEvent.addListener(marker, "dragstart", function() {
+					map.closeInfoWindow();
+				});
+				
+				GEvent.addListener(marker, "dragend", function(point) {
+					store_point_location(point);
+				});
+				
+			}
+			
+		}
 		
 		</script>
 		
-		<p class="user_menu_profile">
-			<a href="show_map();return_false;">Edit home location</a>
-		</p>
-		
-		<p class="user_menu_profile">
-			<a href="show_map();return_false;">Edit current location</a>
-		</p>
+		<div id="layout_map">
+			<div id="content_area_user_title"><h2>Locations on map</h2></div>
+			<div id="map" style="left:30px;">
+				<div style="padding: 1em; color: gray">Loading...</div>
+			</div>
+		</div>
 		
 		<?
+		
 	}
-	*/
+	
 	
 ?>

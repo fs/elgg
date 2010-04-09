@@ -14,7 +14,7 @@ $url = parse_url($request);
 $query = $url['query'];
 $path = explode('&', $query);
 
-if ($url['path'] == '/pg/search/') {
+if (preg_match('/\/pg\/search/', $url['path'])) {
 	
 	$url_params = array();
 	foreach ($path as $part) {
@@ -22,7 +22,7 @@ if ($url['path'] == '/pg/search/') {
 		$url_params[$v[0]] = $v[1];
 	}
 	
-	if ($url_params['search_type'] == 'all') {
+	if (empty($url_params['search_type']) == 'all' || $url_params['search_type'] == 'all') {
 		$selected = true;
 	}
 	
@@ -38,7 +38,7 @@ if ($url['path'] == '/pg/search/') {
 	if ($selected) {
 		?>
 		<ul>
-		<li class="selected"><a href="#" onclick="show_map('all');return false;">All results on a map</a></li>
+		<li><a href="#" onclick="show_map('all');return false;">All results on a map</a></li>
 		</ul>
 		
 		<?

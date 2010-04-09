@@ -22,6 +22,8 @@ if ($show_map) {
 <script type="text/javascript">
 
 	var map = null;
+	var mapType = null;
+	var bounds = null;
 	var all_markers = Array();
 	
 	function show_map(points) {
@@ -44,25 +46,19 @@ if ($show_map) {
 			$('#layout_map').show();
 			$.facebox($('#layout_map'));
 			
-			var lt = <?= $lt ?> || geoip_latitude();
-			var lg = <?= $lg ?> || geoip_longitude();
-			
 			map.clearOverlays();
+			
+			bounds = new GLatLngBounds();
 			
 			for (i in points) {
 				map.addOverlay(points[i]);
-				GEvent.trigger(points[i], "click");
-				//alert(points[i].getLatLng());
+				bounds.extend(points[i].getLatLng());
+				//GEvent.trigger(points[i], "click");
 			}
 			
-			var center = points[i].getLatLng();
-			
-			//alert(getLatLng());
-			
-			//points
-			//map.getBoundsZoomLevel();
-			
-			map.setCenter(center, 5);
+			var center = bounds.getCenter();
+			var zoom   = map.getBoundsZoomLevel(bounds);
+			map.setCenter(center, zoom);
 			
 		}
 	}

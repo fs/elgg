@@ -7,8 +7,8 @@ $map_api = get_plugin_setting('google_api', 'geolocation');
 $url = parse_url($request);
 $path = $url['path'];
 $results = $GLOBALS['my_search_result'];
-//print_r($results);exit;
-if ($path == '/pg/search/' && !empty($results)) {
+//var_dump(preg_match('/\/pg\/search/', $path));exit;
+if (preg_match('/\/pg\/search/', $path) && !empty($results)) {
 	?>
 	<div style="margin-left:230px;">
 	<?

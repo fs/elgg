@@ -8,8 +8,8 @@ $url = parse_url($request);
 $query = $url['query'];
 $path = explode('&', $query);
 
-if ($url['path'] == '/pg/search/') {
-
+if (preg_match('/\/pg\/search/', $url['path'])) {
+	
 	$url_params = array();
 	foreach ($path as $part) {
 		$v = explode('=', $part);

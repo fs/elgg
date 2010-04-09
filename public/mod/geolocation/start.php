@@ -182,27 +182,21 @@
 	 */ 
 	function geolocation_tagger($event, $object_type, $object)
 	{
+		
 		if ($object_type == 'metadata') {
 			$object = $object->getEntity();
 		}
+		
+		if ($object instanceof ElggUser) {
+			return;
+		}
+		
 		if (isset($GLOBALS['stop_recursion']) && $GLOBALS['stop_recursion'] == $object->guid) {
 			return;
 		}
-		if ($object instanceof Locatable)
-		{
+		
+		if ($object instanceof Locatable) {
 			$location = false;
-			/* // See if object has a specific location
-			if (isset($object->location))
-				$location = $object->location;
-				
-			// If not, see if user has a location
-			if (!$location) {
-				if (isset($object->owner_guid))
-				{
-					$user = get_entity($object->owner_guid);
-					if (isset($user->location)) $location = $user->location;
-				}
-			} */
 			
 			// Nope, so use input params
 			if (!$location) {
@@ -238,8 +232,6 @@
 				}
 			}
 		}
-		//} else
-		//die('gotcha!');
 	}
 	
 	require_once 'models/functions.php';

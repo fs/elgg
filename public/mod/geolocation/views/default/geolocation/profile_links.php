@@ -149,6 +149,13 @@
 					store_point_location(point);
 				});
 				
+				GEvent.addListener(map, "click", function(overlay, latlng) {
+					
+					marker.setLatLng(latlng);
+					store_point_location(latlng);
+					//alert(latlng);
+				});
+				
 			}
 			
 		}

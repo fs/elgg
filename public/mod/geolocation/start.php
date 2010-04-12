@@ -35,8 +35,16 @@
 		elgg_extend_view('search/listing', 'geolocation/search_link');
 		//elgg_extend_view('search/entity_list', 'geolocation/search_map');
 		elgg_extend_view('css','geolocation/css');
+		// extend blog views
 		elgg_extend_view('blog/forms/edit', 'geolocation/scripts');
 		elgg_extend_view('blog/forms/edit','geolocation/geo_input');
+		// extend bookmarks views
+		elgg_extend_view('bookmarks/form', 'geolocation/scripts');
+		elgg_extend_view('bookmarks/form','geolocation/geo_input');
+		// extend file views
+		elgg_extend_view('file/upload', 'geolocation/scripts');
+		elgg_extend_view('file/upload','geolocation/geo_input');
+
 		elgg_extend_view('canvas_header/submenu_group','geolocation/search_all_link');
 		elgg_extend_view('canvas_header/submenu_group','geolocation/search_kml_link');
 		

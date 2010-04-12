@@ -28,7 +28,16 @@ $(function () {
 												return this;
 											}
 									});
-;
+
+	if (!$form.html()) {
+		$form = $('div.contentWrapper form').map(function () {
+												if (this.action.indexOf('action/bookmarks/add')) {
+													return this;
+												}
+											});
+		
+	}
+	
 	$form.append(
 		'<input type="hidden" value="" name="latitude" id="geolocation_latitude" />' +
 		'<input type="hidden" value="" name="longitude" id="geolocation_longitude" />'

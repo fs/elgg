@@ -48,6 +48,7 @@
 		
 		?>
 		<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<?= $GLOBALS['google_api'] ?>"></script>
+		<script type="text/javascript" src="http://j.maxmind.com/app/geoip.js"></script>
 		<script type="text/javascript">
 		
 		var $form = null;
@@ -55,10 +56,17 @@
 		var map = null;
 		var current_type = null;
 		
-		points['home'] = {'lt':<?=$h_lt?>, 'lg':<?=$h_lg?>};
-		points['current'] = {'lt':<?=$c_lt?>, 'lg':<?=$c_lg?>};
-		
 		$(function () {
+			
+			var h_lt = <?= $h_lt ?> || geoip_latitude();
+			var h_lg = <?= $h_lg ?> || geoip_longitude();
+			
+			var c_lt = <?= $c_lt ?> || geoip_latitude();
+			var c_lg = <?= $c_lg ?> || geoip_longitude();
+			//alert(c_lt);
+			points['home'] = {'lt' : h_lt, 'lg' : h_lg};
+			points['current'] = {'lt' : c_lt, 'lg' : c_lg};
+			
 			$form = $('input.submit_button').parents()
 											.map(function () {
 													if (this.tagName == 'FORM') {
@@ -75,6 +83,12 @@
 				'<input type="hidden" value="<?=$c_lg?>" name="current_longitude" id="current_geolocation_longitude" />'+
 				'</p>'
 			);
+			
+			$form.find('input#home_geolocation_latitude').val(h_lt);
+			$form.find('input#home_geolocation_longitude').val(h_lg);
+			$form.find('input#current_geolocation_latitude').val(c_lt);
+			$form.find('input#current_geolocation_longitude').val(c_lg);
+			
 
 			map = new google.maps.Map2(document.getElementById("map"));
 			map.setUIToDefault();

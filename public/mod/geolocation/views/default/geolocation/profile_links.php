@@ -66,8 +66,8 @@
 													}
 											});
 			$form.prepend(
-				'<p><a href="#" onclick="show_user_map(\'home\');return false;">Edit home location</a></p>'+
-				'<p><a href="#" onclick="show_user_map();return false;">Edit current location</a></p>'+
+				'<p><a href="#" onclick="show_user_map(\'home\');return false;">Set Home Location</a></p>'+
+				'<p><a href="#" onclick="show_user_map();return false;">Set Current Location</a></p>'+
 				'<p>'+
 				'<input type="hidden" value="<?=$h_lt?>" name="home_latitude" id="home_geolocation_latitude" />' +
 				'<input type="hidden" value="<?=$h_lg?>" name="home_longitude" id="home_geolocation_longitude" />'+

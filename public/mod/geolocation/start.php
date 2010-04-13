@@ -145,7 +145,7 @@
 			}
 		}
 		
-		//$full_list = elgg_get_entities(array('type'=>'object'));
+		$full_list = elgg_get_entities(array('type'=>'object'));
 		foreach ($full_list as $entity) {
 			if ($entity->latitude && $entity->longitude) {
 				if ($box->east >= $entity->latitude && 

@@ -104,19 +104,23 @@ if (!$google->is_authorized()) {
     if (!$entities) {
 		
 		$username = $email;
-		
-		if(get_user_by_username($username)) {
-			// oops, try adding a "_googleapps" to the end
-			//$username .= '_googleapps';
+
+
+
+    $username = preg_replace("/\@[a-zA-Z\.0-9\-]+$/", "", $username);
+    
+    if(get_user_by_username($username)) {
+        $username = preg_replace("/\@([a-zA-Z\.0-9\-]+)/", ".$1", $email);
+    }
+
+
 			
 			if(get_user_by_username($username)) {
 				$duplicate_account = true;
 				register_error(sprintf(elgg_echo("googleappslogin:account_duplicate"), $username));
 			}
-		}
 		
 		if (!$duplicate_account) {
-			
 			$firstname = $google->get_firstname();
 			$lastname = $google->get_lastname();
 			

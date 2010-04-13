@@ -55,6 +55,7 @@
 		var points = new Array();
 		var map = null;
 		var current_type = null;
+		var marker = null;
 		
 		$(function () {
 			
@@ -63,7 +64,9 @@
 			
 			var c_lt = <?= $c_lt ?> || geoip_latitude();
 			var c_lg = <?= $c_lg ?> || geoip_longitude();
-			//alert(c_lt);
+			
+			
+			
 			points['home'] = {'lt' : h_lt, 'lg' : h_lg};
 			points['current'] = {'lt' : c_lt, 'lg' : c_lg};
 			
@@ -129,12 +132,13 @@
 				$('#layout_map').show();
 				$.facebox($('#layout_map'));
 				
+				$('#geosearch #query').val('');
 				map.clearOverlays();
 				
 				var lt = $form.find('#' + current_type + '_geolocation_latitude').val();
 				var lg = $form.find('#' + current_type + '_geolocation_longitude').val();
 				var p = new GLatLng(lt, lg);
-				var marker = new GMarker(p, {draggable: true});
+				marker = new GMarker(p, {draggable: true});
 				
 				map.setCenter(p, 11);
 				map.addOverlay(marker);
@@ -153,17 +157,94 @@
 					
 					marker.setLatLng(latlng);
 					store_point_location(latlng);
-					//alert(latlng);
+				});
+				
+				$('#geosearch').submit(function() {
+					geocode();
+					return false;
+				});
+				
+				$(document).bind('close.facebox', function() { 
+					
 				});
 				
 			}
 			
 		}
 		
+		function geocode() {
+			var query = document.getElementById("query").value;
+			if (/\s*^\-?\d+(\.\d+)?\s*\,\s*\-?\d+(\.\d+)?\s*$/.test(query)) {
+				var latlng = parseLatLng(query);
+				if (latlng == null) {
+					document.getElementById("query").value = "";
+				} else {
+					reverseGeocode(latlng);
+				}
+			} else {
+				forwardGeocode(query);
+			}
+		}
+		
+		function initGeocoder(query) {
+			selected = null;
+			
+			var hash = 'q=' + query;
+			var geocoder = new GClientGeocoder();
+			
+			hashFragment = '#' + escape(hash);
+			window.location.hash = escape(hash);
+			return geocoder;
+		}
+			
+		function forwardGeocode(address) {
+			var geocoder = initGeocoder(address);
+			geocoder.getLocations(address, function(response) {
+				showResponse(response, false);
+			});  
+		}
+		
+		function reverseGeocode(latlng) {
+			var geocoder = initGeocoder(latlng.toUrlValue(6));
+			geocoder.getLocations(latlng, function(response) {
+				showResponse(response, true);
+			});
+		}
+		
+		function parseLatLng(value) {
+			value.replace('/\s//g');
+			var coords = value.split(',');
+			var lat = parseFloat(coords[0]);
+			var lng = parseFloat(coords[1]);
+			if (isNaN(lat) || isNaN(lng)) {
+				return null;
+			} else {
+				return new GLatLng(lat, lng);
+			}
+		}
+		
+		function showResponse(response, reverse) {
+			
+			if (! response) {
+				alert("Geocoder request failed");
+			} else {
+				if (!response.Placemark || !response.Placemark[0]) {
+					return;
+				}
+				latlng = new GLatLng(response.Placemark[0].Point.coordinates[1],
+								 response.Placemark[0].Point.coordinates[0]);
+				
+				marker.setLatLng(latlng);
+				map.panTo(latlng);
+				store_point_location(latlng);
+			}
+		}
+		
 		</script>
 		
 		<div id="layout_map">
 			<div id="content_area_user_title"><h2>Locations on map</h2></div>
+			<div><form name="geosearch" id="geosearch" onsubmit="return false;"><input type="text" name="query" id="query" value=""/><input type="submit" id="query_submit" value="Search" /></form></div>
 			<div id="map" style="left:30px;">
 				<div style="padding: 1em; color: gray">Loading...</div>
 			</div>

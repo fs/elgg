@@ -72,16 +72,93 @@ google.setOnLoadCallback(function () {
 
 	map.addOverlay(marker);
 
-	function store_point_location () {
-		var point = marker.getLatLng();
+	function store_point_location(point) {
+		
+		if (!point) {
+			point = marker.getLatLng();
+		}
+		
 		$form.find('#geolocation_latitude').val(point.y);
 		$form.find('#geolocation_longitude').val(point.x);
-		//alert(point.x + ' ' + point.y);
 	}
+	
+	function geocode() {
+		var query = document.getElementById("query").value;
+		if (/\s*^\-?\d+(\.\d+)?\s*\,\s*\-?\d+(\.\d+)?\s*$/.test(query)) {
+			var latlng = parseLatLng(query);
+			if (latlng == null) {
+				document.getElementById("query").value = "";
+			} else {
+				reverseGeocode(latlng);
+			}
+		} else {
+			forwardGeocode(query);
+		}
+	}
+	
+	function initGeocoder(query) {
+		selected = null;
+		
+		var hash = 'q=' + query;
+		var geocoder = new GClientGeocoder();
+		
+		hashFragment = '#' + escape(hash);
+		window.location.hash = escape(hash);
+		return geocoder;
+	}
+		
+	function forwardGeocode(address) {
+		var geocoder = initGeocoder(address);
+		geocoder.getLocations(address, function(response) {
+			showResponse(response, false);
+		});  
+	}
+	
+	function reverseGeocode(latlng) {
+		var geocoder = initGeocoder(latlng.toUrlValue(6));
+		geocoder.getLocations(latlng, function(response) {
+			showResponse(response, true);
+		});
+	}
+	
+	function parseLatLng(value) {
+		value.replace('/\s//g');
+		var coords = value.split(',');
+		var lat = parseFloat(coords[0]);
+		var lng = parseFloat(coords[1]);
+		if (isNaN(lat) || isNaN(lng)) {
+			return null;
+		} else {
+			return new GLatLng(lat, lng);
+		}
+	}
+	
+	function showResponse(response, reverse) { 
+		if (! response) {
+			alert("Geocoder request failed");
+		} else {
+			latlng = new GLatLng(response.Placemark[0].Point.coordinates[1],
+							 response.Placemark[0].Point.coordinates[0]);
+			
+			marker.setLatLng(latlng);
+			map.panTo(latlng);
+			store_point_location(latlng);
+		}
+	}
+	
+	$('#geosearch').submit(function() {
+		geocode();
+		return false;
+	});
 	
 	store_point_location();
 	
 	GEvent.addListener(marker, "dragend", store_point_location);
+	
+	GEvent.addListener(map, "click", function(overlay, latlng) {
+		marker.setLatLng(latlng);
+		store_point_location(latlng);
+	});
 	
 	window.set_center = function (lt, lg) {
 		map.setCenter(new GLatLng(lt, lg), 1);
@@ -91,8 +168,9 @@ google.setOnLoadCallback(function () {
 
 </script>
 <div class="map-container">
-  <label>Location <a href="#" class="view-map-link">view map</a></label>
-  <div class="map">
+	<label>Location <a href="#" class="view-map-link">view map</a></label>
+	<div class="map">
+		<div><form name="geosearch" id="geosearch" onsubmit="return false;"><input type="text" name="query" id="query" value=""/><input type="submit" id="query_submit" value="Search" /></form></div>
 		<div id="map"></div>
-  </div>
+	</div>
 </div>

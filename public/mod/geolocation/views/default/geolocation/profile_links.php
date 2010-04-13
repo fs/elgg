@@ -231,6 +231,9 @@
 				if (!response.Placemark || !response.Placemark[0]) {
 					return;
 				}
+				//console.log(response);
+				box = response.Placemark[0].ExtendedData.LatLonBox;
+				//console.log(box);
 				latlng = new GLatLng(response.Placemark[0].Point.coordinates[1],
 								 response.Placemark[0].Point.coordinates[0]);
 				

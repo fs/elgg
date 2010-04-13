@@ -28,7 +28,7 @@
 		extend_elgg_settings_page('geolocation/geo_input', 'usersettings/user', 900);
 		register_plugin_hook('usersettings:save','user','geolocation_user_settings_save');
 		
-		//register_page_handler('map_search','geolocation_page_handler');
+		register_page_handler('search_region','geolocation_page_handler');
 		register_page_handler('geolocation','geolocation_page_handler');
 		
 		// extend some views
@@ -47,6 +47,7 @@
 
 		elgg_extend_view('canvas_header/submenu_group','geolocation/search_all_link');
 		elgg_extend_view('canvas_header/submenu_group','geolocation/search_kml_link');
+		elgg_extend_view('canvas_header/submenu_group','geolocation/search_region');
 		
 		elgg_extend_view('canvas/layouts/two_column_left_sidebar', 'geolocation/search', 1000);
 		
@@ -111,20 +112,69 @@
 		
 		global $CONFIG;
 		
+		require_once($CONFIG->path . "engine/start.php");
+		$user = $_SESSION['user'];
+		
+		// Get the current page's owner
+		$page_owner = page_owner_entity();
+		if ($page_owner === false || is_null($page_owner)) {
+			$page_owner = $_SESSION['user'];
+			set_page_owner($_SESSION['guid']);
+		}
+		
 		// The second part dictates what we're doing
 		$screen = $page[0];
 		
-		switch ($screen) {
-			
-			case 'kml':
-				echo elgg_extend_view('blog/forms/edit','geolocation/geo_input');
-				break;
-			
-			default:
-				
-				break;
-			
+		$box = geolocation_geocode_box($screen);
+		//print_r($box);exit;
+		$results = array();
+		
+		$result_list = array();
+		$user_list = array();
+		$full_list = array();
+		
+		$user_list = elgg_get_entities(array('type'=>'user'));
+		foreach ($user_list as $entity) {
+			if ($entity->current_latitude && $entity->current_longitude) {
+				if ($box->east >= $entity->current_longitude && 
+					$box->west <= $entity->current_longitude && 
+					$box->north >= $entity->current_latitude && 
+					$box->south <= $entity->current_latitude) {
+					$result_list[] = $entity;
+				}
+			}
 		}
+		
+		//$full_list = elgg_get_entities(array('type'=>'object'));
+		foreach ($full_list as $entity) {
+			if ($entity->latitude && $entity->longitude) {
+				if ($box->east >= $entity->latitude && 
+					$box->west <= $entity->latitude && 
+					$box->north >= $entity->longitude && 
+					$box->south <= $entity->longitude) {
+					$result_list[] = $entity;
+				}
+			}
+		}
+		
+		$current_params = array(
+							'query' => $screen,
+							'offset' => '0',
+							'sort' => 'relevance',
+							'order' => 'desc',
+							'search_type' => 'all'
+						);
+
+		
+		$results['entities'] = $result_list;
+		$results['count'] = count($result_list);
+		/*
+		echo '<pre>';
+		print_r($result_list);
+		echo '</pre>';
+		exit;
+		*/
+		require_once dirname(__FILE__) . '/locations.php';
 		
 		exit;
 		
@@ -181,6 +231,35 @@
 			
 	   		return array('lat' => $obj[1], 'long' => $obj[0]);
 			
+		}
+	}
+	
+	/** 
+	 * Google geocoder box.
+	 *
+	 * Listen for an Elgg Geocode request and use google maps to geocode it.
+	 */
+	function geolocation_geocode_box($location = null)
+	{
+		if (!empty($location))
+		{
+			$google_api = get_plugin_setting('google_api', 'geolocation');
+			
+			// Desired address
+		   	$address = "http://maps.google.com/maps/geo?q=".urlencode($location)."&output=json&key=" . $google_api;
+			
+		   	// Retrieve the URL contents
+	   		$result = file_get_contents($address);
+	   		$obj = json_decode($result);
+	   		if (!empty($obj) && 
+				!empty($obj->Placemark) && 
+				!empty($obj->Placemark[0]) &&
+				!empty($obj->Placemark[0]->ExtendedData) &&
+				!empty($obj->Placemark[0]->ExtendedData->LatLonBox)) {
+				return $obj->Placemark[0]->ExtendedData->LatLonBox;
+			}
+		} else {
+			return false;
 		}
 	}
 	

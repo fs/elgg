@@ -44,7 +44,8 @@
 		'googleappslogin:sites:everyone' => "All Wikis",
 		'googleappslogin:sites:all' => "All Wikis",
 		'googleappslogin:site:user' => "%s's wiki",
-		'googleappslogin:site:add' => "Create new Wiki",
+    'googleappslogin:site:add' => "Create new Wiki",
+    'item:object:site_activity' => "Site activity"
 		
 	);
 					

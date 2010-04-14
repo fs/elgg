@@ -10,44 +10,15 @@
 	 * @link http://elgg.org/
 	 */
 
-	// Load Elgg engine
-	global $CONFIG;
-	require_once($CONFIG->path . "engine/start.php");
-	$user = $_SESSION['user'];
-	
-	// Get the current page's owner
-	$page_owner = page_owner_entity();
-	if ($page_owner === false || is_null($page_owner)) {
-		$page_owner = $_SESSION['user'];
-		set_page_owner($_SESSION['guid']);
-	}
-
 	$area2 = elgg_view_title(elgg_echo('geolocation:googlemaps'));
 
 	// Get a list of google sites
-	$area2 .= '<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&region=GB">
-	<script type="text/javascript">
+	//$area2 .= elgg_entities_listing('search/listing', array('search_types' => $entity->getVolatileData('search')));
 	
-		function initialize() {
-			
-			var myLatlng = new google.maps.LatLng(-34.397, 150.644);
-			var myOptions = {
-				zoom: 8,
-				center: myLatlng,
-				mapTypeId: google.maps.MapTypeId.ROADMAP
-			}
-			var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-			
-		}
-		
-		$(function () {
-			initialize();
-		});
+	if (is_array($results['entities']) && $results['count']) {
+		$area2 .= elgg_view('entities/entity_list', array('entities' => $results['entities'], 'viewtype' => 'list'));
+	}
 	
-	</script>
-
-	';
-
 	$body = elgg_view_layout("two_column_left_sidebar", '', $area1 . $area2, '');
 
 	// Get categories, if they're installed

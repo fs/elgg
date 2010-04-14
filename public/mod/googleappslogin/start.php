@@ -71,16 +71,6 @@
 		
 		global $CONFIG;
 		
-		// make profile edit links invisible for googleapps accounts
-		// that do not have googleapps control explicitly turned off
-		if ((get_context() == 'profile') 
-			&& ($page_owner_entity = page_owner_entity()) 
-			&& ($page_owner_entity->google == 1)
-			&& ($page_owner_entity->googleapps_controlled_profile != 'no')
-		) {
-			elgg_extend_view('metatags','googleappslogin/hide_profile_embed');
-		}
-		
 		if (get_context() == 'wikis') {
 			add_submenu_item(elgg_echo('googleappslogin:sites:your'), $CONFIG->wwwroot . 'pg/wikis/' . $_SESSION['user']->username);
 			add_submenu_item(elgg_echo('googleappslogin:sites:everyone'), $CONFIG->wwwroot . 'pg/wikis/all');

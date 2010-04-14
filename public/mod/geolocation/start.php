@@ -71,9 +71,40 @@
 		}
 		
 		$GLOBALS['search_count'] = (int) $returnvalue['count'] + $GLOBALS['search_count'];
-		
-		// Change search results
-		//return array('count' => count($entities), 'entities' => $entities);
+		if (get_input('region')) {
+			
+			$entities = array();
+			$box = geolocation_geocode_box(get_input('region'));
+			if (is_array($returnvalue['entities']) && count($returnvalue['entities'])) { 
+				foreach ($returnvalue['entities'] as $entity) {
+					
+					if ($entity->type == 'user') {
+						if ($entity->current_latitude && $entity->current_longitude) {
+							if ($box->east >= $entity->current_longitude && 
+								$box->west <= $entity->current_longitude && 
+								$box->north >= $entity->current_latitude && 
+								$box->south <= $entity->current_latitude) {
+									$entities[] = $entity;
+							}
+						}
+						
+					} else {
+						if ($entity->latitude && $entity->longitude) {
+							if ($box->east >= $entity->latitude && 
+								$box->west <= $entity->latitude && 
+								$box->north >= $entity->longitude && 
+								$box->south <= $entity->longitude) {
+									$entities[] = $entity;
+							}
+						}
+					}
+				}
+			}
+			
+			// Change search results
+			return array('count' => count($entities), 'entities' => $entities);
+			
+		}
 		
 	}
 	

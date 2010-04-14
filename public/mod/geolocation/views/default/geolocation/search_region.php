@@ -20,6 +20,8 @@ if (preg_match('/\/pg\/search/', $url['path'])) {
 		$url_params[$v[0]] = $v[1];
 	}
 	
+	unset($url_params['region']);
+	
 	//print_r($url_params);
 	
 	?>

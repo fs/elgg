@@ -51,7 +51,7 @@
 		elgg_extend_view('css','googleappslogin/css');
 		elgg_extend_view('elgg_topbar/extend','googleappslogin/new_mail');
 		register_plugin_hook('usersettings:save','user','googleappslogin_user_settings_save');
-		
+		register_entity_type('object','site_activity', 'Site activity');
 		$user = $_SESSION['user'];
 		if (!empty($user) && 
 			$user->google && 

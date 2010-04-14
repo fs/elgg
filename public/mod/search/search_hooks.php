@@ -44,7 +44,7 @@ function search_objects_hook($hook, $type, $value, $params) {
 
 		$desc = search_get_highlighted_relevant_substrings($entity->description, $params['query']);
 		$entity->setVolatileData('search_matched_description', $desc);
-	}
+  }
 
 	return array(
 		'entities' => $entities,

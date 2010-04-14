@@ -1649,7 +1649,8 @@ function entity_row_to_elggstar($row) {
 
 	$classname = get_subtype_class_from_id($row->subtype);
 	if ($classname!="") {
-		if (class_exists($classname)) {
+    if (class_exists($classname)) {
+
 			$new_entity = new $classname($row);
 
 			if (!($new_entity instanceof ElggEntity)) {

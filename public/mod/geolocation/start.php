@@ -53,7 +53,7 @@
 		
 		elgg_extend_view('profile/edit','geolocation/profile_links');
 		
-		register_elgg_event_handler('profileupdate','all','geolocation_profile_update');
+    register_elgg_event_handler('profileupdate','all','geolocation_profile_update');
 		
 	}
 	
@@ -73,10 +73,11 @@
 		$GLOBALS['search_count'] = (int) $returnvalue['count'] + $GLOBALS['search_count'];
 		if (get_input('region')) {
 			
-			$entities = array();
-			$box = geolocation_geocode_box(get_input('region'));
-			if (is_array($returnvalue['entities']) && count($returnvalue['entities'])) { 
-				foreach ($returnvalue['entities'] as $entity) {
+      $entities = array();
+      $box = geolocation_geocode_box(get_input('region'));
+      
+      if (is_array($returnvalue['entities']) && count($returnvalue['entities'])) { 
+        foreach ($returnvalue['entities'] as $entity) {
 					
 					if ($entity->type == 'user') {
 						if ($entity->current_latitude && $entity->current_longitude) {
@@ -99,7 +100,9 @@
 						}
 					}
 				}
-			}
+      }
+
+      //print_r($entities);die($box);
 			
 			// Change search results
 			return array('count' => count($entities), 'entities' => $entities);
@@ -280,14 +283,14 @@
 		   	$address = "http://maps.google.com/maps/geo?q=".urlencode($location)."&output=json&key=" . $google_api;
 			
 		   	// Retrieve the URL contents
-	   		$result = file_get_contents($address);
-	   		$obj = json_decode($result);
+      $result = file_get_contents($address);
+      $obj = json_decode($result);
 	   		if (!empty($obj) && 
 				!empty($obj->Placemark) && 
 				!empty($obj->Placemark[0]) &&
 				!empty($obj->Placemark[0]->ExtendedData) &&
 				!empty($obj->Placemark[0]->ExtendedData->LatLonBox)) {
-				return $obj->Placemark[0]->ExtendedData->LatLonBox;
+        return $obj->Placemark[0]->ExtendedData->LatLonBox;
 			}
 		} else {
 			return false;

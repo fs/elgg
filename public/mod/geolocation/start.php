@@ -313,7 +313,6 @@ function geolocation_geocode_box($location = null) {
  */
 function geolocation_tagger($event, $object_type, $object) {
 
-    var_dump($object);
     if ($object_type == 'metadata') {
         $object = $object->getEntity();
     }

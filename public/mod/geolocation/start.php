@@ -317,7 +317,6 @@ function geolocation_tagger($event, $object_type, $object) {
     if ($object_type == 'metadata') {
         $object = $object->getEntity();
     }
-    var_dump($object);die();
 
     if ($object instanceof ElggUser) {
         return;

@@ -15,7 +15,7 @@
 	
 	$access_types = array(
 		'private' => '0',
-		'friends-only' => '-2',
+		'logged-in' => '1',
 		'public' => '2'
 	);
 	$user = page_owner_entity();
@@ -45,7 +45,7 @@
 			foreach ($site_list as $title => $access) {
 				if (!empty($title)){
 					if (is_null($access) || $access != 0 && $access != -2) {
-						$access = 2; 
+						$access = 1; 
 					}
 					?><p><b><?php echo $title;?></b><br /><?
 					echo elgg_view('input/radio',array('internalname' => "googleapps_sites_settings[" . $title . "]", 'options' => $access_types, 'value' => $access));

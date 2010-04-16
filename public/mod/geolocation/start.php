@@ -314,7 +314,7 @@ function geolocation_geocode_box($location = null) {
 function geolocation_tagger($event, $object_type, $object) {
 
     if ($object_type == 'metadata') {
-        $object = $object->getEntity();
+        $object = $object->getOwnerEntity();
     }
 
     if ($object instanceof ElggUser) {

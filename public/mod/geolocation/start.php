@@ -44,6 +44,12 @@ function geolocation_init() {
     elgg_extend_view('file/upload', 'geolocation/scripts');
     elgg_extend_view('file/upload','geolocation/geo_input');
 
+// extend photo views
+    elgg_extend_view('tidypics/forms/upload', 'geolocation/scripts');
+    elgg_extend_view('tidypics/forms/upload','geolocation/geo_input');
+    elgg_extend_view('tidypics/forms/edit', 'geolocation/scripts');
+    elgg_extend_view('tidypics/forms/edit','geolocation/geo_input');
+
     elgg_extend_view('canvas_header/submenu_group','geolocation/search_all_link');
     elgg_extend_view('canvas_header/submenu_group','geolocation/search_kml_link');
     elgg_extend_view('canvas_header/submenu_group','geolocation/search_region');

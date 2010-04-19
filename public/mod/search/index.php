@@ -16,7 +16,7 @@ $query = stripslashes(get_input('q', get_input('tag', '', FALSE), FALSE));
 
 // get limit and offset.  override if on search dashboard, where only 2
 // of each most recent entity types will be shown.
-$limit = ($search_type == 'all') ? 2 : get_input('limit', 10);
+$limit = ($search_type == 'all') ? 10 : get_input('limit', 20);
 $offset = ($search_type == 'all') ? 0 : get_input('offset', 0);
 
 $entity_type = get_input('entity_type', ELGG_ENTITIES_ANY_VALUE);

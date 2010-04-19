@@ -44,7 +44,7 @@
 			<?php
 			foreach ($site_list as $title => $access) {
 				if (!empty($title)){
-					if (is_null($access) || $access != 0 && $access != -2) {
+					if (is_null($access) || $access != 0 && $access != 2) {
 						$access = 1; 
 					}
 					?><p><b><?php echo $title;?></b><br /><?

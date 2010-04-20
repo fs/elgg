@@ -54,7 +54,7 @@ function googleapps_cron_fetch_data() {
 				$user->last_site_activity = 0;
 			}
 
-			// Parse server response for google sites activity stream
+      // Parse server response for google sites activity stream
 			foreach ($response_list as $site) {
 
 				$title = $site['title'];
@@ -77,10 +77,9 @@ function googleapps_cron_fetch_data() {
 				$site_title = $title;
 				$title = 'Changes on ' . $title . ' site';
 
-				//echo '<pre>';print_r($rss->entry);echo '</pre>';exit;
+				//echo '<pre>';print_r($rss->entry);echo '</pre>';
 				// Parse entries for each google site
 				foreach ($rss->entry as $item) {
-          echo '12';
 					// Get entry data
 					$text = $item->summary->div->asXML();
 					$author_email = @$item->author->email[0];
@@ -88,8 +87,8 @@ function googleapps_cron_fetch_data() {
 					$time = strtotime($date);
 					$access = !empty($site_access) ? $site_access : 2;
           $times[] = $time;
-          echo $user->last_site_activity; echo '<br>'; echo $time; echo $item->updated;
-					if ($user->last_site_activity <= $time && $author_email == $user->email) {
+          
+          if ($user->last_site_activity <= $time && $author_email == $user->email) {
             // Initialise a new ElggObject (entity)
 						$site_activity = new ElggObject();
 						$site_activity->subtype = "site_activity";
@@ -246,7 +245,7 @@ function googleapps_cron_fetch_data() {
 				$site_title = $title;
 				$title = 'Changes on ' . $title . ' site';
 
-				//echo '<pre>';print_r($rss->entry);echo '</pre>';exit;
+				// echo '<pre>';print_r($rss->entry);echo '</pre>';exit;
 				// Parse entries for each google site
 				foreach ($rss->entry as $item) {
 					

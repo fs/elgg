@@ -194,22 +194,23 @@ class OAuth_Client {
 	public function fetch_sites($xml) {
 		
 		$rss = simplexml_load_string($xml);
-		//die($xml);
-		$list = array();
+    
+    $list = array();
 		foreach ($rss->entry as $item) {
 			$feedUri = preg_replace('!(.*)feeds/site/(.*)!', '$1feeds/activity/$2', $item->id);
 			
 			$namespaces = array_merge(array('' => ''), $rss->getDocNamespaces(true));
 			$item_array = array();
 			$item_array = $this->xml2phpArray($item, $namespaces, $item_array);
-			//print_r($item_array);exit;
-			$site_url = '';
+      
+      $site_url = '';
 			foreach ($item->link[0]->attributes() as $key => $val) {
 				if ($key == 'href') {
 					$site_url = $val;
 				}
 			}
-			$site = array();
+      
+      $site = array();
 			$site['site_id'] = $item_array['id'];
 			$site['title'] = $item_array['title'];
 			$site['feed'] = $feedUri;
@@ -217,8 +218,8 @@ class OAuth_Client {
 			$site['modified'] = strtotime($item_array['updated']);
 			
 			$list[] = $site;
-		}
-		
+    }
+
 		return $list;
 		
 	}

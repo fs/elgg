@@ -209,8 +209,9 @@ function googleapps_cron_fetch_data() {
 			$_SESSION['new_google_mess'] = $count;
 		}
 		
-		if ($oauth_sync_sites != 'no' && 
-			((!$all && in_array('sites', $scope)) || $all)) {
+	  //if ($oauth_sync_sites != 'no' && 
+    //((!$all && in_array('sites', $scope)) || $all)) {
+      if(false) {
 			
 			$response_list = googleapps_sync_sites();
 			

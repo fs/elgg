@@ -27,8 +27,8 @@ function get_client($user) {
 
 function googleapps_cron_fetch_data() {
 	$result = find_metadata('googleapps_controlled_profile', 'yes', 'user');
-	foreach ($result as $item) {
-		$user = get_user($item->owner_guid);
+	foreach ($result as $gapps_user) {
+		$user = get_user($gapps_user->owner_guid);
     $client = get_client($user);
     
     $all = true;
@@ -80,20 +80,21 @@ function googleapps_cron_fetch_data() {
 				//echo '<pre>';print_r($rss->entry);echo '</pre>';exit;
 				// Parse entries for each google site
 				foreach ($rss->entry as $item) {
-
+          echo '12';
 					// Get entry data
 					$text = $item->summary->div->asXML();
 					$author_email = @$item->author->email[0];
 					$date = $item->updated;
 					$time = strtotime($date);
 					$access = !empty($site_access) ? $site_access : 2;
-					$times[] = $time;
+          $times[] = $time;
+          echo $user->last_site_activity; echo '<br>'; echo $time; echo $item->updated;
 					if ($user->last_site_activity <= $time && $author_email == $user->email) {
-						// Initialise a new ElggObject (entity)
+            // Initialise a new ElggObject (entity)
 						$site_activity = new ElggObject();
 						$site_activity->subtype = "site_activity";
-						$site_activity->owner_guid = get_loggedin_userid();
-						$site_activity->container_guid = (int)get_input('container_guid', get_loggedin_userid());
+						$site_activity->owner_guid = $user->guid;
+						$site_activity->container_guid = $user->guid;
 
 						$site_activity->access_id = $access;
 						$site_activity->title = $title;
@@ -109,7 +110,7 @@ function googleapps_cron_fetch_data() {
 
 						// add to river
 						if (add_to_river('river/object/site_activity/create', 'create',
-						get_loggedin_userid(), $site_activity->guid, "", strtotime($date))) {
+						  $user->guid, $site_activity->guid, "", strtotime($date))) {
 							$is_new_activity = true;
 						}
 

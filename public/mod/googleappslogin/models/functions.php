@@ -21,20 +21,20 @@ function get_client($user) {
   $client = new OAuth_Client($CONSUMER_KEY, $CONSUMER_SECRET, SIG_METHOD_HMAC);
   $client->access_token = $user->access_token;
   $client->access_secret = $user->token_secret;
-	return $client;
+   
+  return $client;
 
 }
 
 function googleapps_cron_fetch_data() {
-	$result = find_metadata('googleapps_controlled_profile', 'yes', 'user');
+  $result = find_metadata('googleapps_controlled_profile', 'yes', 'user');
 	foreach ($result as $gapps_user) {
 		$user = get_user($gapps_user->owner_guid);
     $client = get_client($user);
     
     $all = true;
-		$oauth_sync_email = get_plugin_setting('oauth_sync_email', 'googleappslogin');
-		$oauth_sync_sites = get_plugin_setting('oauth_sync_sites', 'googleappslogin');
-		$oauth_sync_docs = get_plugin_setting('oauth_sync_docs', 'googleappslogin');
+    
+    $oauth_sync_sites = get_plugin_setting('oauth_sync_sites', 'googleappslogin');
 
 		$count = 0;
 		$is_new_activity = false;
@@ -70,13 +70,12 @@ function googleapps_cron_fetch_data() {
 
 				// Get google sites activity stream
 				$activity_xml = $client->execute($feed, '1.1');
-
 				$rss = simplexml_load_string($activity_xml);
 				$times[] = strtotime($rss->updated);
 
 				$site_title = $title;
 				$title = 'Changes on ' . $title . ' site';
-
+      
 				//echo '<pre>';print_r($rss->entry);echo '</pre>';
 				// Parse entries for each google site
 				foreach ($rss->entry as $item) {
@@ -245,7 +244,6 @@ function googleapps_cron_fetch_data() {
 				$site_title = $title;
 				$title = 'Changes on ' . $title . ' site';
 
-				// echo '<pre>';print_r($rss->entry);echo '</pre>';exit;
 				// Parse entries for each google site
 				foreach ($rss->entry as $item) {
 					

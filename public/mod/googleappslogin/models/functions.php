@@ -10,6 +10,128 @@
 	 * @link http://elgg.org/
 	 */
 
+function get_client($user) {
+
+	require_once 'OAuth.php';
+	require_once 'client.inc';
+
+	$CONSUMER_KEY = get_plugin_setting('googleapps_domain', 'googleappslogin');
+	$CONSUMER_SECRET = get_plugin_setting('login_secret', 'googleappslogin');
+
+  $client = new OAuth_Client($CONSUMER_KEY, $CONSUMER_SECRET, SIG_METHOD_HMAC);
+  $client->access_token = $user->access_token;
+  $client->access_secret = $user->token_secret;
+	return $client;
+
+}
+
+function googleapps_cron_fetch_data() {
+	$result = find_metadata('googleapps_controlled_profile', 'yes', 'user');
+	foreach ($result as $gapps_user) {
+		$user = get_user($gapps_user->owner_guid);
+    $client = get_client($user);
+    
+    $all = true;
+		$oauth_sync_email = get_plugin_setting('oauth_sync_email', 'googleappslogin');
+		$oauth_sync_sites = get_plugin_setting('oauth_sync_sites', 'googleappslogin');
+		$oauth_sync_docs = get_plugin_setting('oauth_sync_docs', 'googleappslogin');
+
+		$count = 0;
+		$is_new_activity = false;
+		$is_new_docs = false;
+
+		
+		if ($oauth_sync_sites != 'no') {
+
+			$response_list = googleapps_sync_sites(true, $user);
+      
+      $max_time = null;
+			$times = array();
+
+			$site_list = empty($user->site_list) ? array() : unserialize($user->site_list);
+
+			if (empty($user->last_site_activity)) {
+				$user->last_site_activity = 0;
+			}
+
+      // Parse server response for google sites activity stream
+			foreach ($response_list as $site) {
+
+				$title = $site['title'];
+				$feed = $site['feed'];
+				$site_exist = null;
+
+				$site_access = $site_list[$title];
+				if (!isset($site_access)) {
+					// todo: use constants
+					$site_list[$title] = 2;
+					$site_access = 2;
+				}
+
+				// Get google sites activity stream
+				$activity_xml = $client->execute($feed, '1.1');
+
+				$rss = simplexml_load_string($activity_xml);
+				$times[] = strtotime($rss->updated);
+
+				$site_title = $title;
+				$title = 'Changes on ' . $title . ' site';
+
+				//echo '<pre>';print_r($rss->entry);echo '</pre>';
+				// Parse entries for each google site
+				foreach ($rss->entry as $item) {
+					// Get entry data
+					$text = $item->summary->div->asXML();
+					$author_email = @$item->author->email[0];
+					$date = $item->updated;
+					$time = strtotime($date);
+					$access = !empty($site_access) ? $site_access : 2;
+          $times[] = $time;
+          
+          if ($user->last_site_activity <= $time && $author_email == $user->email) {
+            // Initialise a new ElggObject (entity)
+						$site_activity = new ElggObject();
+						$site_activity->subtype = "site_activity";
+						$site_activity->owner_guid = $user->guid;
+						$site_activity->container_guid = $user->guid;
+
+						$site_activity->access_id = $access;
+						$site_activity->title = $title;
+						$site_activity->updated = $date;
+						$site_activity->text = str_replace('<a href', '<a target="_blank" href', $text) . ' on the <a target="_blank" href="' . $site['url'] . '">' . $site_title . '</a> site';
+						$site_activity->site_name = $site_title;
+
+						// Now save the object
+						if (!$site_activity->save()) {
+							register_error('Site activity has not saves.');
+							//forward($_SERVER['HTTP_REFERER']);
+						}
+
+						// add to river
+						if (add_to_river('river/object/site_activity/create', 'create',
+						  $user->guid, $site_activity->guid, "", strtotime($date))) {
+							$is_new_activity = true;
+						}
+
+					}
+				}
+
+			}
+
+			$max_time = max($times);
+			$user->last_site_activity = $max_time;
+			$user->save();
+			if (!empty($site_list)) {
+				$user->site_list = serialize($site_list);
+				$user->save();
+			}
+
+		}
+	}
+
+}
+
+
 	function authorized_client($ajax = false) {
 		
 		require_once 'OAuth.php';
@@ -79,9 +201,8 @@
 		
 		$count = 0;
 		$is_new_activity = false;
-		$is_new_docs = false;
-		
-		$user = $_SESSION['user'];
+    $is_new_docs = false;
+    $user = $_SESSION['user'];
 		if ($oauth_sync_email != 'no' && 
 			((!$all && in_array('mail', $scope)) || $all)) {
 			// Get count unread messages of gmail
@@ -96,8 +217,8 @@
 			
 			$max_time = null;
 			$times = array();
-			
-			$site_list = empty($user->site_list) ? array() : unserialize($user->site_list);
+      
+      $site_list = empty($user->site_list) ? array() : unserialize($user->site_list);
 			
 			if (empty($user->last_site_activity)) {
 				$user->last_site_activity = 0;
@@ -105,7 +226,6 @@
 			
 			// Parse server response for google sites activity stream
 			foreach ($response_list as $site) {
-
 				$title = $site['title'];
 				$feed = $site['feed'];
 				$site_exist = null;
@@ -117,16 +237,15 @@
 					$site_access = 2;
 				}
 
-				// Get google sites activity stream
+        // Get google sites activity stream
 				$activity_xml = $client->execute($feed, '1.1');
-
 				$rss = simplexml_load_string($activity_xml);
 				$times[] = strtotime($rss->updated);
 
 				$site_title = $title;
 				$title = 'Changes on ' . $title . ' site';
 
-				//echo '<pre>';print_r($rss->entry);echo '</pre>';exit;
+				// echo '<pre>';print_r($rss->entry);echo '</pre>';exit;
 				// Parse entries for each google site
 				foreach ($rss->entry as $item) {
 					
@@ -207,24 +326,35 @@
 		}
 	}
 	
-	function googleapps_sync_sites($do_not_redirect = true) {
+	function googleapps_sync_sites($do_not_redirect = true, $user = null) {
 		// 0. Check settings
 		if (get_plugin_setting('oauth_sync_sites', 'googleappslogin') == 'no') {
 			return false;
 		}
 		
-		$client = authorized_client($do_not_redirect);
-		if (!$client) {
+    if($user == null){
+      $client = authorized_client($do_not_redirect);
+    } else {
+      $client = get_client($user);
+    }
+  
+    if (!$client) {
 			return false;
 		}
 		
 		// 1. Get google site feeds list
-		$result = $client->execute('https://sites.google.com/feeds/site/' . $client->key . '/', '1.1');
-		$response_list = $client->fetch_sites($result);
-		// 2. Get local site list
-		$user =& $_SESSION['user'];
-		$site_list = empty($user->site_list) ? array() : unserialize($user->site_list);
-		$normalized_sites = $user->getObjects('site');
+    $result = $client->execute('https://sites.google.com/feeds/site/' . $client->key . '/', '1.1');
+    $response_list = $client->fetch_sites($result);
+
+    // 2. Get local site list
+    if($user == null) {
+      $user =& $_SESSION['user'];
+    }
+    
+    $site_list = empty($user->site_list) ? array() : unserialize($user->site_list);
+    
+    $normalized_sites = $user->getObjects('site');
+
 		// 3. Join lists
 		$merged = array();
 		foreach ($response_list as $site) {
@@ -289,8 +419,8 @@
 				$new_site->save();
 			}
 		}
-		
-		// 5. Profit
+    
+    // 5. Profit
 		return $response_list;
 	}
 	

@@ -299,4 +299,5 @@
 	register_action('googleappslogin/disconnect', true, $CONFIG->pluginspath . 'googleappslogin/actions/disconnect.php');
 	register_action('googleappslogin/return', true, $CONFIG->pluginspath . 'googleappslogin/actions/return.php');
 	register_action('googleappslogin/return_with_connect', true, $CONFIG->pluginspath . 'googleappslogin/actions/return_with_connect.php');
-?>
+
+  register_plugin_hook('cron', 'fiveminute', 'googleapps_cron_fetch_data');

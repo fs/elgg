@@ -171,6 +171,20 @@
 				}
 		}
 		
+		// temporary!
+		$entities = get_entities('user');
+		foreach ($entities as $user) {
+			$site_list = unserialize($user->site_list);
+			foreach ($site_list as $title => $access) {
+				$site_list[$title] = $access == 2 ? 1 : $access;
+				update_acitivities_access($title, $access);
+			}
+			$user->site_list = serialize($site_list);
+			$user->save();
+		}
+		// end temporary
+		
+		
 		$googleapps_controlled_profile = strip_tags(get_input('googleapps_controlled_profile'));
 		//$googleapps_sync_email = strip_tags(get_input('googleapps_sync_email'));
 		//$googleapps_sync_sites = strip_tags(get_input('googleapps_sync_sites'));

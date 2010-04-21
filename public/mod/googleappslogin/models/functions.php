@@ -1,14 +1,20 @@
 <?php
 
-	/**
-	 * Functions for use OAuth
-	 *
-	 * @package GoogleAppsLogin
-	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
-	 * @author Alexander Ulitin <alexander.ulitin@flatsoft.com>
-	 * @copyright FlatSourcing 2010
-	 * @link http://elgg.org/
-	 */
+/**
+ * Functions for use OAuth
+ *
+ * @package GoogleAppsLogin
+ * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
+ * @author Alexander Ulitin <alexander.ulitin@flatsoft.com>
+ * @copyright FlatSourcing 2010
+ * @link http://elgg.org/
+ */
+
+function calc_access($access) {
+	if ($access == 22) return 2;
+	if ($access == 2) return 1;
+	return $access;
+}
 
 function get_client($user) {
 
@@ -27,34 +33,25 @@ function get_client($user) {
 }
 
 function googleapps_cron_fetch_data() {
-  $result = find_metadata('googleapps_controlled_profile', 'yes', 'user');
+	$result = find_metadata('googleapps_controlled_profile', 'yes', 'user');
 	foreach ($result as $gapps_user) {
 		$user = get_user($gapps_user->owner_guid);
-    $client = get_client($user);
-    
-    $all = true;
-    
-    $oauth_sync_sites = get_plugin_setting('oauth_sync_sites', 'googleappslogin');
-
+		$client = get_client($user);
+		$all = true;
+		$oauth_sync_sites = get_plugin_setting('oauth_sync_sites', 'googleappslogin');
 		$count = 0;
 		$is_new_activity = false;
 		$is_new_docs = false;
-
-		
 		if ($oauth_sync_sites != 'no') {
-
 			$response_list = googleapps_sync_sites(true, $user);
-      
-      $max_time = null;
+			$max_time = null;
 			$times = array();
-
 			$site_list = empty($user->site_list) ? array() : unserialize($user->site_list);
-
 			if (empty($user->last_site_activity)) {
 				$user->last_site_activity = 0;
 			}
 
-      // Parse server response for google sites activity stream
+			// Parse server response for google sites activity stream
 			foreach ($response_list as $site) {
 
 				$title = $site['title'];
@@ -64,8 +61,8 @@ function googleapps_cron_fetch_data() {
 				$site_access = $site_list[$title];
 				if (!isset($site_access)) {
 					// todo: use constants
-					$site_list[$title] = 2;
-					$site_access = 2;
+					$site_list[$title] = 1;
+					$site_access = 1;
 				}
 
 				// Get google sites activity stream
@@ -84,11 +81,11 @@ function googleapps_cron_fetch_data() {
 					$author_email = @$item->author->email[0];
 					$date = $item->updated;
 					$time = strtotime($date);
-					$access = !empty($site_access) ? $site_access : 2;
-          $times[] = $time;
+					$access = calc_access($access);
+					$times[] = $time;
           
-          if ($user->last_site_activity <= $time && $author_email == $user->email) {
-            // Initialise a new ElggObject (entity)
+					if ($user->last_site_activity <= $time && $author_email == $user->email) {
+					// Initialise a new ElggObject (entity)
 						$site_activity = new ElggObject();
 						$site_activity->subtype = "site_activity";
 						$site_activity->owner_guid = $user->guid;
@@ -233,8 +230,8 @@ function googleapps_cron_fetch_data() {
 				$site_access = $site_list[$title];
 				if (!isset($site_access)) {
 					// todo: use constants
-					$site_list[$title] = 2;
-					$site_access = 2;
+					$site_list[$title] = 1;
+					$site_access = 1;
 				}
 
         // Get google sites activity stream
@@ -253,7 +250,7 @@ function googleapps_cron_fetch_data() {
 					$author_email = @$item->author->email[0];
 					$date = $item->updated;
 					$time = strtotime($date);
-					$access = !empty($site_access) ? $site_access : 2;
+					$access = calc_access($site_access);
 					$times[] = $time;
 					if ($user->last_site_activity <= $time && $author_email == $user->email) {
 						// Initialise a new ElggObject (entity)

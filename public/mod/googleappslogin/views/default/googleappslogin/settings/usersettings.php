@@ -16,7 +16,7 @@
 	$access_types = array(
 		'private' => '0',
 		'logged-in' => '1',
-		'public' => '2'
+		'public' => '22'
 	);
 	$user = page_owner_entity();
 	//echo '<pre>';print_r($user->googleapps_controlled_profile);exit;
@@ -44,7 +44,7 @@
 			<?php
 			foreach ($site_list as $title => $access) {
 				if (!empty($title)){
-					if (is_null($access) || $access != 0 && $access != 2) {
+					if (is_null($access) || $access != 0 && $access != 22) {
 						$access = 1; 
 					}
 					?><p><b><?php echo $title;?></b><br /><?

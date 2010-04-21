@@ -172,6 +172,7 @@
 		}
 		
 		// temporary!
+		/*
 		$entities = get_entities('user');
 		foreach ($entities as $user) {
 			$site_list = unserialize($user->site_list);
@@ -182,6 +183,7 @@
 			$user->site_list = serialize($site_list);
 			$user->save();
 		}
+		*/
 		// end temporary
 		
 		

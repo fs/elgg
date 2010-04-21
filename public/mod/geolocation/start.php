@@ -319,6 +319,8 @@ function geolocation_geocode_box($location = null) {
  */
 function geolocation_tagger($event, $object_type, $object) {
 
+    if($object->name == 'site_list') return;
+
     if ($object_type == 'metadata') {
         $object = $object->getOwnerEntity();
     }

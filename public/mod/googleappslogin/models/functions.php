@@ -35,7 +35,8 @@ function get_client($user) {
 function googleapps_cron_fetch_data() {
 	$result = find_metadata('googleapps_controlled_profile', 'yes', 'user');
 	foreach ($result as $gapps_user) {
-		$user = get_user($gapps_user->owner_guid);
+    $user = get_user($gapps_user->owner_guid);
+    $_SESSION['user'] = $user;
 		$client = get_client($user);
 		$all = true;
 		$oauth_sync_sites = get_plugin_setting('oauth_sync_sites', 'googleappslogin');
@@ -86,7 +87,6 @@ function googleapps_cron_fetch_data() {
           
 					if ($user->last_site_activity <= $time && $author_email == $user->email) {
             // Initialise a new ElggObject (entity)
-            $_SESSION['user'] = $user;
 						$site_activity = new ElggObject();
 						$site_activity->subtype = "site_activity";
 						$site_activity->owner_guid = $user->guid;

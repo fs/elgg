@@ -169,8 +169,13 @@ google.setOnLoadCallback(function () {
 </script>
 <div class="map-container">
 	<label>Location <a href="#" class="view-map-link">view map</a></label>
-	<div class="map">
-		<div><form name="geosearch" id="geosearch" onsubmit="return false;"><input type="text" name="query" id="query" value=""/><input type="submit" id="query_submit" value="Search" /></form></div>
+	<div class="map"><a href="#" class="view-map-link close">Close</a>
+		<div class="geosearch">
+			<form name="geosearch" id="geosearch" onsubmit="return false;">
+				<input type="text" name="query" id="query" value=""/>
+				<input type="submit" id="query_submit" value="Search" />
+			</form>
+		</div>
 		<div id="map"></div>
 	</div>
 </div>

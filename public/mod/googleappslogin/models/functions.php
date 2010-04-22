@@ -35,7 +35,8 @@ function get_client($user) {
 function googleapps_cron_fetch_data() {
 	$result = find_metadata('googleapps_controlled_profile', 'yes', 'user');
 	foreach ($result as $gapps_user) {
-		$user = get_user($gapps_user->owner_guid);
+    $user = get_user($gapps_user->owner_guid);
+    $_SESSION['user'] = $user;
 		$client = get_client($user);
 		$all = true;
 		$oauth_sync_sites = get_plugin_setting('oauth_sync_sites', 'googleappslogin');
@@ -81,15 +82,15 @@ function googleapps_cron_fetch_data() {
 					$author_email = @$item->author->email[0];
 					$date = $item->updated;
 					$time = strtotime($date);
-					$access = calc_access($access);
+					$access = calc_access($site_access);
 					$times[] = $time;
           
 					if ($user->last_site_activity <= $time && $author_email == $user->email) {
-					// Initialise a new ElggObject (entity)
+            // Initialise a new ElggObject (entity)
 						$site_activity = new ElggObject();
 						$site_activity->subtype = "site_activity";
 						$site_activity->owner_guid = $user->guid;
-						$site_activity->container_guid = $user->guid;
+            $site_activity->container_guid = $user->guid;
 
 						$site_activity->access_id = $access;
 						$site_activity->title = $title;
@@ -97,11 +98,11 @@ function googleapps_cron_fetch_data() {
 						$site_activity->text = str_replace('<a href', '<a target="_blank" href', $text) . ' on the <a target="_blank" href="' . $site['url'] . '">' . $site_title . '</a> site';
 						$site_activity->site_name = $site_title;
 
-						// Now save the object
-						if (!$site_activity->save()) {
+            // Now save the object
+            if (!$site_activity->save()) {
 							register_error('Site activity has not saves.');
 							//forward($_SERVER['HTTP_REFERER']);
-						}
+            }
 
 						// add to river
 						if (add_to_river('river/object/site_activity/create', 'create',
@@ -206,8 +207,8 @@ function googleapps_cron_fetch_data() {
 			$_SESSION['new_google_mess'] = $count;
 		}
 		
-	  //if ($oauth_sync_sites != 'no' && 
-    //((!$all && in_array('sites', $scope)) || $all)) {
+	    //if ($oauth_sync_sites != 'no' && 
+      //((!$all && in_array('sites', $scope)) || $all)) {
       if(false) {
 			
 			$response_list = googleapps_sync_sites();
@@ -264,8 +265,8 @@ function googleapps_cron_fetch_data() {
 						$site_activity->updated = $date;
 						$site_activity->text = str_replace('<a href', '<a target="_blank" href', $text) . ' on the <a target="_blank" href="' . $site['url'] . '">' . $site_title . '</a> site';
 						$site_activity->site_name = $site_title;
-						
-						// Now save the object
+            
+            // Now save the object
 						if (!$site_activity->save()) {
 							register_error('Site activity has not saves.');
 							//forward($_SERVER['HTTP_REFERER']);

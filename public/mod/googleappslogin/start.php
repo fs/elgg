@@ -166,7 +166,7 @@
 		function update_acitivities_access($site_name, $access) {
 				$entities = get_entities_from_metadata('site_name', $site_name, 'object');
 				foreach ($entities as $entity) {
-					$entity->access_id = $access;
+					$entity->access_id = $access == 2 ? 1 : ($access == 22 ? 2 : $access);
 					$entity->save();
 				}
 		}

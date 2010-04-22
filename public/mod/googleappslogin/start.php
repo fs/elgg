@@ -218,7 +218,7 @@
 			
 			if (($user) && ($user->canEdit())) {
 				if ($googleapps_controlled_profile != $user->googleapps_controlled_profile) {
-					$user->googleapps_controlled_profile = $googleapps_controlled_profile;
+					//$user->googleapps_controlled_profile = $googleapps_controlled_profile;
 					if (!$user->save()) {
 						$error = true;
 					}

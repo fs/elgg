@@ -53,7 +53,7 @@ function geolocation_init() {
 
 	elgg_extend_view('canvas_header/submenu_group','geolocation/search_all_link');
 	elgg_extend_view('canvas_header/submenu_group','geolocation/search_kml_link');
-	elgg_extend_view('canvas_header/submenu_group','geolocation/search_region');
+	//elgg_extend_view('canvas_header/submenu_group','geolocation/search_region');
 
 	elgg_extend_view('canvas/layouts/two_column_left_sidebar', 'geolocation/search', 1000);
 

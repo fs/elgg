@@ -18,7 +18,7 @@
 	left:50%;
 	margin-left:-340px !important;
 }
-.map .view-map-link.close {z-index:500;position:absolute;right:0px; top:-20px;background:url(/_graphics/pop_up_logout.png) right -1px no-repeat;height:17px;width:50px;display:block;}
+.map .view-map-link.close {z-index:500;position:absolute;right:0px; top:-20px;background:url(/mod/geolocation/graphics/pop_up_logout.png) right -1px no-repeat;height:17px;width:50px;display:block;}
 .map .view-map-link.close:hover {background-position:right -18px;}
 .map .geosearch {position:absolute; bottom:15px; right:7px; z-index:500;}
 .map .geosearch input {border-color:#4690d6;}

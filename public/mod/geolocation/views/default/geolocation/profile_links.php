@@ -47,7 +47,8 @@
 		$c_lg = 0;
 		
 		?>
-		<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<?= $GLOBALS['google_api'] ?>"></script>
+		
+		<script src="http://maps.google.com/maps?file=api&amp;v=3&amp;key=<?= $GLOBALS['google_api'] ?>"></script>
 		<script type="text/javascript" src="http://j.maxmind.com/app/geoip.js"></script>
 		<script type="text/javascript">
 		

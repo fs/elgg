@@ -55,12 +55,9 @@ if ($is_location) {
 		echo elgg_view('geolocation/search_points_listing', array('entities' => $entities, 'prefix' => $type));
 		
 		?>
-		<div class="search_listing">
-		<!--<a href="?<?= $adv_query?>">view on a map</a>-->
+		<div class="search_listing">		
 		<a href="#map2" onclick="show_map(<?=$type?>_markers);return false;">view on a map</a>
 		</div>
 		<?
 	}
 }
-
-?>

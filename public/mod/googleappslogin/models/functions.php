@@ -49,7 +49,7 @@ function googleapps_cron_fetch_data() {
 			$times = array();
 			$site_list = empty($user->site_list) ? array() : unserialize($user->site_list);
 			if (empty($user->last_site_activity)) {
-				$user->last_site_activity = 0;
+				$user->last_site_activity = '0';
 			}
 
 			// Parse server response for google sites activity stream
@@ -114,10 +114,13 @@ function googleapps_cron_fetch_data() {
 				}
 
 			}
+      
+      if($response_list) {
+			  $max_time = max($times);
+			  $user->last_site_activity = $max_time;
+        $user->save();
+      }
 
-			$max_time = max($times);
-			$user->last_site_activity = $max_time;
-			$user->save();
 			if (!empty($site_list)) {
 				$user->site_list = serialize($site_list);
 				$user->save();
@@ -362,7 +365,8 @@ function googleapps_cron_fetch_data() {
 		$user->site_list = serialize($merged);
 		$user->save();
 		// 4.1 Update normalized sites: destroy deleted sites
-		foreach ($normalized_sites as $site_entity) {
+    if($normalized_sites) { 
+    foreach ($normalized_sites as $site_entity) {
 			$found = false;
 			foreach ($response_list as $site) {
 				if (empty($site_entity->site_id)) {
@@ -393,7 +397,8 @@ function googleapps_cron_fetch_data() {
 					$site_entity->save();
 				}
 			}
-		}
+    }
+    }
 		// 4.2 Update normalized sites: create new sites
 		foreach ($response_list as $site) {
 			$found = false;

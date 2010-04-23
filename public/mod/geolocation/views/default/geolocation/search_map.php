@@ -102,18 +102,14 @@ if ($show_map) {
 			$.facebox($('#layout_map'));
 
 			bounds = new GLatLngBounds();
-			var center = bounds.getCenter();
 
-			map.setCenter(center, 2);
-			map.addControl(new GLargeMapControl());
-			map.addControl(new GMapTypeControl());
 			var icon = new GIcon(G_DEFAULT_ICON);
 			icon.image = "http://chart.apis.google.com/chart?cht=mm&chs=24x32&chco=FFFFFF,008CFF,000000&ext=.png";
 			for (i in points) {
 				if(is_all == '1') {
 					var latlng = new GLatLng(points[i].latitude, points[i].longitude);
 					var marker = new GMarker(latlng);
-					
+
 					if(points[i].desc) {
 						var fn = markerClick(points[i].desc, latlng);
 						GEvent.addListener(marker, "click", fn);
@@ -121,9 +117,16 @@ if ($show_map) {
 				} else {
 					var marker = points[i];
 				}
+				bounds.extend(marker.getLatLng());
 
 				markers.push(marker);
 			}
+
+			var center = bounds.getCenter();
+			var zoom   = map.getBoundsZoomLevel(bounds);
+			map.setCenter(center, zoom);
+			map.addControl(new GLargeMapControl());
+			map.addControl(new GMapTypeControl());
 			refreshMap();
         }
 	}

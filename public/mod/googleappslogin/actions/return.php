@@ -63,7 +63,7 @@ if (!$client->authorized() && !empty($user) && ($oauth_sync_email != 'no' || $oa
 
 if (!empty($_SESSION['oauth_connect'])) {
 	unset($_SESSION['oauth_connect']);
-	forward('pg/settings/user/');
+	forward('mod/googleappslogin');
 }
 
 $google = Google_OpenID::create_from_response($CONFIG->input);

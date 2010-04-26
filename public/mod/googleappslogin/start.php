@@ -50,7 +50,7 @@ function googleappslogin_init() {
 	// Extend system CSS with our own styles
 	elgg_extend_view('css','googleappslogin/css');
 	elgg_extend_view('elgg_topbar/extend','googleappslogin/new_mail');
-	register_plugin_hook('usersettings:save','user','googleappslogin_user_settings_save');
+	//register_plugin_hook('usersettings:save','user','googleappslogin_user_settings_save');
 	register_entity_type('object','site_activity', 'Site activity');
 	$user = $_SESSION['user'];
 	if (!empty($user) &&
@@ -81,7 +81,7 @@ function googleappslogin_pagesetup() {
 		add_submenu_item(elgg_echo('googleappslogin:site:add'), $GLOBALS['link_to_add_site']);
 	}
 
-	extend_elgg_settings_page('googleappslogin/settings/usersettings', 'usersettings/user');
+	//extend_elgg_settings_page('googleappslogin/settings/usersettings', 'usersettings/user');
 }
 
 /**

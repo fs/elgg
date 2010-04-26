@@ -52,10 +52,12 @@ googleapps_sync_sites();
 					}
 				}
 
+				$body .= '<div class="clearfloat"></div><div class="friendspicker_savebuttons">	<input type="submit" value="' . elgg_echo('save') . '" /><br /></div>	';
+
 				echo elgg_view('input/form',array(
 				'body' => $body,
 				'method' => 'post',
-				'action' => $vars['url'] . 'action/usersettings/save',
+				'action' => $vars['url'] . 'action/googleappslogin/save',
 				));
 			}
 			echo elgg_view('googleappslogin/disconnect');

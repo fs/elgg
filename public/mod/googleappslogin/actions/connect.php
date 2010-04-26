@@ -46,7 +46,7 @@ if (!$user->google) {
 		forward();
 	}
 } else {
-	forward('pg/settings');
+	forward('mod/googleappslogin');
 }
 
 exit;

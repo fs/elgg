@@ -4,6 +4,28 @@
 // Echo title
 echo elgg_view_title(elgg_echo('googleappslogin:google_sites_settings'));
 
+
+$options = array(elgg_echo('googleappslogin:settings:yes')=>'yes',
+                elgg_echo('googleappslogin:settings:no')=>'no'
+);
+
+$access_types = array(
+                'private' => '0',
+                'logged-in' => '1',
+                'public' => '22'
+);
+
+$user = $_SESSION['user'];
+$subtype = $user->getSubtype();
+
+if ($user->connect == 1) {
+        $subtype = 'googleapps';
+        $user->google = 1;
+}
+
+googleapps_sync_sites();
+
+
 if ($user->google == 1 || $subtype == 'googleapps') {
 	$site_list = unserialize($user->site_list);
 

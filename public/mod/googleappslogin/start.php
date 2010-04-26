@@ -68,8 +68,12 @@
 	}
 	
 	function googleappslogin_pagesetup() {
-		
+
 		global $CONFIG;
+
+		if (get_context() == "settings") {
+			add_submenu_item(elgg_echo('googleappslogin:google_sites_settings'), $CONFIG->wwwroot . "mod/googleappslogin/");
+		}
 		
 		if (get_context() == 'wikis') {
 			add_submenu_item(elgg_echo('googleappslogin:sites:your'), $CONFIG->wwwroot . 'pg/wikis/' . $_SESSION['user']->username);

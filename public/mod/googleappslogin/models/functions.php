@@ -34,11 +34,9 @@ function get_client($user) {
 
 function googleapps_cron_fetch_data() {
   $result = find_metadata('googleapps_controlled_profile', 'yes', 'user', '', 99999999);
-  //print_r(get_metadata_for_entity(2));
-  //$result = find_metadata('googleapps_controlled_profile', 'yes', 'object');
+  
   foreach ($result as $gapps_user) {    
     $user = get_user($gapps_user->owner_guid);
-    echo $user->email . "\n";
     $_SESSION['user'] = $user;
 		$client = get_client($user);
 		$all = true;

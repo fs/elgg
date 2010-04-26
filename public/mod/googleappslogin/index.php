@@ -1,7 +1,7 @@
 <?php	
 
 // Load Elgg framework
-require_once(dirname(dirname(dirname(__FILE__))) . '/engine/start.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/engine/start.php');
 
 // Ensure only logged-in users can see this page
 gatekeeper();

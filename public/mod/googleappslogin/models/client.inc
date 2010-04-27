@@ -218,7 +218,7 @@ class OAuth_Client {
         
       
       $acl_xml = $this->execute($acl_url, '1.2');
-      $acl = simplexml_load_string($acl_xml);
+      if( $acl_xml != "Internal Error" ) $acl = simplexml_load_string($acl_xml);
       
       $public = false;
 

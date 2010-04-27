@@ -247,7 +247,12 @@ class ElggDiskFilestore extends ElggFilestore {
 		}
 
 		if ((!$owner) || (!$owner->username)) {
-			throw new InvalidParameterException(sprintf(elgg_echo('InvalidParameterException:MissingOwner'), $file->getFilename(), $file->guid));
+			// include file guid and owner guid to make debugging easier
+			$owner_guid = 0;
+			if ($owner) {
+				$owner_guid = $owner->guid;
+			}
+			throw new InvalidParameterException(sprintf(elgg_echo('InvalidParameterException:MissingOwner'), $file->getFilename(), $file->guid, $owner_guid));
 		}
 
 		return $this->dir_root . $this->make_file_matrix($owner->guid) . $file->getFilename();
@@ -643,13 +648,13 @@ class ElggFile extends ElggObject {
 	 * along side this file, or the system default.
 	 */
 	protected function getFilestore() {
-    // Short circuit if already set.
+		// Short circuit if already set.
 		if ($this->filestore) {
 			return $this->filestore;
 		}
 
 		// If filestore meta set then retrieve filestore TODO: Better way of doing this?
-    $metas = get_metadata_for_entity($this->guid);
+		$metas = get_metadata_for_entity($this->guid);
 		$parameters = array();
 		if (is_array($metas)) {
 			foreach ($metas as $meta) {
@@ -665,7 +670,7 @@ class ElggFile extends ElggObject {
 
 		// If parameters loaded then create new filestore
 		if (count($parameters)!=0) {
-      // Create new filestore object
+			// Create new filestore object
 			if ((!isset($parameters['filestore'])) || (!class_exists($parameters['filestore']))) {
 				throw new ClassNotFoundException(elgg_echo('ClassNotFoundException:NotFoundNotSavedWithFile'));
 			}

@@ -217,7 +217,18 @@ class OAuth_Client {
       }
         
       
+      $acl_xml = $this->execute($acl_url, '1.2');
+      $acl = simplexml_load_string($acl_xml);
       
+      $public = false;
+
+      if($acl){
+        foreach ($acl->entry as $item) {
+         if($item->id == $acl->id . '/default') $public = true;
+        }
+      }
+
+      if($public) {
       $site = array();
 			$site['site_id'] = $item_array['id'];
 			$site['title'] = $item_array['title'];
@@ -226,7 +237,8 @@ class OAuth_Client {
       $site['acl'] = $acl_url;
 			$site['modified'] = strtotime($item_array['updated']);
 			
-			$list[] = $site;
+      $list[] = $site; 
+      }
     }
 
 		return $list;

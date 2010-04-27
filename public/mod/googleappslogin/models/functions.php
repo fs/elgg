@@ -67,9 +67,9 @@ function googleapps_cron_fetch_data() {
 					$site_access = 1;
 				}
 
-        $acl_xml = $client->execute($site['acl'], '1.2');
-        $acl = simplexml_load_string($acl_xml);
-        var_dump($acl);
+        //$acl_xml = $client->execute($site['acl'], '1.2');
+        //$acl = simplexml_load_string($acl_xml);
+        //var_dump($acl);
         //echo $acl_xml . "\n";
 				// Get google sites activity stream
         $activity_xml = $client->execute($feed, '1.1');

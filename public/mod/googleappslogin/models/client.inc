@@ -208,13 +208,22 @@ class OAuth_Client {
 				if ($key == 'href') {
 					$site_url = $val;
 				}
-			}
+      }
+
+      foreach ($item->link[1]->attributes() as $key => $val) {
+          if ($key == 'href') {
+            $acl_url = $val;
+          }
+      }
+        
+      
       
       $site = array();
 			$site['site_id'] = $item_array['id'];
 			$site['title'] = $item_array['title'];
 			$site['feed'] = $feedUri;
-			$site['url'] = $site_url;
+      $site['url'] = $site_url;
+      $site['acl'] = $acl_url;
 			$site['modified'] = strtotime($item_array['updated']);
 			
 			$list[] = $site;
@@ -222,7 +231,8 @@ class OAuth_Client {
 
 		return $list;
 		
-	}
+  }
+
 	
 	public function unread_messages($list = false) {
 		

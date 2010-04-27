@@ -45,7 +45,7 @@ function googleapps_cron_fetch_data() {
 		$is_new_activity = false;
 		$is_new_docs = false;
 		if ($oauth_sync_sites != 'no') {
-			$response_list = googleapps_sync_sites(true, $user);
+      $response_list = googleapps_sync_sites(true, $user);
 			$max_time = null;
 			$times = array();
 			$site_list = empty($user->site_list) ? array() : unserialize($user->site_list);
@@ -67,9 +67,13 @@ function googleapps_cron_fetch_data() {
 					$site_access = 1;
 				}
 
+        $acl_xml = $client->execute($site['acl'], '1.2');
+        $acl = simplexml_load_string($acl_xml);
+        var_dump($acl);
+        //echo $acl_xml . "\n";
 				// Get google sites activity stream
-				$activity_xml = $client->execute($feed, '1.1');
-				$rss = simplexml_load_string($activity_xml);
+        $activity_xml = $client->execute($feed, '1.1');
+        $rss = simplexml_load_string($activity_xml);
 				$times[] = strtotime($rss->updated);
 
 				$site_title = $title;
@@ -239,8 +243,9 @@ function googleapps_cron_fetch_data() {
 					$site_access = 1;
 				}
 
+      
         // Get google sites activity stream
-				$activity_xml = $client->execute($feed, '1.1');
+        $activity_xml = $client->execute($feed, '1.1');
 				$rss = simplexml_load_string($activity_xml);
 				$times[] = strtotime($rss->updated);
 
@@ -341,7 +346,7 @@ function googleapps_cron_fetch_data() {
   
     if (!$client) {
 			return false;
-		}
+    }
 		
 		// 1. Get google site feeds list
     $result = $client->execute('https://sites.google.com/feeds/site/' . $client->key . '/', '1.1');
@@ -358,7 +363,7 @@ function googleapps_cron_fetch_data() {
 
 		// 3. Join lists
 		$merged = array();
-		foreach ($response_list as $site) {
+    foreach ($response_list as $site) {
 			$title = $site['title'];
 			$merged[$title] = isset($site_list[$title]) ? $site_list[$title] : ACCESS_PUBLIC;
 		}

@@ -26,6 +26,7 @@ foreach ($types as $type => $subtypes) {
 //
 //			add_submenu_item(elgg_echo($label), $url);
 			$name = $type . "_" . $subtype;
+			$select_checkboxes[] = array('label' => elgg_echo($label), 'name' => $name);
 		}
 	} else {
 		$label = "item:$type";
@@ -42,8 +43,8 @@ foreach ($types as $type => $subtypes) {
 //
 //		add_submenu_item(elgg_echo($label), $url);
 		$name = $type;
-	}
-	$select_checkboxes[] = array('label' => elgg_echo($label), 'name' => $name);
+		$select_checkboxes[] = array('label' => elgg_echo($label), 'name' => $name);
+	}	
 }
 
 $body = elgg_view('geolocation/map', array('select_checkboxes' => $select_checkboxes));

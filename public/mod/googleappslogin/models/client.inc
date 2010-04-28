@@ -191,7 +191,7 @@ class OAuth_Client {
 
 	}
 
-	public function fetch_sites($xml, $checkAcl = false) {
+	public function fetch_sites($xml) {
 
 		$rss = simplexml_load_string($xml);
 
@@ -216,31 +216,29 @@ class OAuth_Client {
 				}
 			}
 
+			$public = false;
+			$acl_xml = $this->execute($acl_url, '1.2');
+			if( $acl_xml != "Internal Error" ) $acl = simplexml_load_string($acl_xml);
 
-			$public = true;
-
-			if($checkAcl == true) {
-				$public = false;
-				$acl_xml = $this->execute($acl_url, '1.2');
-				if( $acl_xml != "Internal Error" ) $acl = simplexml_load_string($acl_xml);
-
-				if($acl) {
-					foreach ($acl->entry as $item) {
-						if($item->id == $acl->id . '/default') $public = true;
-					}
+			if($acl) {
+				foreach ($acl->entry as $item) {
+					if($item->id == $acl->id . '/default') $public = true;
 				}
 			}
 
+			$site = array();
 			if($public) {
-				$site = array();
-				$site['site_id'] = $item_array['id'];
-				$site['title'] = $item_array['title'];
-				$site['feed'] = $feedUri;
-				$site['url'] = $site_url;
-				$site['modified'] = strtotime($item_array['updated']);
-
-				$list[] = $site;
+				$site['isPublic'] = true;
+			} else {
+				$site['isPublic'] = false;
 			}
+			
+			$site['site_id'] = $item_array['id'];
+			$site['title'] = $item_array['title'];
+			$site['feed'] = $feedUri;
+			$site['url'] = $site_url;
+			$site['modified'] = strtotime($item_array['updated']);
+			$list[] = $site;
 		}
 
 		return $list;

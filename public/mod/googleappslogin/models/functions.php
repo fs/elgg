@@ -85,7 +85,10 @@ function googleapps_cron_fetch_data() {
 					$access = calc_access($site_access);
 					$times[] = $time;
 
-					if ($user->last_site_activity <= $time && $author_email == $user->email) {
+					if ($user->last_site_activity <= $time 
+							&& $author_email == $user->email
+							&& $site['isPublic'] == true)
+						{
 						// Initialise a new ElggObject (entity)
 						$site_activity = new ElggObject();
 						$site_activity->subtype = "site_activity";
@@ -327,7 +330,7 @@ function googleapps_fetch_oauth_data($client, $ajax = false, $scope = null) {
 	}
 }
 
-function googleapps_sync_sites($do_not_redirect = true, $user = null, $checkAcl = false) {
+function googleapps_sync_sites($do_not_redirect = true, $user = null) {
 	// 0. Check settings
 	if (get_plugin_setting('oauth_sync_sites', 'googleappslogin') == 'no') {
 		return false;
@@ -345,7 +348,7 @@ function googleapps_sync_sites($do_not_redirect = true, $user = null, $checkAcl 
 
 	// 1. Get google site feeds list
 	$result = $client->execute('https://sites.google.com/feeds/site/' . $client->key . '/', '1.1');
-	$response_list = $client->fetch_sites($result, $checkAcl);
+	$response_list = $client->fetch_sites($result);
 
 	// 2. Get local site list
 	if($user == null) {

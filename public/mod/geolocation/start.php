@@ -31,6 +31,9 @@ function geolocation_init() {
 	register_page_handler('geolocation','geolocation_page_handler');
 
 
+//extend toolbar
+	elgg_extend_view('page_elements/searchbox', 'geolocation/toolbar_link', 400);
+
 // extend some views
 	elgg_extend_view('search/listing', 'geolocation/search_link');
 //elgg_extend_view('search/entity_list', 'geolocation/search_map');
@@ -175,21 +178,26 @@ function geolocation_page_handler($page) {
 			$result = elgg_get_entities(
 					array(
 					'types' => array('user', 'object'),
-					'subtypes' => 'bookmarks'
+					'subtypes' => array('bookmarks', 0)
 					)
 			);
 
 			$data = array();
 
-			$data['count'] = count($result);
+			//$data['count'] = count($result);
 
-			foreach($result as $item) {				
-				$data['marker'][]['latitude'] = $item->getLatitude();
-				$key = count($data['marker'])-1;
-				$data['marker'][$key]['longitude'] = $item->getLongitude();
+			//var_dump($result);
+
+			foreach($result as $item) {
 				if($item->type == 'user') {
+					$data['marker'][]['latitude'] = $item->current_latitude;
+					$key = count($data['marker'])-1;
+					$data['marker'][$key]['longitude'] = $item->current_longitude;
 					$data['marker'][$key]['desc'] = '<a href="' . $item->getURL() . '">' . $item->name . '</a>';
 				} else {
+					$data['marker'][]['latitude'] = $item->getLatitude();
+					$key = count($data['marker'])-1;
+					$data['marker'][$key]['longitude'] = $item->getLongitude();
 					$data['marker'][$key]['desc'] = '<a href="' . $item->getURL() . '">' . $item->title . '</a>';
 				}
 				$data['marker'][$key]['desc'] .= $item->description;

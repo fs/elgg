@@ -1,0 +1,1 @@
+<a href="/mod/geolocation/map.php" style="position: absolute;left:-30px;"><img src="/mod/geolocation/graphics/globe.png" width="16" height="16" alt="map" /></a>

@@ -177,19 +177,14 @@ function geolocation_page_handler($page) {
 
 			$entity_types = get_registered_entity_types();
 
-			$types = array_keys($types);
-			$subtypes = array();
-			$subtype = array_values($types);
-			
-			foreach($subtype as $item){
-				array_merge($subtypes, $item);
-			}
-
-			
+			$types = array_keys($entity_types);
+			$subtypes = $entity_types['object'];
+									
 			$result = elgg_get_entities(
 					array(
 					'types' => $types,
-					'subtypes' => $subtypes
+					'subtypes' => $subtypes,
+					'limit' => 1000
 					)
 			);
 

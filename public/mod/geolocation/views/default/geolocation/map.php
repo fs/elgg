@@ -44,7 +44,7 @@
 	});
 
 	function toggleAll(toggle) {
-		var allCheckboxes = $("#show_types input:checkbox:enabled");
+		var allCheckboxes = $("#typesForm input:checkbox:enabled");
 		if(toggle) {
 			allCheckboxes.attr('checked', 'checked');
 		} else {

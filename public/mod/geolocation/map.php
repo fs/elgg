@@ -12,36 +12,11 @@ foreach ($types as $type => $subtypes) {
 	if (is_array($subtypes) && count($subtypes)) {
 		foreach ($subtypes as $subtype) {
 			$label = "item:$type:$subtype";
-
-//			$data = htmlspecialchars(http_build_query(array(
-//				'q' => $query,
-//				'entity_subtype' => $subtype,
-//				'entity_type' => $type,
-//				'owner_guid' => $owner_guid,
-//				'search_type' => 'entities',
-//				'friends' => $friends
-//			)));
-
-//			$url = "{$CONFIG->wwwroot}pg/search/?$data";
-//
-//			add_submenu_item(elgg_echo($label), $url);
 			$name = $type . "_" . $subtype;
 			$select_checkboxes[] = array('label' => elgg_echo($label), 'name' => $name);
 		}
 	} else {
 		$label = "item:$type";
-
-//		$data = htmlspecialchars(http_build_query(array(
-//			'q' => $query,
-//			'entity_type' => $type,
-//			'owner_guid' => $owner_guid,
-//			'search_type' => 'entities',
-//			'friends' => $friends
-//		)));
-
-//		$url = "{$CONFIG->wwwroot}pg/search/?$data";
-//
-//		add_submenu_item(elgg_echo($label), $url);
 		$name = $type;
 		$select_checkboxes[] = array('label' => elgg_echo($label), 'name' => $name);
 	}	

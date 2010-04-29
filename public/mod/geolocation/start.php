@@ -175,32 +175,40 @@ function geolocation_page_handler($page) {
 	switch ($page[0]) {
 		case 'data':
 
+			$entity_types = get_registered_entity_types();
+
+			$types = array_keys($types);
+			$subtypes = array();
+			$subtype = array_values($types);
+			
+			foreach($subtype as $item){
+				array_merge($subtypes, $item);
+			}
+
+			
 			$result = elgg_get_entities(
 					array(
-					'types' => array('user', 'object'),
-					'subtypes' => array('bookmarks', 0)
+					'types' => $types,
+					'subtypes' => $subtypes
 					)
 			);
 
 			$data = array();
 
-			//$data['count'] = count($result);
-
-			//var_dump($result);
-
 			foreach($result as $item) {
-				if($item->type == 'user') {
+				if($item->type == 'user' && $item->current_latitude != null && $item->current_longitude != null) {
 					$data['marker'][]['latitude'] = $item->current_latitude;
 					$key = count($data['marker'])-1;
 					$data['marker'][$key]['longitude'] = $item->current_longitude;
 					$data['marker'][$key]['desc'] = '<a href="' . $item->getURL() . '">' . $item->name . '</a>';
-				} else {
+					$data['marker'][$key]['desc'] .= $item->description;
+				} elseif($item->getLatitude() != null) {
 					$data['marker'][]['latitude'] = $item->getLatitude();
 					$key = count($data['marker'])-1;
 					$data['marker'][$key]['longitude'] = $item->getLongitude();
 					$data['marker'][$key]['desc'] = '<a href="' . $item->getURL() . '">' . $item->title . '</a>';
-				}
-				$data['marker'][$key]['desc'] .= $item->description;
+					$data['marker'][$key]['desc'] .= $item->description;
+				}				
 			}
 
 			echo 'var data = ' . json_encode($data);

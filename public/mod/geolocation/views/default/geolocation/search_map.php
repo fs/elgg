@@ -21,7 +21,7 @@ if ($show_map) {
 
 <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<?= $GLOBALS['google_api'] ?>" type="text/javascript"></script>
 <script src="/mod/geolocation/js/markerclusterer.js" type="text/javascript"></script>
-<script src="/pg/geolocation/data" type="text/javascript"></script>
+<script src="/pg/geolocation/data?types=all" type="text/javascript"></script>
 <script type="text/javascript">
 	var all_markers = Array();
 	var styles = [[{

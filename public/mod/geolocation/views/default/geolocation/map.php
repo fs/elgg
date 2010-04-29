@@ -12,8 +12,7 @@
 	}
 
 	jQuery(function() {
-		map = new google.maps.Map2(document.getElementById("map"));
-		map.setUIToDefault();
+		map = new google.maps.Map2(document.getElementById("map"));		
 		refreshMap(data);
 	});
 
@@ -26,7 +25,14 @@
 		}
 	}
 
-	function refreshMap(datajson) {
+	function setPosition() {
+		var center = bounds.getCenter();
+		var zoom   = map.getBoundsZoomLevel(bounds);
+
+		map.setCenter(center, zoom);
+	}
+
+	function loadMarkers(datajson) {
 		markers = [];
 		var points = datajson.marker;
 		bounds = new GLatLngBounds();
@@ -42,11 +48,24 @@
 
 			markers.push(marker);
 		}
+	}
 
-		var center = bounds.getCenter();
-		var zoom   = map.getBoundsZoomLevel(bounds);
-				
-		map.setCenter(center, zoom);
+	function refreshMarkers(datajson){
+		loadMarkers(datajson);
+		
+		map.addControl(new GLargeMapControl());
+		map.addControl(new GMapTypeControl());
+
+		if (markerClusterer != null) {
+			markerClusterer.clearMarkers();
+        }
+        markerClusterer = new MarkerClusterer(map, markers);
+	}
+
+	function refreshMap(datajson) {
+		loadMarkers(datajson);
+
+		setPosition();
 
 		map.addControl(new GLargeMapControl());
 		map.addControl(new GMapTypeControl());
@@ -63,7 +82,7 @@
                 url: '/pg/geolocation/data',
 				dataType : "json",                     // тип загружаемых данных
 				success: function (result) { // вешаем свой обработчик на функцию success
-					refreshMap(result);
+					refreshMarkers(result);
 				}
             });
             return false; // <-- important!

@@ -166,6 +166,42 @@ function geolocation_profile_update($event, $object_type, $object) {
 	}
 }
 
+function get_json_markers() {
+	global $CONFIG;
+
+	require_once($CONFIG->path . "engine/start.php");
+
+	$check_types = get_input('check_types', false);
+
+	if($check_types) {
+		$types = array();
+		$subtypes = array();
+		foreach($check_types as $item) {
+			if( preg_match("/^object_(.*)/", $item, $matches) ) {
+				if(!in_array('object', $types)) $types[] = 'object';
+				$subtypes[] = $matches[1];
+			} else {
+				$types[] = $item;
+			}
+		}
+	} elseif(get_input('types') == 'all') {
+		$entity_types = get_registered_entity_types();
+
+		$types = array_keys($entity_types);
+		$subtypes = $entity_types['object'];
+	}
+
+	$result = elgg_get_entities(
+			array(
+			'types' => $types,
+			'subtypes' => $subtypes,
+			'limit' => 1000
+			)
+	);
+
+	return $result;
+}
+
 function geolocation_page_handler($page) {
 
 	global $CONFIG;
@@ -175,34 +211,13 @@ function geolocation_page_handler($page) {
 	switch ($page[0]) {
 		case 'data':
 
-			$check_types = get_input('check_types', false);
-		
-			if($check_types) {
-				$types = array();
-				$subtypes = array();
-				foreach($check_types as $item) {
-					if( preg_match("/^object_(.*)/", $item, $matches) ) {
-						if(!in_array('object', $types)) $types[] = 'object';
-						$subtypes[] = $matches[1];
-					} else {
-						$types[] = $item;
-					}
-				}
-			} elseif(get_input('types') == 'all') {
-				$entity_types = get_registered_entity_types();
+			$result = get_json_markers() ;
 
-				$types = array_keys($entity_types);
-				$subtypes = $entity_types['object'];
-				echo 'var data = ';
+			if(get_input('view') == 'kml') {
+				$GLOBALS['my_search_result'] = $result;
+				page_draw('kml', 'body');
+				exit();
 			}
-
-			$result = elgg_get_entities(
-					array(
-					'types' => $types,
-					'subtypes' => $subtypes,
-					'limit' => 1000
-					)
-			);
 
 			$data = array();
 
@@ -222,7 +237,10 @@ function geolocation_page_handler($page) {
 				}
 			}
 
+
+			if(get_input('types') == 'all') echo 'var data = ';
 			echo json_encode($data);
+
 
 			break;
 

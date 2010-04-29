@@ -1,6 +1,6 @@
 <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<?= $GLOBALS['google_api'] ?>" type="text/javascript"></script>
 <script src="/mod/geolocation/js/markerclusterer.js" type="text/javascript"></script>
-<script src="/pg/geolocation/data" type="text/javascript"></script>
+<script src="/pg/geolocation/data?types=all" type="text/javascript"></script>
 <script type="text/javascript">
 	var markerClusterer = null;
 	var markers = [];
@@ -14,8 +14,21 @@
 	jQuery(function() {
 		map = new google.maps.Map2(document.getElementById("map"));
 		map.setUIToDefault();
+		refreshMap(data);				
+	});
 
-		var points = data.marker;
+	function toggleAll(toggle) {
+		var allCheckboxes = $("#typesForm input:checkbox:enabled");
+		if(toggle) {
+			allCheckboxes.attr('checked', 'checked');
+		} else {
+			allCheckboxes.removeAttr('checked');
+		}
+	}
+
+	function refreshMap(datajson) {
+		markers = [];
+		var points = datajson.marker;
 		bounds = new GLatLngBounds();
 
 		for (i in points) {
@@ -40,22 +53,17 @@
 		if (markerClusterer != null) {
 			markerClusterer.clearMarkers();
         }
-        markerClusterer = new MarkerClusterer(map, markers);		
-	});
-
-	function toggleAll(toggle) {
-		var allCheckboxes = $("#typesForm input:checkbox:enabled");
-		if(toggle) {
-			allCheckboxes.attr('checked', 'checked');
-		} else {
-			allCheckboxes.removeAttr('checked');
-		}
+        markerClusterer = new MarkerClusterer(map, markers);
 	}
 
 	$(document).ready(function() {
         $('#typesForm').bind('submit', function() {
             $(this).ajaxSubmit({
-                target: ''
+                url: '/pg/geolocation/data',
+				dataType : "json",                     // тип загружаемых данных
+				success: function (result) { // вешаем свой обработчик на функцию success
+					refreshMap(result);
+				}
             });
             return false; // <-- important!
         });

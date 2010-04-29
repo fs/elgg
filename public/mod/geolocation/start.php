@@ -175,11 +175,27 @@ function geolocation_page_handler($page) {
 	switch ($page[0]) {
 		case 'data':
 
-			$entity_types = get_registered_entity_types();
+			$check_types = get_input('check_types', false);
+		
+			if($check_types) {
+				$types = array();
+				$subtypes = array();
+				foreach($check_types as $item) {
+					if( preg_match("/^object_(.*)/", $item, $matches) ) {
+						if(!in_array('object', $types)) $types[] = 'object';
+						$subtypes[] = $matches[1];
+					} else {
+						$types[] = $item;
+					}
+				}
+			} elseif(get_input('types') == 'all') {
+				$entity_types = get_registered_entity_types();
 
-			$types = array_keys($entity_types);
-			$subtypes = $entity_types['object'];
-									
+				$types = array_keys($entity_types);
+				$subtypes = $entity_types['object'];
+				echo 'var data = ';
+			}
+
 			$result = elgg_get_entities(
 					array(
 					'types' => $types,
@@ -203,10 +219,10 @@ function geolocation_page_handler($page) {
 					$data['marker'][$key]['longitude'] = $item->getLongitude();
 					$data['marker'][$key]['desc'] = '<a href="' . $item->getURL() . '">' . $item->title . '</a>';
 					$data['marker'][$key]['desc'] .= $item->description;
-				}				
+				}
 			}
 
-			echo 'var data = ' . json_encode($data);
+			echo json_encode($data);
 
 			break;
 

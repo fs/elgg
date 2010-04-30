@@ -159,8 +159,9 @@
 </script>
 
 
-<div>
+<div class="filter-toolbar">
 	<form method="GET" action="" id="typesForm">
+		<p class="title">Include on map:</p>
 		<ul>
 			<?php foreach($vars['select_checkboxes'] as $item): ?>
 			<li>
@@ -168,17 +169,21 @@
 				<label for="label_<?php echo $item['name']; ?>"><?php echo $item['label']; ?></label>
 			</li>
 			<?php endforeach; ?>
-			<li>Select: <a href="javascript:toggleAll(1)">All</a> | <a href="javascript:toggleAll(0)">None</a></li>
-			<li><input type="submit" name="do" value="Update map"></li>
 		</ul>
+		<div class="update-map">
+			<span>Select: <a href="javascript:toggleAll(1)">All</a> | <a href="javascript:toggleAll(0)">None</a></span>
+			<span><input type="submit" name="do" value="Update map"></span>
+		</div>
 	</form>
 </div>
-<div class="geosearch">
-	<form name="geosearch" id="geosearch" onsubmit="return false;">
-		<input type="text" name="query" id="query" value=""/>
-		<input type="submit" id="query_submit" value="Search" />
-	</form>
-</div>
-<div id="map" style="width: 100%">
-	<div style="padding: 1em; color: gray">Loading...</div>
+<div class="google-map">
+	<div class="geosearch single">
+		<form name="geosearch" id="geosearch" onsubmit="return false;">
+			<input type="text" name="query" id="query" value=""/>
+			<input type="submit" id="query_submit" value="Search" />
+		</form>
+	</div>
+	<div id="map" style="width: 100%">
+		<div style="padding: 1em; color: gray">Loading...</div>
+	</div>
 </div>

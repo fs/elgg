@@ -20,8 +20,10 @@
 }
 .map .view-map-link.close {z-index:500;position:absolute;right:0px; top:-20px;background:url(/mod/geolocation/graphics/pop_up_logout.png) right -1px no-repeat;height:17px;width:50px;display:block;}
 .map .view-map-link.close:hover {background-position:right -18px;}
-.map .geosearch {position:absolute; bottom:15px; right:7px; z-index:500;}
-.map .geosearch input {border-color:#4690d6;}
+.map .geosearch,
+.geosearch.single {position:absolute; bottom:15px; right:7px; z-index:500;}
+.map .geosearch input,
+.geosearch input {border-color:#4690d6;}
 #blog_edit_page .map-container {background: #BBDAF7; margin-left:230px;width:710px;}
 #blog_edit_page .map-container > label{ margin-left:20px; }
 #blog_edit_page .map {  }
@@ -32,3 +34,10 @@
 .user_settings div.map-container div.map #map { }
 .search-results-sidebar { -webkit-border-radius:8px; -moz-border-radius:8px 8px 8px 8px; background:#DEDEDE; float:left; margin:15px 0 0 1px; padding:0 0 5px; width:718px; }
 .search-results-sidebar div#map { width:672px; }
+.google-map {position:relative;}
+.filter-toolbar {padding:10px;overflow:hidden;position:relative;}
+.filter-toolbar .title {font-weight:bold;margin-bottom:0;}
+.filter-toolbar ul {overflow:hidden;padding:0;margin:10px 0 0;float:left;width:500px;}
+.filter-toolbar ul li {list-style:none;display:block;float:left;width:160px;}
+.filter-toolbar ul li label {font-size:12px;font-weight:normal;}
+.filter-toolbar .update-map {float:right;width:200px;position:absolute;bottom:0;right:10px;}

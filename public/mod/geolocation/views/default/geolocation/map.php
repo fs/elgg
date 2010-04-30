@@ -39,7 +39,15 @@
 
 		for (i in points) {
 			var latlng = new GLatLng(points[i].latitude, points[i].longitude);
-			var marker = new GMarker(latlng);
+			
+			if( typeof(points[i].icon) != "undefined") {
+			var icon = new GIcon(G_DEFAULT_ICON);
+			icon.image = "/mod/geolocation/graphics/markers/" + points[i].icon + ".png";
+			var marker = new GMarker(latlng, {icon: icon});
+			} else {
+				var marker = new GMarker(latlng);
+			}
+
 			bounds.extend(marker.getLatLng());
 			if(points[i].desc) {
 				var fn = markerClick(points[i].desc, latlng);

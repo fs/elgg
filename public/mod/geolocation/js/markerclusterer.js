@@ -687,17 +687,33 @@ ClusterMarker_.prototype.initialize = function (map) {
     div.innerHTML = this.text_;
     map.getPane(G_MAP_MAP_PANE).appendChild(div);
     var padding = this.padding_;
-    GEvent.addDomListener(div, "click", function () {
+    GEvent.addDomListener(div, "click", function () {	
 	var title = '';
+	var one_location = 0;
+	var orig_loc = markers_desc[0].longitude + markers_desc[0].latitude;
 	for (i in markers_desc) {
+	    if (orig_loc != markers_desc[i].longitude + markers_desc[i].latitude) {
+		one_location++;
+	    }
 	    var num = parseInt(i) +1
 	    title = title + num + ". " + markers_desc[i].desc + "<br />";
 	}
-	map.openInfoWindowHtml(latlng, title, {
-	    maxWidth:300,
-	    maxHeight:300,
-	    autoScroll:true
-	});
+	
+	if(one_location != 0) {
+	    var pos = map.fromLatLngToDivPixel(latlng);
+	    var sw = new GPoint(pos.x - padding, pos.y + padding);
+	    sw = map.fromDivPixelToLatLng(sw);
+	    var ne = new GPoint(pos.x + padding, pos.y - padding);
+	    ne = map.fromDivPixelToLatLng(ne);
+	    var zoom = map.getBoundsZoomLevel(new GLatLngBounds(sw, ne), map.getSize());
+	    map.setCenter(latlng, zoom);
+	} else {	
+	    map.openInfoWindowHtml(latlng, title, {
+		maxWidth:300,
+		maxHeight:300,
+		autoScroll:true
+	    });
+	}
     });
       
     this.div_ = div;

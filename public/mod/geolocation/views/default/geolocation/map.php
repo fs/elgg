@@ -11,11 +11,6 @@
 		}
 	}
 
-	jQuery(function() {
-		map = new google.maps.Map2(document.getElementById("map"));		
-		refreshMap(data);
-	});
-
 	function toggleAll(toggle) {
 		var allCheckboxes = $("#typesForm input:checkbox:enabled");
 		if(toggle) {
@@ -67,7 +62,7 @@
 		if (markerClusterer != null) {
 			markerClusterer.clearMarkers();
         }
-        markerClusterer = new MarkerClusterer(map, markers);
+        markerClusterer = new MarkerClusterer(map, markers, datajson.marker);
 	}
 
 	function refreshMap(datajson) {
@@ -81,26 +76,8 @@
 		if (markerClusterer != null) {
 			markerClusterer.clearMarkers();
         }
-        markerClusterer = new MarkerClusterer(map, markers);
-	}
-
-	$(document).ready(function() {
-        $('#typesForm').bind('submit', function() {
-            $(this).ajaxSubmit({
-                url: '/pg/geolocation/data',
-				dataType : "json",                     // тип загружаемых данных
-				success: function (result) { // вешаем свой обработчик на функцию success
-					refreshMarkers(result);
-				}
-            });
-            return false; // <-- important!
-        });
-
-		$('#geosearch').submit(function() {
-			geocode();
-			return false;
-		});
-    });
+        markerClusterer = new MarkerClusterer(map, markers, [], datajson.marker);
+	}	
 
 	function geocode() {
 		var query = document.getElementById("query").value;
@@ -159,10 +136,32 @@
 		} else {
 			latlng = new GLatLng(response.Placemark[0].Point.coordinates[1],
 			response.Placemark[0].Point.coordinates[0]);			
-			map.panTo(latlng);
-			//refreshMap(data, latlng)
+			map.panTo(latlng);			
 		}
 	}
+
+	jQuery(function() {
+		map = new google.maps.Map2(document.getElementById("map"));		
+		refreshMap(data);
+	});
+
+	$(document).ready(function() {
+        $('#typesForm').bind('submit', function() {
+            $(this).ajaxSubmit({
+                url: '/pg/geolocation/data',
+				dataType : "json",
+				success: function (result) {
+					refreshMarkers(result);
+				}
+            });
+            return false; // <-- important!
+        });
+
+		$('#geosearch').submit(function() {
+			geocode();
+			return false;
+		});
+    });
 
 </script>
 

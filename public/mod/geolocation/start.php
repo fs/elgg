@@ -197,7 +197,7 @@ function get_json_markers() {
 			'subtypes' => $subtypes,
 			'limit' => 1000
 			)
-	);	
+	);
 
 	return $result;
 }
@@ -222,12 +222,12 @@ function geolocation_page_handler($page) {
 			$data = array();
 
 			$icons = array(
-				'album',
-				'photo',
-				'user',
-				'blog',
-				'file',
-				'video'
+					'album',
+					'image',
+					'user',
+					'blog',
+					'file',
+					'video'
 			);
 
 			foreach($result as $item) {
@@ -242,8 +242,13 @@ function geolocation_page_handler($page) {
 					$data['marker'][]['latitude'] = $item->getLatitude();
 					$key = count($data['marker'])-1;
 					$data['marker'][$key]['longitude'] = $item->getLongitude();
-					$data['marker'][$key]['desc'] = '<a href="' . $item->getURL() . '">' . $item->title . '</a>';
-					$data['marker'][$key]['desc'] .= $item->description;
+					if (get_subtype_from_id($item->subtype) == 'image') {
+						$data['marker'][$key]['desc'] = '<a href="' . $item->getURL() . '">image</a>';
+					} else {
+						$data['marker'][$key]['desc'] = '<a href="' . $item->getURL() . '">' . $item->title . '</a>';
+						$data['marker'][$key]['desc'] .= $item->description;
+					}
+
 					if( $item->type == 'object' && in_array(get_subtype_from_id($item->subtype), $icons) ) $data['marker'][$key]['icon'] = get_subtype_from_id($item->subtype);
 				}
 			}

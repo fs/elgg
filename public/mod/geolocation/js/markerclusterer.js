@@ -74,7 +74,7 @@
  * @param {Array of GMarker} opt_markers Initial set of markers to be clustered.
  * @param {MarkerClustererOptions} opt_opts A container for optional arguments.
  */
-function MarkerClusterer(map, opt_markers, opt_opts) {
+function MarkerClusterer(map, opt_markers, opt_opts, opt_descs) {
     // private members
     var clusters_ = [];
     var map_ = map;
@@ -83,8 +83,10 @@ function MarkerClusterer(map, opt_markers, opt_opts) {
     var gridSize_ = 60;
     var sizes = [53, 56, 66, 78, 90];
     var styles_ = [];
-    var leftMarkers_ = [];
+    var leftMarkers_ = [];    
     var mcfn_ = null;
+
+    var markersDesc_ = [];
 
     var i = 0;
     for (i = 1; i <= 5; ++i) {
@@ -118,7 +120,7 @@ function MarkerClusterer(map, opt_markers, opt_opts) {
 	    return;
 	}
 	var leftMarkers = [];
-	for (i = 0; i < leftMarkers_.length; ++i) {
+	for (i = 0; i < leftMarkers_.length; ++i) {	    
 	    me_.addMarker(leftMarkers_[i], true, null, null, true);
 	}
 	leftMarkers_ = leftMarkers;
@@ -144,6 +146,7 @@ function MarkerClusterer(map, opt_markers, opt_opts) {
 	}
 	clusters_ = [];
 	leftMarkers_ = [];
+	markersDesc_ = [];
 	GEvent.removeListener(mcfn_);
     };
 
@@ -161,11 +164,11 @@ function MarkerClusterer(map, opt_markers, opt_opts) {
    * These markers should be add to new clusters.
    * @param {Array of GMarker} markers Markers to add.
    */
-    function reAddMarkers_(markers) {
+    function reAddMarkers_(markers, markers_desc) {
 	var len = markers.length;
 	var clusters = [];
-	for (var i = len - 1; i >= 0; --i) {
-	    me_.addMarker(markers[i].marker, true, markers[i].isAdded, clusters, true);
+	for (var i = len - 1; i >= 0; --i) {	    
+	    me_.addMarker(markers[i].marker, true, markers[i].isAdded, clusters, true, markers_desc[i]);
 	}
 	addLeftMarkers_();
     }
@@ -179,10 +182,12 @@ function MarkerClusterer(map, opt_markers, opt_opts) {
    * @param {Array of Cluster} opt_clusters Provide a list of clusters, the marker
    *     cluster will only check these cluster where the marker should join.
    */
-    this.addMarker = function (marker, opt_isNodraw, opt_isAdded, opt_clusters, opt_isNoCheck) {
+    this.addMarker = function (marker, opt_isNodraw, opt_isAdded, opt_clusters, opt_isNoCheck, marker_desc) {
+	
 	if (opt_isNoCheck !== true) {
 	    if (!isMarkerInViewport_(marker)) {
 		leftMarkers_.push(marker);
+		markersDesc_.push(marker_desc);
 		return;
 	    }
 	}
@@ -210,11 +215,11 @@ function MarkerClusterer(map, opt_markers, opt_opts) {
 
 	    // Found a cluster which contains the marker.
 	    if (pos.x >= center.x - gridSize_ && pos.x <= center.x + gridSize_ &&
-		pos.y >= center.y - gridSize_ && pos.y <= center.y + gridSize_) {
+		pos.y >= center.y - gridSize_ && pos.y <= center.y + gridSize_) {		
 		cluster.addMarker({
 		    'isAdded': isAdded,
 		    'marker': marker
-		});
+		}, marker_desc);
 		if (!opt_isNodraw) {
 		    cluster.redraw_();
 		}
@@ -223,11 +228,11 @@ function MarkerClusterer(map, opt_markers, opt_opts) {
 	}
 
 	// No cluster contain the marker, create a new cluster.
-	cluster = new Cluster(this, map);
+	cluster = new Cluster(this, opt_descs);
 	cluster.addMarker({
 	    'isAdded': isAdded,
 	    'marker': marker
-	});
+	}, marker_desc);
 	if (!opt_isNodraw) {
 	    cluster.redraw_();
 	}
@@ -332,6 +337,7 @@ function MarkerClusterer(map, opt_markers, opt_opts) {
     this.resetViewport = function () {
 	var clusters = this.getClustersInViewport_();
 	var tmpMarkers = [];
+	var tmpMarkersDesc = [];
 	var removed = 0;
 
 	for (var i = 0; i < clusters.length; ++i) {
@@ -346,12 +352,14 @@ function MarkerClusterer(map, opt_markers, opt_opts) {
 		// If the cluster zoom level changed then destroy the cluster
 		// and collect its markers.
 		var mks = cluster.getMarkers();
+		var mksdesc = cluster.getMarkersDesc();
 		for (var j = 0; j < mks.length; ++j) {
 		    var newMarker = {
 			'isAdded': false,
 			'marker': mks[j].marker
 		    };
 		    tmpMarkers.push(newMarker);
+		    tmpMarkersDesc.push(mksdesc[j]);
 		}
 		cluster.clearMarkers();
 		removed++;
@@ -364,7 +372,7 @@ function MarkerClusterer(map, opt_markers, opt_opts) {
 	}
 
 	// Add the markers collected into marker cluster to reset
-	reAddMarkers_(tmpMarkers);
+	reAddMarkers_(tmpMarkers, tmpMarkersDesc);
 	this.redraw_();
     };
 
@@ -374,16 +382,16 @@ function MarkerClusterer(map, opt_markers, opt_opts) {
    *
    * @param {Array of GMarker} markers The markers you want to add.
    */
-    this.addMarkers = function (markers) {
-	for (var i = 0; i < markers.length; ++i) {
-	    this.addMarker(markers[i], true);
+    this.addMarkers = function (markers, descs) {
+	for (var i = 0; i < markers.length; ++i) {	    
+	    this.addMarker(markers[i], true, null, null, null, descs[i]);
 	}
 	this.redraw_();
     };
 
     // initialize
-    if (typeof opt_markers === "object" && opt_markers !== null) {
-	this.addMarkers(opt_markers);
+    if (typeof opt_markers === "object" && opt_markers !== null) {	
+	this.addMarkers(opt_markers, opt_descs);
     }
 
     // when map move end, regroup.
@@ -406,6 +414,7 @@ function MarkerClusterer(map, opt_markers, opt_opts) {
 function Cluster(markerClusterer) {
     var center_ = null;
     var markers_ = [];
+    var markers_desc_ = [];
     var markerClusterer_ = markerClusterer;
     var map_ = markerClusterer.getMap_();
     var clusterMarker_ = null;
@@ -418,6 +427,10 @@ function Cluster(markerClusterer) {
    */
     this.getMarkers = function () {
 	return markers_;
+    };
+
+    this.getMarkersDesc = function () {
+	return markers_desc_;
     };
 
     /**
@@ -469,7 +482,7 @@ function Cluster(markerClusterer) {
    *   {Boolean} isAdded If the marker is added on map.
    *   {GMarker} marker The marker you want to add.
    */
-    this.addMarker = function (marker) {
+    this.addMarker = function (marker, marker_desc) {
 	if (center_ === null) {
 	    /*var pos = marker['marker'].getLatLng();
        pos = map.fromLatLngToContainerPixel(pos);
@@ -478,7 +491,8 @@ function Cluster(markerClusterer) {
        center = map.fromContainerPixelToLatLng(pos);*/
 	    center_ = marker.marker.getLatLng();
 	}
-	markers_.push(marker);
+	markers_.push(marker);	
+	markers_desc_.push(marker_desc);
     };
 
     /**
@@ -554,8 +568,8 @@ function Cluster(markerClusterer) {
 		    markers_[i].marker.hide();
 		}
 	    }
-	    if (clusterMarker_ === null) {
-		clusterMarker_ = new ClusterMarker_(center_, this.getTotalMarkers(), markerClusterer_.getStyles_(), markerClusterer_.getGridSize_());
+	    if (clusterMarker_ === null) {		
+		clusterMarker_ = new ClusterMarker_(center_, this.getTotalMarkers(), markerClusterer_.getStyles_(), markerClusterer_.getGridSize_(), markers_desc_);
 		map_.addOverlay(clusterMarker_);
 	    } else {
 		if (clusterMarker_.isHidden()) {
@@ -606,7 +620,7 @@ function Cluster(markerClusterer) {
  *   {String} textColor text color.
  * @param {Number} padding Padding of marker center.
  */
-function ClusterMarker_(latlng, count, styles, padding) {
+function ClusterMarker_(latlng, count, styles, padding, markers_desc) {
     var index = 0;
     var dv = count;
     while (dv !== 0) {
@@ -627,6 +641,7 @@ function ClusterMarker_(latlng, count, styles, padding) {
     this.styles_ = styles;
     this.text_ = count;
     this.padding_ = padding;
+    this.markers_desc_ = markers_desc;
 }
 
 ClusterMarker_.prototype = new GOverlay();
@@ -639,6 +654,7 @@ ClusterMarker_.prototype.initialize = function (map) {
     this.map_ = map;
     var div = document.createElement("div");
     var latlng = this.latlng_;
+    var markers_desc = this.markers_desc_;
     var pos = map.fromLatLngToDivPixel(latlng);
     pos.x -= parseInt(this.width_ / 2, 10);
     pos.y -= parseInt(this.height_ / 2, 10);
@@ -667,19 +683,23 @@ ClusterMarker_.prototype.initialize = function (map) {
 
     div.style.cssText = mstyle + 'cursor:pointer;top:' + pos.y + "px;left:" +
     pos.x + "px;color:" + txtColor +  ";position:absolute;font-size:11px;" +
-    'font-family:Arial,sans-serif;font-weight:bold';
+    'font-family:Arial,sans-serif;font-weight:bold';    
     div.innerHTML = this.text_;
     map.getPane(G_MAP_MAP_PANE).appendChild(div);
     var padding = this.padding_;
-      GEvent.addDomListener(div, "click", function () {
-        var pos = map.fromLatLngToDivPixel(latlng);
-        var sw = new GPoint(pos.x - padding, pos.y + padding);
-        sw = map.fromDivPixelToLatLng(sw);
-        var ne = new GPoint(pos.x + padding, pos.y - padding);
-        ne = map.fromDivPixelToLatLng(ne);
-        var zoom = map.getBoundsZoomLevel(new GLatLngBounds(sw, ne), map.getSize());
-        map.setCenter(latlng, zoom);
-      });
+    GEvent.addDomListener(div, "click", function () {
+	var title = '';
+	for (i in markers_desc) {
+	    var num = parseInt(i) +1
+	    title = title + num + ". " + markers_desc[i].desc + "<br />";
+	}
+	map.openInfoWindowHtml(latlng, title, {
+	    maxWidth:300,
+	    maxHeight:300,
+	    autoScroll:true
+	});
+    });
+      
     this.div_ = div;
 };
 
@@ -696,7 +716,7 @@ ClusterMarker_.prototype.remove = function () {
  * @private
  */
 ClusterMarker_.prototype.copy = function () {
-    return new ClusterMarker_(this.latlng_, this.index_, this.text_, this.styles_, this.padding_);
+    return new ClusterMarker_(this.latlng_, this.index_, this.text_, this.styles_, this.padding_, this.markers_desc_);
 };
 
 /**

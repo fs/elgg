@@ -62,7 +62,7 @@
 		if (markerClusterer != null) {
 			markerClusterer.clearMarkers();
         }
-        markerClusterer = new MarkerClusterer(map, markers, datajson.marker);
+        markerClusterer = new MarkerClusterer(map, markers, [], datajson.marker);
 	}
 
 	function refreshMap(datajson) {

@@ -452,8 +452,14 @@ function geolocation_tagger($event, $object_type, $object) {
 // Nope, so use logged in user
 		if (!$location) {
 			$user = get_loggedin_user();
-			if (($user) && (isset($user->location)))
-				$location = $user->location;
+			if ($user && $user->current_latitude != null && $user->current_longitude != null) {
+				$location = array($user->current_latitude, $user->current_longitude);
+			}
+
+			if ($user->current_latitude != null && $user->current_longitude != null) {
+				$object->setLatLong($user->current_latitude, $user->current_longitude);
+				return;
+			}
 		}
 
 // Have we got a location
@@ -463,6 +469,8 @@ function geolocation_tagger($event, $object_type, $object) {
 				$location = implode(', ', $location);
 
 			$latlong = elgg_geocode_location($location);
+
+
 
 			if ($latlong) {
 				$object->setLatLong($latlong['lat'], $latlong['long']);

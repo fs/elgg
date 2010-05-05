@@ -188,7 +188,14 @@ function get_json_markers() {
 		$entity_types = get_registered_entity_types();
 
 		$types = array_keys($entity_types);
-		$subtypes = $entity_types['object'];
+		$orig_subtypes = $entity_types['object'];
+		$subtypes = array();
+
+		$ignore_subtypes = array('site_activity');
+		foreach($orig_subtypes as $item) {
+			if(!in_array($ignore_subtypes, $orig_subtypes)) $subtypes = $item;
+		}
+
 	}
 
 	$result = elgg_get_entities(

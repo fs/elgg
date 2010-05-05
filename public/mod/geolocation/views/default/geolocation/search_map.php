@@ -88,7 +88,7 @@ if ($show_map) {
 	var markers = [];
 	var markerClusterer = null;
 	function show_map(points) {
-		var is_all;
+		var is_all = 0;
 		markers = []
 		if(points == 'all') {
 			is_all = 1;
@@ -126,7 +126,9 @@ if ($show_map) {
 			map.setCenter(center, zoom);
 			map.addControl(new GLargeMapControl());
 			map.addControl(new GMapTypeControl());
-			refreshMap();
+			
+			if(is_all == '1') { refreshMap(data.marker); }
+			else { refreshMap(); }
         }
 	}
 
@@ -138,7 +140,7 @@ if ($show_map) {
 
 	}
 
-	function refreshMap() {
+	function refreshMap(desc) {
 
         if (markerClusterer != null) {
 			markerClusterer.clearMarkers();
@@ -147,7 +149,8 @@ if ($show_map) {
         zoom = -1 
         size = -1 
         style = "-1"
-        markerClusterer = new MarkerClusterer(map, markers);
+		if(typeof desc === 'undefined') { markerClusterer = new MarkerClusterer(map, markers); }
+		else { markerClusterer = new MarkerClusterer(map, markers, [], desc); }
 	}
 
 	jQuery(function() {

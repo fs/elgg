@@ -110,6 +110,14 @@ function MarkerClusterer(map, opt_markers, opt_opts, opt_descs) {
 	}
     }
 
+    
+    if (typeof opt_descs === 'undefined') {
+	opt_descs = []
+	for(i in opt_markers) {	    
+	    opt_descs[i] = {'desc':''}
+	}
+    }
+
     /**
    * When we add a marker, the marker may not in the viewport of map, then we don't deal with it, instead
    * we add the marker into a array called leftMarkers_. When we reset MarkerClusterer we should add the
@@ -688,9 +696,10 @@ ClusterMarker_.prototype.initialize = function (map) {
     map.getPane(G_MAP_MAP_PANE).appendChild(div);
     var padding = this.padding_;
     GEvent.addDomListener(div, "click", function () {	
-	var title = '';
-	var one_location = 0;
+	var title = '';		
+	var one_location = 0;	
 	var orig_loc = markers_desc[0].longitude + markers_desc[0].latitude;
+	
 	for (i in markers_desc) {
 	    if (orig_loc != markers_desc[i].longitude + markers_desc[i].latitude) {
 		one_location++;
@@ -698,7 +707,7 @@ ClusterMarker_.prototype.initialize = function (map) {
 	    var num = parseInt(i) +1
 	    title = title + num + ". " + markers_desc[i].desc + "<br />";
 	}
-	
+		
 	if(one_location != 0) {
 	    var pos = map.fromLatLngToDivPixel(latlng);
 	    var sw = new GPoint(pos.x - padding, pos.y + padding);

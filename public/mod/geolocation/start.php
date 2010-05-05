@@ -193,7 +193,7 @@ function get_json_markers() {
 
 		$ignore_subtypes = array('site_activity');
 		foreach($orig_subtypes as $item) {
-			if(!in_array($ignore_subtypes, $orig_subtypes)) $subtypes = $item;
+			if(!in_array($ignore_subtypes, $orig_subtypes)) $subtypes[] = $item;
 		}
 
 	}

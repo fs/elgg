@@ -61,6 +61,7 @@ function geolocation_init() {
 	elgg_extend_view('canvas/layouts/two_column_left_sidebar', 'geolocation/search', 1000);
 
 	elgg_extend_view('profile/edit','geolocation/profile_links');
+	elgg_extend_view('profile/userdetails', 'geolocation/profile_userdetails');
 
 	register_elgg_event_handler('profileupdate','all','geolocation_profile_update');
 

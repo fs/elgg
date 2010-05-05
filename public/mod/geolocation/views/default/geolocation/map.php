@@ -141,7 +141,7 @@
 	}
 
 	jQuery(function() {
-		map = new google.maps.Map2(document.getElementById("map"));		
+		map = new google.maps.Map2(document.getElementById("map"));
 		refreshMap(data);
 	});
 

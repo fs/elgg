@@ -203,7 +203,6 @@ function googleapps_fetch_oauth_data($client, $ajax = false, $scope = null) {
 	$oauth_sync_docs = get_plugin_setting('oauth_sync_docs', 'googleappslogin');
 
 	$count = 0;
-	$is_new_activity = false;
 	$is_new_docs = false;
 	$user = $_SESSION['user'];
 	if ($oauth_sync_email != 'no' &&
@@ -211,93 +210,6 @@ function googleapps_fetch_oauth_data($client, $ajax = false, $scope = null) {
 		// Get count unread messages of gmail
 		$count = $client->unread_messages();
 		$_SESSION['new_google_mess'] = $count;
-	}
-
-	//if ($oauth_sync_sites != 'no' &&
-	//((!$all && in_array('sites', $scope)) || $all)) {
-	if(false) {
-
-		$response_list = googleapps_sync_sites();
-
-		$max_time = null;
-		$times = array();
-
-		$site_list = empty($user->site_list) ? array() : unserialize($user->site_list);
-
-		if (empty($user->last_site_activity)) {
-			$user->last_site_activity = 0;
-		}
-
-		// Parse server response for google sites activity stream
-		foreach ($response_list as $site) {
-			$title = $site['title'];
-			$feed = $site['feed'];
-			$site_exist = null;
-
-			$site_access = $site_list[$title];
-			if (!isset($site_access)) {
-				// todo: use constants
-				$site_list[$title] = 1;
-				$site_access = 1;
-			}
-
-
-			// Get google sites activity stream
-			$activity_xml = $client->execute($feed, '1.1');
-			$rss = simplexml_load_string($activity_xml);
-			$times[] = strtotime($rss->updated);
-
-			$site_title = $title;
-			$title = 'Changes on ' . $title . ' site';
-
-			// Parse entries for each google site
-			foreach ($rss->entry as $item) {
-
-				// Get entry data
-				$text = $item->summary->div->asXML();
-				$author_email = @$item->author->email[0];
-				$date = $item->updated;
-				$time = strtotime($date);
-				$access = calc_access($site_access);
-				$times[] = $time;
-				if ($user->last_site_activity <= $time && $author_email == $user->email) {
-					// Initialise a new ElggObject (entity)
-					$site_activity = new ElggObject();
-					$site_activity->subtype = "site_activity";
-					$site_activity->owner_guid = get_loggedin_userid();
-					$site_activity->container_guid = (int)get_input('container_guid', get_loggedin_userid());
-
-					$site_activity->access_id = $access;
-					$site_activity->title = $title;
-					$site_activity->updated = $date;
-					$site_activity->text = str_replace('<a href', '<a target="_blank" href', $text) . ' on the <a target="_blank" href="' . $site['url'] . '">' . $site_title . '</a> site';
-					$site_activity->site_name = $site_title;
-
-					// Now save the object
-					if (!$site_activity->save()) {
-						register_error('Site activity has not saves.');
-						//forward($_SERVER['HTTP_REFERER']);
-					}
-
-					// add to river
-					if (add_to_river('river/object/site_activity/create', 'create',
-					get_loggedin_userid(), $site_activity->guid, "", strtotime($date))) {
-						$is_new_activity = true;
-					}
-
-				}
-			}
-
-		}
-
-		$max_time = max($times);
-		$user->last_site_activity = $max_time;
-		$user->save();
-		if (!empty($site_list)) {
-			$user->site_list = serialize($site_list);
-			$user->save();
-		}
-
 	}
 
 	if ($oauth_sync_docs != 'no') {
@@ -324,7 +236,7 @@ function googleapps_fetch_oauth_data($client, $ajax = false, $scope = null) {
 	if ($ajax) {
 		$response = array();
 		$response['mail_count'] = !empty($count) ? $count : 0;
-		$response['new_activity'] = !empty($is_new_activity) ? 1 : 0;
+		//$response['new_activity'] = !empty($is_new_activity) ? 1 : 0;
 		$response['new_docs'] = !empty($is_new_docs) ? 1 : 0;
 		return json_encode($response);
 	}

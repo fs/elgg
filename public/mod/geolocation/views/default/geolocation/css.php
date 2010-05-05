@@ -41,3 +41,7 @@
 .filter-toolbar ul li {list-style:none;display:block;float:left;width:160px;}
 .filter-toolbar ul li label {font-size:12px;font-weight:normal;}
 .filter-toolbar .update-map {float:right;width:200px;position:absolute;bottom:0;right:10px;}
+.map_home,
+.map_current {float:left;margin-left:76px;}
+#map_home {width:200px;height:200px;overflow: hidden;}
+#map_current {width:200px;height:200px;overflow: hidden;}

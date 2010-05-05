@@ -231,14 +231,14 @@ function geolocation_page_handler($page) {
 			);
 
 			foreach($result as $item) {
-				if($item->type == 'user' && $item->current_latitude != null && $item->current_longitude != null) {
+				if($item->type == 'user' && $item->current_latitude != null && $item->current_longitude != null  && $item->current_latitude != '0.004806518549043713' && $item->current_longitude != '0.35430908203125') {
 					$data['marker'][]['latitude'] = $item->current_latitude;
 					$key = count($data['marker'])-1;
 					$data['marker'][$key]['longitude'] = $item->current_longitude;
 					$data['marker'][$key]['desc'] = '<a href="' . $item->getURL() . '">' . $item->name . '</a>';
 					$data['marker'][$key]['desc'] .= $item->description;
 					if( in_array($item->type, $icons) ) $data['marker'][$key]['icon'] = $item->type;
-				} elseif($item->getLatitude() != null) {
+				} elseif($item->getLatitude() != null && $item->getLatitude() != '0.004806518549043713' && $item->getLongitude() != '0.35430908203125') {
 					$data['marker'][]['latitude'] = $item->getLatitude();
 					$key = count($data['marker'])-1;
 					$data['marker'][$key]['longitude'] = $item->getLongitude();

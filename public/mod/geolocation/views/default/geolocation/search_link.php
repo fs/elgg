@@ -52,11 +52,11 @@ if ($is_location) {
 		//echo elgg_view('geolocation/search_map', array('entities' => $entities, 'map_api' => $map_api));
 	} else {
 		
-		echo elgg_view('geolocation/search_points_listing', array('entities' => $entities, 'prefix' => $type));
+		echo elgg_view('geolocation/search_points_listing', array('entities' => $entities, 'prefix' => $type.$subtype));
 		
 		?>
 		<div class="search_listing">		
-		<a href="#map2" onclick="show_map(<?=$type?>_markers);return false;">view on a map</a>
+		<a href="#map2" onclick="show_map(<?=$type?><?=$subtype?>_markers);return false;">view on a map</a>
 		</div>
 		<?
 	}

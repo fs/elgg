@@ -1,22 +1,46 @@
-<?php
+<?php	
 
-// Load Elgg framework
-//require_once($_SERVER['DOCUMENT_ROOT'] . '/engine/start.php');
-//
-//// Ensure only logged-in users can see this page
-//gatekeeper();
+	// Get the Elgg engine
+	require_once(dirname(dirname(dirname(__FILE__))) . "/engine/start.php");
+	
+	// If we're not logged on, forward the user elsewhere
+	if (!isloggedin()) {
+		forward();
+	}
 
-// Set the context to settings
-//set_context('settings');
-//
-//// Get the form
-//global $SESSION;
-//
-//
-//$body = elgg_view('googleappslogin/googlesites/form');
-//
-//// Insert it into the correct canvas layout
-//$body = elgg_view_layout('two_column_left_sidebar','',$body);
-//
-//// Draw the page
-//page_draw(elgg_echo('googleappslogin:google_sites_settings'),$body);
+	// Get owner of profile - set in page handler
+	$user = $_SESSION['user'];
+	if (!$user) {		
+		register_error(elgg_echo("profile:notfound"));
+		forward();
+	}
+
+	// check if logged in user can edit this profile
+	if (!$user->canEdit()) {
+		register_error(elgg_echo("profile:noaccess"));
+		forward();
+	}
+
+	// Get edit form
+
+	
+	if($page[0] == 'home') {
+		$title = elgg_echo('geolocation:home_location');
+	} else {
+		$title = elgg_echo('geolocation:current_location');
+	}
+	$area2 = elgg_view_title($title);
+	
+	$area2 .= elgg_view(
+			"geolocation/edit_location",
+			array(
+				'entity' => $user,
+				'page' => $page[0]
+				)
+			);
+
+	$area1 = '';
+	
+	$body = elgg_view_layout("two_column_left_sidebar", $area1, $area2);
+
+	page_draw($title,$body);

@@ -24,13 +24,13 @@ if (!isset($CONFIG)) {
  */
 
 // Database username
-$CONFIG->dbuser = 'alexandr';
+$CONFIG->dbuser = 'elgg';
 
 // Database password
-$CONFIG->dbpass = 'alexandr';
+$CONFIG->dbpass = 'elgg';
 
 // Database name
-$CONFIG->dbname = 'alexandr_dev';
+$CONFIG->dbname = 'elgg';
 
 // Database server
 // (For most configurations, you can leave this as 'localhost')
@@ -39,7 +39,7 @@ $CONFIG->dbhost = 'mysql.toa';
 // Database table prefix
 // If you're sharing a database with other applications, you will want to use this
 // to differentiate Elgg's tables.
-$CONFIG->dbprefix = 'elgg_';
+$CONFIG->dbprefix = 'offrelease_';
 
 /*
  * Multiple database connections

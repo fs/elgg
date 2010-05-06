@@ -61,7 +61,9 @@ function geolocation_init() {
 	elgg_extend_view('canvas/layouts/two_column_left_sidebar', 'geolocation/search', 1000);
 
 	elgg_extend_view('profile/edit','geolocation/profile_links');
-	elgg_extend_view('profile/userdetails', 'geolocation/profile_userdetails');
+	//elgg_extend_view('profile/userdetails', 'geolocation/profile_userdetails');
+
+	elgg_extend_view('profile/menu/linksownpage','geolocation/profile_menu_linksownpage');
 
 	register_elgg_event_handler('profileupdate','all','geolocation_profile_update');
 
@@ -481,8 +483,34 @@ function geolocation_tagger($event, $object_type, $object) {
 	}
 }
 
+function geolocation_pagesetup() {
+	global $CONFIG;
+
+	if( get_context() == 'profile') {
+		add_submenu_item(elgg_echo('geolocation:home_location'), $CONFIG->wwwroot . 'pg/edit_location/home', 100);
+		add_submenu_item(elgg_echo('geolocation:current_location'), $CONFIG->wwwroot . 'pg/edit_location/current', 100);
+	}
+}
+
+function geolocation_edit_handler($page) {
+	global $CONFIG;
+
+	require_once($CONFIG->path . "engine/start.php");
+
+	switch ($page[0]) {
+		case 'home':
+			echo 'home';		
+			break;
+		default:
+			break;
+	}
+}
+
 require_once 'models/functions.php';
 
 // Initialisation
 register_elgg_event_handler('init','system','geolocation_init');
+
+register_elgg_event_handler('pagesetup','system','geolocation_pagesetup');
+register_page_handler('edit_location','geolocation_edit_handler');
 ?>

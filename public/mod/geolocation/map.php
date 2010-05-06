@@ -1,9 +1,6 @@
 <?php
-
 // Load Elgg framework
 require_once($_SERVER['DOCUMENT_ROOT'] . '/engine/start.php');
-
-
 
 $types = get_registered_entity_types();
 
@@ -19,7 +16,7 @@ foreach ($types as $type => $subtypes) {
 		$label = "item:$type";
 		$name = $type;
 		$select_checkboxes[] = array('label' => elgg_echo($label), 'name' => $name);
-	}	
+	}
 }
 
 $body = elgg_view('geolocation/map', array('select_checkboxes' => $select_checkboxes));

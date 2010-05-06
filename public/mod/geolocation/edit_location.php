@@ -1,7 +1,7 @@
 <?php	
 
 	// Get the Elgg engine
-	require_once(dirname(dirname(dirname(__FILE__))) . "/engine/start.php");
+	require_once($_SERVER['DOCUMENT_ROOT'] . '/engine/start.php');
 	
 	// If we're not logged on, forward the user elsewhere
 	if (!isloggedin()) {

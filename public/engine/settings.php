@@ -24,13 +24,13 @@ if (!isset($CONFIG)) {
  */
 
 // Database username
-$CONFIG->dbuser = 'elgg';
+$CONFIG->dbuser = 'alexandr';
 
 // Database password
-$CONFIG->dbpass = 'elgg';
+$CONFIG->dbpass = 'alexandr';
 
 // Database name
-$CONFIG->dbname = 'elgg';
+$CONFIG->dbname = 'alexandr_dev';
 
 // Database server
 // (For most configurations, you can leave this as 'localhost')
@@ -39,7 +39,7 @@ $CONFIG->dbhost = 'mysql.toa';
 // Database table prefix
 // If you're sharing a database with other applications, you will want to use this
 // to differentiate Elgg's tables.
-$CONFIG->dbprefix = 'offrelease_';
+$CONFIG->dbprefix = 'elgg_';
 
 /*
  * Multiple database connections
@@ -104,7 +104,7 @@ $CONFIG->db['write']->dbhost = "localhost";
  *
  * Note: Multiple server support is only available on server 1.2.1 or higher with PECL library > 2.0.0
  */
-//$CONFIG->memcache = true;
+$CONFIG->memcache = false;
 //
 //$CONFIG->memcache_servers = array (
 //	array('server1', 11211),

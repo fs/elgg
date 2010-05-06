@@ -16,7 +16,8 @@
 	}
 
 	?>
-<div>
+<div style="position:relative;width:650px;margin:0 10px;">
+<div class="geosearch single">
 	<form name="geosearch" id="geosearch" onsubmit="return false;">
 		<input type="text" name="query" id="query" value=""/>
 		<input type="submit" id="query_submit" value="Search" />
@@ -24,8 +25,8 @@
 </div>
 <div id="map">
 	<div style="padding: 1em; color: gray">Loading...</div>
-</div>
-<form action="<?php echo $vars['url']; ?>action/profile/edit" method="post" id="location_form">
+</div></div>
+<form action="<?php echo $vars['url']; ?>action/profile/edit" method="post" id="location_form" style="margin:0 10px;">
 		<?php echo elgg_view('input/securitytoken') ; ?>
 	<input type="hidden" value="<?php echo $lat; ?>" name="<?php echo $vars['page']; ?>_latitude" id="<?php echo $vars['page']; ?>_geolocation_latitude" />
 	<input type="hidden" value="<?php echo $lng; ?>" name="<?php echo $vars['page']; ?>_longitude" id="<?php echo $vars['page']; ?>_geolocation_longitude" />

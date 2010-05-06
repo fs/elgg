@@ -1,19 +1,21 @@
 <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<?= $GLOBALS['google_api'] ?>" type="text/javascript"></script>
-<p>
-	<a href="javascript:show_map_and_marker('map', new GLatLng('<?php echo $vars['entity']->current_latitude; ?>', '<?php echo $vars['entity']->current_longitude; ?>'));"><?php echo elgg_echo("geolocation:current_location"); ?></a>
+<p class="user_menu_item">
+  <a href="javascript:show_map_and_marker('<?php echo elgg_echo("geolocation:current_location"); ?>', new GLatLng('<?php echo $vars['entity']->current_latitude; ?>', '<?php echo $vars['entity']->current_longitude; ?>'));"><?php echo elgg_echo("geolocation:current_location"); ?></a>
 </p>
-<p>
-	<a href="javascript:show_map_and_marker('map', new GLatLng('<?php echo $vars['entity']->home_latitude; ?>', '<?php echo $vars['entity']->home_longitude; ?>'));"><?php echo elgg_echo("geolocation:home_location"); ?></a>
+<p class="user_menu_item">
+  <a href="javascript:show_map_and_marker('<?php echo elgg_echo("geolocation:home_location"); ?>', new GLatLng('<?php echo $vars['entity']->home_latitude; ?>', '<?php echo $vars['entity']->home_longitude; ?>'));"><?php echo elgg_echo("geolocation:home_location"); ?></a>
 </p>
-<div id="layout_map" class="map">
+<div id="layout_map">
 	<div id="content_area_user_title"><h2>Locations on map</h2></div>
-	<div id="map" style="left:30px;">
+	<div id="map">
 		<div style="padding: 1em; color: gray">Loading...</div>
 	</div>
 </div>
 <script type="text/javascript">
-	function show_map_and_marker(map_id, latlng) {
-		map = new google.maps.Map2(document.getElementById(map_id));
+  var map = new google.maps.Map2(document.getElementById('map'));
+  $('#layout_map').hide();
+  function show_map_and_marker(type, latlng) {
+    $('#layout_map div h2').html(type.substr(0, 1).toUpperCase() + type.substr(1) + ' on a map');
 		map.clearOverlays();
 		map.setCenter(latlng, 13);
 		map.addOverlay(new GMarker(latlng));

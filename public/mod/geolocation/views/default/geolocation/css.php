@@ -45,3 +45,7 @@
 .map_current {float:left;margin-left:76px;}
 #map_home {width:200px;height:200px;overflow: hidden;}
 #map_current {width:200px;height:200px;overflow: hidden;}
+#layout_map h2 {margin:0;padding-left:0;}
+#facebox .popup {}
+#facebox .body {width:auto;}
+p.user_menu_item {margin-bottom:0;}

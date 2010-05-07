@@ -162,8 +162,13 @@ error_reporting(-1);
      */
 	function authorized_client($ajax = false) {
 
-		$user = $_SESSION['user'];
+		require_once 'OAuth.php';
+		require_once 'client.inc';
 
+		$CONSUMER_KEY = get_plugin_setting('googleapps_domain', 'googleappslogin');
+		$CONSUMER_SECRET = get_plugin_setting('login_secret', 'googleappslogin');
+
+		$user = $_SESSION['user'];
 		if (!empty($user->access_token)) {
 			$_SESSION['access_token'] = $user->access_token;
 		}
@@ -171,8 +176,8 @@ error_reporting(-1);
 			$_SESSION['token_secret'] = $user->token_secret;
 		}
 
-		$client = get_client($user);
-		
+		$client = new OAuth_Client($CONSUMER_KEY, $CONSUMER_SECRET, SIG_METHOD_HMAC);
+
 		if (!empty($client->access_token)) {
 			$_SESSION['access_token'] = $client->access_token;
 		}
@@ -189,7 +194,6 @@ error_reporting(-1);
 				header('Location: ' . $url);
 				exit;
 			} else {
-				// Do not authorise user in google
 				return false;
 			}
 		}

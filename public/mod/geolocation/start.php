@@ -491,8 +491,7 @@ function geolocation_pagesetup() {
 function geolocation_edit_handler($page) {
 
 	global $CONFIG;
-
-	if (get_context() == "profile") {
+	
 		$page_owner = $_SESSION['user'];
 
 		add_submenu_item(elgg_echo('profile:editdetails'), $CONFIG->wwwroot . "pg/profile/{$page_owner->username}/edit/");
@@ -501,8 +500,7 @@ function geolocation_edit_handler($page) {
 		add_submenu_item(elgg_echo('geolocation:home_location'), $CONFIG->wwwroot . 'pg/edit_location/home', 100);
 		add_submenu_item(elgg_echo('geolocation:current_location'), $CONFIG->wwwroot . 'pg/edit_location/current', 100);
 
-		include($CONFIG->pluginspath . "geolocation/edit_location.php");
-	}
+		include($CONFIG->pluginspath . "geolocation/edit_location.php");	
 
 }
 

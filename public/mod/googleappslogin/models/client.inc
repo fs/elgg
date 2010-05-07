@@ -218,16 +218,18 @@ class OAuth_Client {
 
 			$public = false;
 			$acl_xml = $this->execute($acl_url, '1.2');
-			if( $acl_xml != "Internal Error" ) $acl = simplexml_load_string($acl_xml);
+			if ( $acl_xml != "Internal Error" && !empty($acl_xml) ) {
+				$acl = simplexml_load_string($acl_xml);
+			}
 
-			if($acl) {
+			if (!empty($acl)) {
 				foreach ($acl->entry as $item) {
 					if($item->id == $acl->id . '/default') $public = true;
 				}
 			}
 
 			$site = array();
-			if($public) {
+			if ($public) {
 				$site['isPublic'] = true;
 			} else {
 				$site['isPublic'] = false;

@@ -1,5 +1,5 @@
 <?php
-
+error_reporting(-1);
 /**
  * Functions for use OAuth
  *
@@ -46,7 +46,9 @@
 	function googleapps_cron_fetch_data() {
 
 		$result = find_metadata('googleapps_controlled_profile', 'yes', 'user', '', 99999999);
-
+		if (empty($result)) {
+			return;
+		}
 		foreach ($result as $gapps_user) {
 			$user = get_user($gapps_user->owner_guid);
 			$_SESSION['user'] = $user;
@@ -140,6 +142,12 @@
 					$user->site_list = serialize($site_list);
 					$user->save();
 				}
+				
+				if ($is_new_activity) {
+					echo 'New activity added.';
+				} else {
+					echo 'No new activity.';
+				}
 
 			}
 		}
@@ -154,8 +162,13 @@
      */
 	function authorized_client($ajax = false) {
 
-		$user = $_SESSION['user'];
+		require_once 'OAuth.php';
+		require_once 'client.inc';
 
+		$CONSUMER_KEY = get_plugin_setting('googleapps_domain', 'googleappslogin');
+		$CONSUMER_SECRET = get_plugin_setting('login_secret', 'googleappslogin');
+
+		$user = $_SESSION['user'];
 		if (!empty($user->access_token)) {
 			$_SESSION['access_token'] = $user->access_token;
 		}
@@ -163,8 +176,8 @@
 			$_SESSION['token_secret'] = $user->token_secret;
 		}
 
-		$client = get_client($user);
-		
+		$client = new OAuth_Client($CONSUMER_KEY, $CONSUMER_SECRET, SIG_METHOD_HMAC);
+
 		if (!empty($client->access_token)) {
 			$_SESSION['access_token'] = $client->access_token;
 		}
@@ -181,7 +194,6 @@
 				header('Location: ' . $url);
 				exit;
 			} else {
-				// Do not authorise user in google
 				return false;
 			}
 		}

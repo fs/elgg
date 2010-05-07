@@ -508,7 +508,7 @@ function geolocation_edit_handler($page) {
 
 require_once 'models/functions.php';
 
-// Initialisation
+// Initialization
 register_elgg_event_handler('init','system','geolocation_init');
 
 register_elgg_event_handler('pagesetup','system','geolocation_pagesetup');

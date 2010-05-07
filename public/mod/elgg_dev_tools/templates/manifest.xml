@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin_manifest>
+    <field key="author" value="%%author%%" />
+    <field key="version" value="0.1" />
+    <field key="description" value="Your plugin description here" />
+    <field key="website" value="Link to your website or project page here" />
+    <field key="copyright" value="(C) %%author%% 2009" />
+    <field key="licence" value="License here" />
+    <field key="elgg_version" value="2009030702" />    
+</plugin_manifest>

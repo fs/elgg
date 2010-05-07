@@ -27,7 +27,7 @@ DirectoryIndex index.php
 # Turn on expiry
 <IfModule mod_expires.c>
 	ExpiresActive On
-	ExpiresDefault "access plus 1 minutes"
+	ExpiresDefault "access plus 10 years"
 </IfModule>
 
 # php 4, apache 1.x
@@ -48,12 +48,12 @@ DirectoryIndex index.php
 	php_value memory_limit 128M
 	# to make sure register global is off
 	php_value register_globals 0
-	# max post size to 8Mb
-	php_value post_max_size 8388608
-	# upload size limit to 5Mb	
-	php_value upload_max_filesize 5242880
+	# max post size to 50Mb
+	php_value post_max_size 54272000
+	# upload size limit to 54Mb	
+	php_value upload_max_filesize 51200000
 	# hide errors, enable only if debug enabled
-	php_value display_errors 0
+	php_value display_errors 1
 </IfModule>
 
 # Turn on mod_gzip if available

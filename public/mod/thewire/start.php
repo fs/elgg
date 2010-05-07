@@ -34,10 +34,11 @@
 				} 
 				
 			// Extend system CSS with our own styles, which are defined in the thewire/css view
-				elgg_extend_view('css','thewire/css');
+				extend_view('css','thewire/css');
 				
 		    //extend views
-				elgg_extend_view('profile/status', 'thewire/profile_status');
+				extend_view('activity/thewire', 'thewire/activity_view');
+				extend_view('profile/status', 'thewire/profile_status');
 				
 			// Register a page handler, so we can have nice URLs
 				register_page_handler('thewire','thewire_page_handler');
@@ -98,7 +99,7 @@
 				}
 			// If the URL is just 'thewire/username', or just 'thewire/', load the standard thewire index
 			} else {
-				require(dirname(__FILE__) . "/index.php");
+				@include(dirname(__FILE__) . "/index.php");
 				return true;
 			}
 			
@@ -153,7 +154,10 @@
 		function thewire_save_post($post, $access_id, $parent=0, $method = "site")
 		{
 			
-			global $SESSION; 
+			global $SESSION;
+			
+			$limitchars = get_plugin_setting('limitchars','thewire');
+			if (!empty($limitchars)) $limitchars = true; 
 			
 			// Initialise a new ElggObject
 			$thewire = new ElggObject();
@@ -168,7 +172,16 @@
 			$thewire->access_id = $access_id;
 			
 			// Set its description appropriately
-			$thewire->description = elgg_substr(strip_tags($post), 0, 160);
+			$thewire->description = $limit_chars ? elgg_substr(strip_tags($post), 0, 160) : strip_tags($post);
+				
+			/*if (is_callable('mb_substr'))
+				$thewire->description = mb_substr(strip_tags($post), 0, 160);
+			else
+				$thewire->description = substr(strip_tags($post), 0, 160);*/
+			
+			//Extract hashtags
+			$hashtags = thewire_extract_hashtags($post);
+			$thewire->tags = $hashtags;
 			
 		    // add some metadata
 	        $thewire->method = $method; //method, e.g. via site, sms etc
@@ -180,8 +193,21 @@
 			if($save)
 				add_to_river('river/object/thewire/create','create',$SESSION['user']->guid,$thewire->guid);
 	        
-	        return $save;
+	    return $save;
 
+		}
+		
+		/**
+		* Return array with any words beginning with #
+		*/
+		function thewire_extract_hashtags($wirepost) {
+			$chunks = explode(' ', $wirepost);
+			$tags = array();
+			
+			foreach($chunks as $chunk) {
+				if ($chunk[0] === "#") { $tags[] = trim($chunk,"#!@#$%^&*()-_+={}[]\\| `~.,/?><"); }
+			}
+			return $tags;
 		}
 		
 		/**

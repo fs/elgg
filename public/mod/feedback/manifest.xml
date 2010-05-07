@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin_manifest>
+	<field key="author" value="Prashant Juvekar" />
+	<field key="version" value="0.5" />
+	<field key="description" value="Site Feedback Plugin" />
+	<field key="website" value="http://www.linkedin.com/in/prashantjuvekar" />
+	<field key="copyright" value="(C) Prashant Juvekar 2009" />
+	<field key="licence" value="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2" />
+	<field key="elgg_version" value="2009030702" />
+</plugin_manifest>

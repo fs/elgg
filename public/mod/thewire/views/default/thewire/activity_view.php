@@ -5,8 +5,11 @@
 	 */
 
 	//grab the users latest from the wire
-	$latest_wire = elgg_list_entities(array('types' => 'object', 'subtypes' => 'thewire', 'owner_guid' => $_SESSION['user']->getGUID(), 'limit' => 1, 'full_view' => TRUE, 'view_type_toggle' => FALSE, 'pagination' => FALSE));
-
+	$latest_wire = list_entities("object", "thewire", $_SESSION['user']->getGUID(), 1, true, false, false);
+	
+	// set default value if user hasn't set it
+	$limitchars = $vars['entity']->limitchars;
+	if (!isset($limitchars)) $limitchars = true;
 ?>
 
 <script>
@@ -26,6 +29,7 @@ function textCounter(field,cntfield,maxlimit) {
 	<form action="<?php echo $vars['url']; ?>action/thewire/add" method="post" name="noteForm">
 			
 		<?php
+			$display .= "<p>calling right file.</p>";
 			$display .= "<h3>" . elgg_echo('thewire:newpost') . "</h3><textarea name='note' value='' onKeyDown=\"textCounter(document.noteForm.note,document.noteForm.remLen1,140)\" onKeyUp=\"textCounter(document.noteForm.note,document.noteForm.remLen1,140)\" id=\"thewire_sidebarInputBox\">{$msg}</textarea><br />";
 			$display .= "<div class='thewire_characters_remaining'><input readonly type=\"text\" name=\"remLen1\" size=\"3\" maxlength=\"3\" value=\"140\" class=\"thewire_characters_remaining_field\">";
 			echo $display;

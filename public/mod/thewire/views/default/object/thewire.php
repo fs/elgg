@@ -37,12 +37,9 @@
 	    </div>
 
 			<div class="thewire_options">
-<?php
-	if (isloggedin()) {
-?>
+			
 			<a href="<?php echo $vars['url']; ?>mod/thewire/add.php?wire_username=<?php echo $vars['entity']->getOwnerEntity()->username; ?>" class="reply"><?php echo elgg_echo('thewire:reply'); ?></a>
 		<?php
-	}
 /*		    //only have a reply option for main notes, not other replies
 		    if($vars['entity']->parent == 0){
         ?>
@@ -74,9 +71,14 @@
 		    
 
 		    $desc = $vars['entity']->description;
-
-		    $desc = preg_replace('/\@([A-Za-z0-9\_\.\-]*)/i','@<a href="' . $vars['url'] . 'pg/thewire/$1">$1</a>',$desc);
-			echo parse_urls($desc);
+		    
+				//make @ reply links
+				$desc = preg_replace('/\@([A-Za-z0-9\_\.\-]*)/i','<a href="' . $vars['url'] . 'pg/thewire/$1">@$1</a>',$desc);
+				
+				//make hashtag search links
+				$desc = preg_replace('/\#([A-Za-z0-9\_\-]*)/i','<a href="' . $vars['url'] . 'pg/search/?q=$1&entity_subtype=thewire&entity_type=object&search_type=tags">#$1</a>',$desc);
+		
+			  echo parse_urls($desc);
 		?>
 		
 		

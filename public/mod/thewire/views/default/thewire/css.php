@@ -45,7 +45,6 @@
 	padding:6px 4px 4px 4px;
 	min-height: 40px;
 	line-height: 1.4em;
-	overflow: hidden;
 }
 .thewire_options {
 	float:right;
@@ -108,6 +107,7 @@ textarea#thewire_large-textarea {
 	width: 664px;
 	height: 40px;
 	padding: 6px;
+	margin-bottom: 5px;
 	font-family: Arial, 'Trebuchet MS','Lucida Grande', sans-serif;
 	font-size: 100%;
 	color:#666666;
@@ -133,5 +133,11 @@ input.thewire_characters_remaining_field:focus {
 }
 .thewire_characters_remaining {
 	text-align: right;
+}
+
+.thewire_tips {
+	font-size: 80%;
+	font-style: italic;
+	padding-bottom: 5px;
 }
 

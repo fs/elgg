@@ -39,7 +39,7 @@ $CONFIG->dbhost = 'mysql.toa';
 // Database table prefix
 // If you're sharing a database with other applications, you will want to use this
 // to differentiate Elgg's tables.
-$CONFIG->dbprefix = 'offrelease_';
+$CONFIG->dbprefix = 'elgg_';
 
 /*
  * Multiple database connections

@@ -11,7 +11,7 @@
 	 * 
 	 */
 
-	$newest_members = elgg_get_entities_from_metadata(array('metadata_names' => 'icontime', 'types' => 'user', 'limit' => 18));
+	$newest_members = get_entities_from_metadata('icontime', '', 'user', '', 0, 18);
 	
 ?>
 

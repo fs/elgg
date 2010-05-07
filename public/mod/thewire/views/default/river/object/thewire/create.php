@@ -6,7 +6,9 @@
 
 	$string = "<a href=\"{$performed_by->getURL()}\">{$performed_by->name}:</a> ";
 	$desc .= $object->description;
-	$desc = preg_replace('/\@([A-Za-z0-9\_\.\-]*)/i','@<a href="' . $vars['url'] . 'pg/thewire/$1">$1</a>',$desc);
+	$desc = preg_replace('/\@([A-Za-z0-9\_\.\-]*)/i','<a href="' . $vars['url'] . 'pg/thewire/$1">@$1</a>',$desc);
+	$desc = preg_replace('/\#([A-Za-z0-9\_\-]*)/i','<a href="' . $vars['url'] . 'pg/search/?q=$1&entity_subtype=thewire&entity_type=object&search_type=tags">#$1</a>',$desc);
+	
 	$string .= parse_urls($desc);
 
 	$string .= " <span class=\"river_item_time\"><a href=\"{$vars['url']}mod/thewire/add.php?wire_username={$object->getOwnerEntity()->username}\" class=\"reply\">" . elgg_echo('thewire:reply') . "</a></span>";

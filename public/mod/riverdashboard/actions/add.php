@@ -13,6 +13,9 @@
 	// Make sure we're logged in and are admin (send us to the front page if not)
 		admin_gatekeeper();
 
+        // Make sure action is secure
+        	action_gatekeeper();
+
 	// Get input data
 		$message = get_input('sitemessage');
 		//$access = 1; //it is for all logged in users

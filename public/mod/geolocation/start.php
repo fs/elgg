@@ -482,7 +482,7 @@ function geolocation_tagger($event, $object_type, $object) {
 function geolocation_pagesetup() {
 	global $CONFIG;
 
-	if( get_context() == 'profile') {		
+	if( get_context() == 'profile') {
 		add_submenu_item(elgg_echo('geolocation:home_location'), $CONFIG->wwwroot . 'pg/edit_location/home', 100);
 		add_submenu_item(elgg_echo('geolocation:current_location'), $CONFIG->wwwroot . 'pg/edit_location/current', 100);
 	}
@@ -492,16 +492,18 @@ function geolocation_edit_handler($page) {
 
 	global $CONFIG;
 
-	$page_owner = $_SESSION['user'];
+	if (get_context() == "profile") {
+		$page_owner = $_SESSION['user'];
 
-	add_submenu_item(elgg_echo('profile:editdetails'), $CONFIG->wwwroot . "pg/profile/{$page_owner->username}/edit/");
-	add_submenu_item(elgg_echo('profile:editicon'), $CONFIG->wwwroot . "pg/profile/{$page_owner->username}/editicon/");
-	
-	add_submenu_item(elgg_echo('geolocation:home_location'), $CONFIG->wwwroot . 'pg/edit_location/home', 100);
-	add_submenu_item(elgg_echo('geolocation:current_location'), $CONFIG->wwwroot . 'pg/edit_location/current', 100);
+		add_submenu_item(elgg_echo('profile:editdetails'), $CONFIG->wwwroot . "pg/profile/{$page_owner->username}/edit/");
+		add_submenu_item(elgg_echo('profile:editicon'), $CONFIG->wwwroot . "pg/profile/{$page_owner->username}/editicon/");
 
-	include($CONFIG->pluginspath . "geolocation/edit_location.php");
-	
+		add_submenu_item(elgg_echo('geolocation:home_location'), $CONFIG->wwwroot . 'pg/edit_location/home', 100);
+		add_submenu_item(elgg_echo('geolocation:current_location'), $CONFIG->wwwroot . 'pg/edit_location/current', 100);
+
+		include($CONFIG->pluginspath . "geolocation/edit_location.php");
+	}
+
 }
 
 require_once 'models/functions.php';

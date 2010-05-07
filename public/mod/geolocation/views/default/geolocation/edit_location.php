@@ -28,8 +28,10 @@
 </div></div>
 <form action="<?php echo $vars['url']; ?>action/profile/edit" method="post" id="location_form" style="margin:0 10px;">
 		<?php echo elgg_view('input/securitytoken') ; ?>
+	<input type="hidden" value="1" name="set_geolocation_auto_current_location" />	
 	<input type="hidden" value="<?php echo $lat; ?>" name="<?php echo $vars['page']; ?>_latitude" id="<?php echo $vars['page']; ?>_geolocation_latitude" />
 	<input type="hidden" value="<?php echo $lng; ?>" name="<?php echo $vars['page']; ?>_longitude" id="<?php echo $vars['page']; ?>_geolocation_longitude" />
+	<input type="checkbox" value="yes" name="geolocation_auto_current_location" <?php if($user->geolocation_auto_current_location == 'yes') echo ' checked=checked' ;?>/> Set auto current location by ip after login<br />
 	<input type="submit" id="save_location" name="save" value="Save" />
 </form>
 

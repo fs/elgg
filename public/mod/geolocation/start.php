@@ -63,7 +63,37 @@ function geolocation_init() {
 
 	register_elgg_event_handler('profileupdate','all','geolocation_profile_update');
 
+	register_elgg_event_handler('login', 'user', 'geolocation_update_current_location_by_ip');
+
 }
+
+function geolocation_update_current_location_by_ip() {
+	$user = $_SESSION['user'];
+
+	if (!empty($user)) {
+		$user_ip = $_SERVER['REMOTE_ADDR'];
+
+		include 'geoip/geoipcity.inc';
+		include 'geoip/geoipregionvars.php';
+
+		$gi = geoip_open($_SERVER['DOCUMENT_ROOT'] . "/mod/geolocation/geoip/GeoLiteCity.dat",GEOIP_STANDARD);
+
+		$record = geoip_record_by_addr($gi,'78.138.140.122');
+		//var_dump($record);
+		geoip_close($gi);
+
+		if($record->latitude != null && $record->latitude != null && $user->geolocation_auto_current_location == 'yes') {
+			$user->current_latitude = $record->latitude;
+			$user->current_longitude = $record->longitude;
+			$user->save();
+		}
+
+//		$user->geolocation_auto_current_location = 'yes';
+//		$user->save();
+
+	}
+}
+
 
 function my_subtype_search_hook($hook, $entity_type, $returnvalue, $params) {
 	if (!isset($GLOBALS['my_search_result'])) {
@@ -418,6 +448,21 @@ function geolocation_geocode_box($location = null) {
  */
 function geolocation_tagger($event, $object_type, $object) {
 
+	// set geolocation_auto_current_location
+	$user = get_loggedin_user();
+	if($object_type == 'user') {		
+		$geoip = get_input('geolocation_auto_current_location');
+		
+		if (get_input('set_geolocation_auto_current_location') == '1') {
+			if($geoip == 'yes') $user->geolocation_auto_current_location = $geoip;
+			else $user->geolocation_auto_current_location = 'no';
+			$_SESSION['user'] = $user;
+			$user->save;
+		}
+	}
+	
+
+
 	if($object->name == 'site_list') return;
 
 	if ($object_type == 'metadata') {
@@ -450,7 +495,6 @@ function geolocation_tagger($event, $object_type, $object) {
 
 // Nope, so use logged in user
 		if (!$location) {
-			$user = get_loggedin_user();
 			if ($user && $user->current_latitude != null && $user->current_longitude != null) {
 				$location = array($user->current_latitude, $user->current_longitude);
 			}
@@ -491,16 +535,16 @@ function geolocation_pagesetup() {
 function geolocation_edit_handler($page) {
 
 	global $CONFIG;
-	
-		$page_owner = $_SESSION['user'];
 
-		add_submenu_item(elgg_echo('profile:editdetails'), $CONFIG->wwwroot . "pg/profile/{$page_owner->username}/edit/");
-		add_submenu_item(elgg_echo('profile:editicon'), $CONFIG->wwwroot . "pg/profile/{$page_owner->username}/editicon/");
+	$page_owner = $_SESSION['user'];
 
-		add_submenu_item(elgg_echo('geolocation:home_location'), $CONFIG->wwwroot . 'pg/edit_location/home', 100);
-		add_submenu_item(elgg_echo('geolocation:current_location'), $CONFIG->wwwroot . 'pg/edit_location/current', 100);
+	add_submenu_item(elgg_echo('profile:editdetails'), $CONFIG->wwwroot . "pg/profile/{$page_owner->username}/edit/");
+	add_submenu_item(elgg_echo('profile:editicon'), $CONFIG->wwwroot . "pg/profile/{$page_owner->username}/editicon/");
 
-		include($CONFIG->pluginspath . "geolocation/edit_location.php");	
+	add_submenu_item(elgg_echo('geolocation:home_location'), $CONFIG->wwwroot . 'pg/edit_location/home', 100);
+	add_submenu_item(elgg_echo('geolocation:current_location'), $CONFIG->wwwroot . 'pg/edit_location/current', 100);
+
+	include($CONFIG->pluginspath . "geolocation/edit_location.php");
 
 }
 

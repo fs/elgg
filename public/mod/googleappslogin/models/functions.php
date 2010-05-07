@@ -150,7 +150,6 @@ error_reporting(-1);
 				}
 
 			}
-			die('3');
 		}
 	
 	}

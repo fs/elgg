@@ -36,6 +36,9 @@
 	<?php endif; ?>
 	<input type="submit" id="save_location" name="save" value="Save" />
 </form>
+<?php if ($vars['page'] == 'current'): ?>
+<a href="javascript:setLocation()">Set current location by my current ip-address</a>
+<?php endif; ?>
 
 <script type="text/javascript">
 	var form = $('#location_form');
@@ -114,6 +117,15 @@
 
 			store_point_location(latlng);
 		}
+	}
+
+	function setLocation(){
+		var lat = geoip_latitude();
+		var lng = geoip_longitude();
+		var latlng = new GLatLng(lat, lng);
+		map.setCenter(latlng);
+		marker.setLatLng(latlng);
+		store_point_location(latlng);
 	}
 
 	var lat = <?= $lat ?> || geoip_latitude();

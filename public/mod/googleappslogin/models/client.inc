@@ -219,7 +219,7 @@ class OAuth_Client {
 			$public = false;
 			$acl_xml = $this->execute($acl_url, '1.2');
 			
-			if ( preg_match("/^<\?xml/", $acl_xml) && !empty($acl_xml) ) {
+			if ( preg_match("/<\?xml/is", $acl_xml) && !empty($acl_xml) ) {
 				$acl = simplexml_load_string($acl_xml);
 			}
 

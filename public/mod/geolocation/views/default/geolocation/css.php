@@ -1,4 +1,6 @@
-#map { width:650px; height:400px;  }
+#map { width:650px; height:400px; overflow:hidden; }
+#map > div { width:630px; }
+#map >div#logocontrol {width:auto;}
 .map-container { background:#fff; margin:-35px 0 20px 10px; padding:10px 20px 20px; width:698px; -moz-border-radius:8px; float:left; padding:0 0 5px; -webkit-border-radius: 8px; }
 .map-container > label{ margin-left:10px; }
 .map {

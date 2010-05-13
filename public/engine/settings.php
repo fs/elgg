@@ -24,13 +24,13 @@ if (!isset($CONFIG)) {
  */
 
 // Database username
-$CONFIG->dbuser = 'elgg';
+$CONFIG->dbuser = 'alexandr';
 
 // Database password
-$CONFIG->dbpass = 'elgg';
+$CONFIG->dbpass = 'alexandr';
 
 // Database name
-$CONFIG->dbname = 'elgg';
+$CONFIG->dbname = 'alexandr_dev';
 
 // Database server
 // (For most configurations, you can leave this as 'localhost')

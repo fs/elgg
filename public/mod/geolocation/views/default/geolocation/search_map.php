@@ -24,66 +24,6 @@ if ($show_map) {
 <script src="/pg/geolocation/data?types=all" type="text/javascript"></script>
 <script type="text/javascript">
 	var all_markers = Array();
-	var styles = [[{
-				url: '../images/people35.png',
-				height: 35,
-				width: 35,
-				opt_anchor: [16, 0],
-				opt_textColor: '#FF00FF'
-			},
-			{
-				url: '../images/people45.png',
-				height: 45,
-				width: 45,
-				opt_anchor: [24, 0],
-				opt_textColor: '#FF0000'
-			},
-			{
-				url: '../images/people55.png',
-				height: 55,
-				width: 55,
-				opt_anchor: [32, 0]
-			}],
-		[{
-				url: '../images/conv30.png',
-				height: 27,
-				width: 30,
-				anchor: [3, 0],
-				textColor: '#FF00FF'
-			},
-			{
-				url: '../images/conv40.png',
-				height: 36,
-				width: 40,
-				opt_anchor: [6, 0],
-				opt_textColor: '#FF0000'
-			},
-			{
-				url: '../images/conv50.png',
-				width: 50,
-				height: 45,
-				opt_anchor: [8, 0]
-			}],
-		[{
-				url: '../images/heart30.png',
-				height: 26,
-				width: 30,
-				opt_anchor: [4, 0],
-				opt_textColor: '#FF00FF'
-			},
-			{
-				url: '../images/heart40.png',
-				height: 35,
-				width: 40,
-				opt_anchor: [8, 0],
-				opt_textColor: '#FF0000'
-			},
-			{
-				url: '../images/heart50.png',
-				width: 50,
-				height: 44,
-				opt_anchor: [12, 0]
-			}]];
 	var map = null;
 	var markers = [];
 	var markerClusterer = null;
@@ -94,7 +34,6 @@ if ($show_map) {
 			is_all = 1;
 			points = data.marker
 		}
-
 
         if(GBrowserIsCompatible()) {
 			$('#layout_map').show();
@@ -127,6 +66,9 @@ if ($show_map) {
 			map.addControl(new GLargeMapControl());
 			map.addControl(new GMapTypeControl());
 			
+			//prepareGeolocation();
+			doGeolocation();
+			
 			if(is_all == '1') { refreshMap(data.marker); }
 			else { refreshMap(); }
         }
@@ -144,13 +86,62 @@ if ($show_map) {
 
         if (markerClusterer != null) {
 			markerClusterer.clearMarkers();
-        }		
+        }
 
         zoom = -1 
         size = -1 
         style = "-1"
 		if(typeof desc === 'undefined') { markerClusterer = new MarkerClusterer(map, markers); }
 		else { markerClusterer = new MarkerClusterer(map, markers, [], desc); }
+	}
+
+	function doGeolocation() {
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(positionSuccess, positionError);
+		} else {
+			//alert("Location detection not supported in browser");
+		}
+	}
+
+	function positionError(err) {
+		
+	}
+
+	function positionSuccess(position) {
+		// Centre the map on the new location
+		var coords = position.coords || position.coordinate || position;
+		var latLng = new google.maps.LatLng(coords.latitude, coords.longitude);
+		map.setCenter(latLng);
+		map.setZoom(12);
+		alert(position);
+		var marker = new map.Marker({
+			map: map,
+			position: latLng,
+			title: 'Why, there you are!'
+		});
+		//document.getElementById('info').innerHTML = 'Looking for <b>' +
+		//coords.latitude + ', ' + coords.longitude + '</b>...';
+		
+		// And reverse geocode.
+		/*
+		(new google.maps.Geocoder()).geocode({latLng: latLng}, function(resp) {
+			var place = "You're around here somewhere!";
+			if (resp[0]) {
+				var bits = [];
+				for (var i = 0, I = resp[0].address_components.length; i < I; ++i) {
+					var component = resp[0].address_components[i];
+					if (contains(component.types, 'political')) {
+						bits.push('<b>' + component.long_name + '</b>');
+					}
+				}
+				if (bits.length) {
+					place = bits.join(' > ');
+				}
+				marker.setTitle(resp[0].formatted_address);
+			}
+			//document.getElementById('info').innerHTML = place;
+		})
+		*/;
 	}
 
 	jQuery(function() {
@@ -160,6 +151,9 @@ if ($show_map) {
 		$('#layout_map').hide();
 
 	});
+	
+	
+	
 </script>
 
 <div style="clear:both;"></div>

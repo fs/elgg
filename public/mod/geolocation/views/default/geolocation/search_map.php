@@ -66,20 +66,9 @@ if ($show_map) {
 			map.addControl(new GLargeMapControl());
 			map.addControl(new GMapTypeControl());
 			
-			//prepareGeolocation();
-			doGeolocation();
-			
 			if(is_all == '1') { refreshMap(data.marker); }
 			else { refreshMap(); }
         }
-	}
-
-	function markerClick(url, latlng) {
-
-		return function() {
-			map.openInfoWindowHtml(latlng, url, {maxWidth:300, maxHeight:300, autoScroll:true});
-		}
-
 	}
 
 	function refreshMap(desc) {
@@ -93,55 +82,6 @@ if ($show_map) {
         style = "-1"
 		if(typeof desc === 'undefined') { markerClusterer = new MarkerClusterer(map, markers); }
 		else { markerClusterer = new MarkerClusterer(map, markers, [], desc); }
-	}
-
-	function doGeolocation() {
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(positionSuccess, positionError);
-		} else {
-			//alert("Location detection not supported in browser");
-		}
-	}
-
-	function positionError(err) {
-		
-	}
-
-	function positionSuccess(position) {
-		// Centre the map on the new location
-		var coords = position.coords || position.coordinate || position;
-		var latLng = new google.maps.LatLng(coords.latitude, coords.longitude);
-		map.setCenter(latLng);
-		map.setZoom(12);
-		alert(position);
-		var marker = new map.Marker({
-			map: map,
-			position: latLng,
-			title: 'Why, there you are!'
-		});
-		//document.getElementById('info').innerHTML = 'Looking for <b>' +
-		//coords.latitude + ', ' + coords.longitude + '</b>...';
-		
-		// And reverse geocode.
-		/*
-		(new google.maps.Geocoder()).geocode({latLng: latLng}, function(resp) {
-			var place = "You're around here somewhere!";
-			if (resp[0]) {
-				var bits = [];
-				for (var i = 0, I = resp[0].address_components.length; i < I; ++i) {
-					var component = resp[0].address_components[i];
-					if (contains(component.types, 'political')) {
-						bits.push('<b>' + component.long_name + '</b>');
-					}
-				}
-				if (bits.length) {
-					place = bits.join(' > ');
-				}
-				marker.setTitle(resp[0].formatted_address);
-			}
-			//document.getElementById('info').innerHTML = place;
-		})
-		*/;
 	}
 
 	jQuery(function() {

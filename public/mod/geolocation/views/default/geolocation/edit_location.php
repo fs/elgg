@@ -23,6 +23,13 @@
 		<input type="submit" id="query_submit" value="Search" />
 	</form>
 </div>
+<?
+if ($vars['page'] == 'current') {
+?>
+<div id="my_location_button" onclick="javascript:doGeolocation()"  title="Where am I?"></div>
+<?
+}
+?>
 <div id="map">
 	<div style="padding: 1em; color: gray">Loading...</div>
 </div></div>
@@ -126,6 +133,28 @@
 		map.setCenter(latlng);
 		marker.setLatLng(latlng);
 		store_point_location(latlng);
+	}
+	
+	function doGeolocation() {
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(positionSuccess, positionError);
+		} else {
+			alert("Location detection not supported in your browser");
+		}
+	}
+
+	function positionError(err) {
+
+	}
+
+	function positionSuccess(position) {
+		// Centre the map on the new location
+		var coords = position.coords || position.coordinate || position;
+		var latLng = new google.maps.LatLng(coords.latitude, coords.longitude);
+		map.setCenter(latLng);
+		map.setZoom(12);
+        //map.addOverlay(new GMarker(latLng));
+		marker.setLatLng(latlng);
 	}
 
 	var lat = <?= $lat ?> || geoip_latitude();

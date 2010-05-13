@@ -16,6 +16,7 @@ if ($vars['entity']) {
 ?>
 <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<?= $GLOBALS['google_api'] ?>" type="text/javascript"></script>
 <script type="text/javascript" src="http://j.maxmind.com/app/geoip.js"></script>
+<script type="text/javascript" src="/mod/geolocation/views/default/geolocation/scripts.js"></script>
 
 <script type="text/javascript">
 

@@ -70,8 +70,8 @@
 
 		setPosition();
 
-		map.addControl(new GLargeMapControl());
-		map.addControl(new GMapTypeControl());
+		//map.addControl(new GLargeMapControl());
+		//map.addControl(new GMapTypeControl());
 
 		if (markerClusterer != null) {
 			markerClusterer.clearMarkers();
@@ -142,10 +142,11 @@
 
 	jQuery(function() {
 		map = new google.maps.Map2(document.getElementById("map"));
+		map.setUIToDefault();
 		refreshMap(data);
 	});
 
-        function doGeolocation() {
+	function doGeolocation() {
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(positionSuccess, positionError);
 		} else {
@@ -163,7 +164,7 @@
 		var latLng = new google.maps.LatLng(coords.latitude, coords.longitude);
 		map.setCenter(latLng);
 		map.setZoom(12);
-                map.addOverlay(new GMarker(latLng));
+        map.addOverlay(new GMarker(latLng));
 	}
 
 	$(document).ready(function() {
@@ -205,14 +206,14 @@
 	</form>
 </div>
 
-<div class="google-map">    
+<div class="google-map">
 	<div class="geosearch single">
 		<form name="geosearch" id="geosearch" onsubmit="return false;">
 			<input type="text" name="query" id="query" value=""/>
 			<input type="submit" id="query_submit" value="Search" />
-		</form>            
+		</form>
 	</div>
-        <div id="my_location_button" onclick="javascript:doGeolocation()"  title="Where am I?"></div>
+	<div id="my_location_button" onclick="javascript:doGeolocation()"  title="Where am I?"></div>
 	<div id="map" style="width: 100%">                
 		<div style="padding: 1em; color: gray">Loading...</div>
 	</div>

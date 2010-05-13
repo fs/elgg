@@ -7,4 +7,11 @@ $(document).ready(function () {
 	});
 });
 
+function markerClick(url, latlng) {
+
+	return function() {
+		map.openInfoWindowHtml(latlng, url, {maxWidth:300, maxHeight:300, autoScroll:true});
+	}
+
+}
 </script>

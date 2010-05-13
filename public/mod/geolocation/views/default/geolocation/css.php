@@ -51,3 +51,5 @@
 #facebox .popup {}
 #facebox .body {width:auto;}
 p.user_menu_item {margin-bottom:0;}
+
+#my_location_button {position:relative;top:290px;left:26px; background-image:url('/mod/geolocation/graphics/my_location_button.png');  width: 20px; height: 20px; overflow: visible !important; z-index: 1;cursor:pointer;}

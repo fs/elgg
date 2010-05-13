@@ -145,6 +145,27 @@
 		refreshMap(data);
 	});
 
+        function doGeolocation() {
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(positionSuccess, positionError);
+		} else {
+			alert("Location detection not supported in your browser");
+		}
+	}
+
+	function positionError(err) {
+
+	}
+
+	function positionSuccess(position) {
+		// Centre the map on the new location
+		var coords = position.coords || position.coordinate || position;
+		var latLng = new google.maps.LatLng(coords.latitude, coords.longitude);
+		map.setCenter(latLng);
+		map.setZoom(12);
+                map.addOverlay(new GMarker(latLng));
+	}
+
 	$(document).ready(function() {
         $('#typesForm').bind('submit', function() {
             $(this).ajaxSubmit({
@@ -164,7 +185,7 @@
     });
 
 </script>
-
+  
 
 <div class="filter-toolbar">
 	<form method="GET" action="" id="typesForm">
@@ -183,14 +204,16 @@
 		</div>
 	</form>
 </div>
-<div class="google-map">
+
+<div class="google-map">    
 	<div class="geosearch single">
 		<form name="geosearch" id="geosearch" onsubmit="return false;">
 			<input type="text" name="query" id="query" value=""/>
 			<input type="submit" id="query_submit" value="Search" />
-		</form>
+		</form>            
 	</div>
-	<div id="map" style="width: 100%">
+        <div id="my_location_button" onclick="javascript:doGeolocation()"  title="Where am I?"></div>
+	<div id="map" style="width: 100%">                
 		<div style="padding: 1em; color: gray">Loading...</div>
 	</div>
 </div>

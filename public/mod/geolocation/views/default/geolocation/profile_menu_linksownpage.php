@@ -29,13 +29,11 @@
 
 		map.setCenter(latlng, 13);
 		map.addOverlay(new GMarker(latlng));
-			
-                var mapControl = new GMapTypeControl();
-                map.addControl(mapControl);
-                map.addControl(new GLargeMapControl());
+                
+                map.setUIToDefault();
 
 		$('#layout_map').show();
-		$.facebox($('#layout_map'));		
+		$.facebox($('#layout_map'));
 	}
 </script>
 <?php endif; ?>

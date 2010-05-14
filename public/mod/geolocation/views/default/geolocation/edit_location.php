@@ -30,10 +30,10 @@ if ($vars['page'] == 'current') {
 <?
 }
 ?>
-<div id="map">
+<div id="map" class="edit-location">
 	<div style="padding: 1em; color: gray">Loading...</div>
 </div></div>
-<form action="<?php echo $vars['url']; ?>action/profile/edit" method="post" id="location_form" style="margin:0 10px;">
+<form action="<?php echo $vars['url']; ?>action/profile/edit" method="post" id="location_form" style="margin:0 10px;position:relative;">
 		<?php echo elgg_view('input/securitytoken') ; ?>	
 	<input type="hidden" value="<?php echo $lat; ?>" name="<?php echo $vars['page']; ?>_latitude" id="<?php echo $vars['page']; ?>_geolocation_latitude" />
 	<input type="hidden" value="<?php echo $lng; ?>" name="<?php echo $vars['page']; ?>_longitude" id="<?php echo $vars['page']; ?>_geolocation_longitude" />
@@ -42,11 +42,10 @@ if ($vars['page'] == 'current') {
 	<input type="checkbox" value="yes" name="geolocation_auto_current_location" <?php if($user->geolocation_auto_current_location == 'yes') echo ' checked=checked' ;?>/> Set auto current location by ip after login<br />
 	<?php endif; ?>
 	<input type="submit" id="save_location" name="save" value="Save" />
+	<?php if ($vars['page'] == 'current'): ?>
+	<a href="javascript:setLocation()" class="set-location">Set current location by my current ip-address</a>
+	<?php endif; ?>
 </form>
-<?php if ($vars['page'] == 'current'): ?>
-<a href="javascript:setLocation()">Set current location by my current ip-address</a>
-<?php endif; ?>
-
 <script type="text/javascript">
 	var form = $('#location_form');
 

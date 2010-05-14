@@ -4,6 +4,10 @@
 		map = new google.maps.Map2(document.getElementById(map_id));
 		map.setCenter(latlng, 13);
 		map.addOverlay(new GMarker(latlng));
+
+               var mapControl = new GMapTypeControl();
+                map.addControl(mapControl);
+                map.addControl(new GLargeMapControl());
 	}
 </script>
 <?php if($vars['entity']->current_latitude && $vars['entity']->current_longitude): ?>

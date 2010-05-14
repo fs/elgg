@@ -12,14 +12,28 @@
 		<div style="padding: 1em; color: gray">Loading...</div>
 	</div>
 </div>
+
+<script type="text/javascript" src="http://j.maxmind.com/app/geoip.js"></script>
 <script type="text/javascript">
   var map = new google.maps.Map2(document.getElementById('map'));
   $('#layout_map').hide();
   function show_map_and_marker(type, latlng) {
     $('#layout_map div h2').html(type.substr(0, 1).toUpperCase() + type.substr(1) + ' on a map');
 		map.clearOverlays();
+
+                if (!latlng.lat() || !latlng.lng()) {                    
+                        var lat = geoip_latitude();
+                        var lng = geoip_longitude();
+                        var latlng = new GLatLng(lat, lng);
+                } // no coords
+
 		map.setCenter(latlng, 13);
 		map.addOverlay(new GMarker(latlng));
+			
+                var mapControl = new GMapTypeControl();
+                map.addControl(mapControl);
+                map.addControl(new GLargeMapControl());
+
 		$('#layout_map').show();
 		$.facebox($('#layout_map'));		
 	}

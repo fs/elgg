@@ -3,3 +3,4 @@ data
 key.pem
 cert.pem
 .svn
+public/engine/settings.php

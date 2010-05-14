@@ -33,7 +33,7 @@ if ($vars['page'] == 'current') {
 <div id="map" class="edit-location">
 	<div style="padding: 1em; color: gray">Loading...</div>
 </div></div>
-<form action="<?php echo $vars['url']; ?>action/profile/edit" method="post" id="location_form" style="margin:10px;position:relative;">
+<form action="<?php echo $vars['url']; ?>action/profile/edit" method="post" id="location_form" style="margin:5px 10px;position:relative;">
 		<?php echo elgg_view('input/securitytoken') ; ?>	
 	<input type="hidden" value="<?php echo $lat; ?>" name="<?php echo $vars['page']; ?>_latitude" id="<?php echo $vars['page']; ?>_geolocation_latitude" />
 	<input type="hidden" value="<?php echo $lng; ?>" name="<?php echo $vars['page']; ?>_longitude" id="<?php echo $vars['page']; ?>_geolocation_longitude" />

@@ -44,7 +44,7 @@ if ($vars['page'] == 'current') {
 	<input type="submit" id="save_location" name="save" value="Save" />
 </form>
 <?php if ($vars['page'] == 'current'): ?>
-<a href="javascript:setLocation()">Set current location by my current ip-address</a>
+<a href="javascript:set_current_location()">Set current location by my current ip-address</a>
 <?php endif; ?>
 
 <script type="text/javascript">

@@ -31,6 +31,7 @@
 	}
 	$area2 = elgg_view_title($title);
 	
+	$area2 .= elgg_view('geolocation/scripts');
 	$area2 .= elgg_view(
 			"geolocation/edit_location",
 			array(

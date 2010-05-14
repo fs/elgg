@@ -17,7 +17,7 @@ foreach ($vars['entities'] as $entity) {
 
 if ($show_map) {
 
-	?>
+?>
 
 <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<?= $GLOBALS['google_api'] ?>" type="text/javascript"></script>
 <script src="/mod/geolocation/js/markerclusterer.js" type="text/javascript"></script>
@@ -63,8 +63,8 @@ if ($show_map) {
 			var center = bounds.getCenter();
 			var zoom   = map.getBoundsZoomLevel(bounds);
 			map.setCenter(center, zoom);
-			map.addControl(new GLargeMapControl());
-			map.addControl(new GMapTypeControl());
+			//map.addControl(new GLargeMapControl());
+			//map.addControl(new GMapTypeControl());
 			
 			if(is_all == '1') { refreshMap(data.marker); }
 			else { refreshMap(); }
@@ -100,7 +100,7 @@ if ($show_map) {
 
 <div id="layout_map">
 	<div id="content_area_user_title"><h2>Locations on map</h2></div>
-	<div id="map">
+	<div id="map" style="left:10px;">
 		<div style="padding: 1em; color: gray">Loading...</div>
 	</div>
 </div>

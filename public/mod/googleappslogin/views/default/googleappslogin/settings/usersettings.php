@@ -35,6 +35,9 @@
 	
 	if ($user->google == 1 || $subtype == 'googleapps') {
 		
+		//echo elgg_echo('googleappslogin:googleapps_controlled_profile') . "<br />";
+		//echo elgg_view('input/radio', array('internalname' => 'googleapps_controlled_profile', 'options' => $options, 'value' => $googleapps_controlled_profile));
+		
 		$site_list = unserialize($user->site_list);
 		if (!empty($site_list)) {
 			?>

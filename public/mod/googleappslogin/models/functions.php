@@ -50,7 +50,8 @@
 		}
 		foreach ($result as $gapps_user) {
 			$user = get_user($gapps_user->owner_guid);
-			if (empty($user->access_token) || empty($user->access_secret)) {
+			//print_r($user);
+			if (empty($user->access_token) || empty($user->token_secret)) {
 				echo '<p>No access token for ' . $user->username . '.</p>';
 				continue;
 			}

@@ -191,7 +191,7 @@ class OAuth_Client {
 
 	}
 
-	public function fetch_sites($xml) {
+	public function fetch_sites($xml) {            
 
 		$rss = simplexml_load_string($xml);
 
@@ -243,11 +243,11 @@ class OAuth_Client {
 			$site['feed'] = $feedUri;
 			$site['url'] = $site_url;
 			$site['modified'] = strtotime($item_array['updated']);
+
 			$list[] = $site;
 		}
 
 		return $list;
-
 	}
 
 

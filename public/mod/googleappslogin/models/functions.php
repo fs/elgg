@@ -48,6 +48,7 @@
 		if (empty($result)) {
 			return;
 		}
+
 		foreach ($result as $gapps_user) {
 			$user = get_user($gapps_user->owner_guid);
 			//print_r($user);
@@ -64,7 +65,9 @@
 			$is_new_activity = false;
 			$is_new_docs = false;
 			if ($oauth_sync_sites != 'no') {
-				$response_list = googleapps_sync_sites(true, $user, true);
+                                $res=googleapps_sync_sites(true, $user, true);
+				$response_list = $res['response_list'];
+                                $site_entity=$res['site_entity'];
 				$max_time = null;
 				$times = array();
 				$site_list = empty($user->site_list) ? array() : unserialize($user->site_list);
@@ -94,20 +97,26 @@
 					$site_title = $title;
 					$title = 'Changes on ' . $title . ' site';
 
+                                        $last_time_updated=$site_entity->modified; // Last time modified
 					// Parse entries for each google site
+
 					foreach ($rss->entry as $item) {
 						// Get entry data
 						$text = $item->summary->div->asXML();
 						$author_email = @$item->author->email[0];
-						$date = $item->updated;
+                                                $date = $item->updated;
+
+                                                 if (strtotime($date)>$last_time_updated) $last_time_updated=strtotime($date); // last time updated
+
 						$time = strtotime($date);
 						$access = calc_access($site_access);
 						$times[] = $time;
 
-						if ($user->last_site_activity <= $time 
+						if (   $user->last_site_activity <= $time
 								&& $author_email == $user->email
-								&& $site['isPublic'] == true)
+								&&  $site['isPublic'] == true )
 							{
+                                                    
 							// Initialise a new ElggObject (entity)
 							$site_activity = new ElggObject();
 							$site_activity->subtype = "site_activity";
@@ -116,7 +125,9 @@
 
 							$site_activity->access_id = $access;
 							$site_activity->title = $title;
-							$site_activity->updated = $date;
+
+                                                        $site_activity->updated = $date;
+
 							$site_activity->text = str_replace('<a href', '<a target="_blank" href', $text) . ' on the <a target="_blank" href="' . $site['url'] . '">' . $site_title . '</a> site';
 							$site_activity->site_name = $site_title;
 
@@ -133,7 +144,20 @@
 							}
 
 						}
-					}
+					} // sites
+
+                                        // change site time
+                                        if( $last_time_updated <> $site_entity->modified ) {
+                                            $site_entity->modified = $last_time_updated;
+                                            $site_entity->save();
+                                            echo "<br />updated site ".$site_entity->title;
+
+                                            echo "<br />New time=".$last_time_updated;
+
+                                        }
+
+                                        echo $site_entity;
+                                        
 
 				}
 
@@ -155,7 +179,11 @@
 				}
 
 			}
-		}
+		} // each user
+
+
+
+                //end
 	
 	}
 
@@ -294,8 +322,7 @@
      * @return array|false
      */
 	
-	function googleapps_sync_sites($do_not_redirect = true, $user = null) {
-
+	function googleapps_sync_sites($do_not_redirect = true, $user = null) {            
 		// 0. Check settings
 		if (get_plugin_setting('oauth_sync_sites', 'googleappslogin') == 'no') {
 			return false;
@@ -313,7 +340,7 @@
 
 		// 1. Get google site feeds list
 		$result = $client->execute('https://sites.google.com/feeds/site/' . $client->key . '/', '1.1');
-		$response_list = $client->fetch_sites($result);
+		$response_list = $client->fetch_sites($result); // Site list
 
 		// 2. Get local site list
 		if($user == null) {
@@ -337,8 +364,10 @@
 		// 4.1 Update normalized sites: destroy deleted sites
 		if($normalized_sites) {
 			foreach ($normalized_sites as $site_entity) {
+
 				$found = false;
 				foreach ($response_list as $site) {
+
 					if (empty($site_entity->site_id)) {
 						continue;
 					}
@@ -359,12 +388,15 @@
 						$site_entity->title = $found['title'];
 						$modified = true;
 					}
-					if ($site['modified'] != $site_entity->modified) {
+					if ($site['modified'] > $site_entity->modified) {
 						$site_entity->modified = $found['modified'];
 						$modified = true;
 					}
 					if ($modified) {
 						$site_entity->save();
+
+                                                echo "<h1>save site</h1>";
+
 					}
 				}
 			}
@@ -394,7 +426,7 @@
 		}
 
 		// 5. Profit
-		return $response_list;
+		return array('response_list'=>$response_list,  'site_entity'=>$site_entity);
 
 	}
 

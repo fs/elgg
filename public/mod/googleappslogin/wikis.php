@@ -40,8 +40,8 @@
 	
 	$site_list = array();
 	
-	foreach ($sites as $number => $site) {
-		
+	foreach ($sites as $number => $site) {           
+
 		if (isset($site_list[$site->site_id])) {
 			$actual_site = $site_list[$site->site_id];
 			if ($actual_site->owner_guid != $site->owner_guid) {
@@ -60,8 +60,7 @@
 		}
 	}
 	
-	foreach ($site_list as $number => $site) {
-		
+	foreach ($site_list as $number => $site) {            
 		//echo '<pre>';print_r($site->other_owners);
 		$owner = get_entity($site->owner_guid);
 		$owners = array();
@@ -77,7 +76,8 @@
 		$c = 0;
 		$owners_string = '';
 		foreach ($owners as $owner) {
-			
+
+
 			$owners_string .= '<a href="/pg/profile/' . $owner->username . '">' . $owner->name . '</a>';
 			if ($c + 1 < count($owners)) {
 				$owners_string .= ', ';
@@ -97,10 +97,13 @@
 						<p><b><a href="' . $site->url . '">' . $site->title . '</a></b></p>
 					</div>
 		';
+
+
+
 		if ($site->modified) {
 			$area2 .= '
 					<div>
-						Updated ' . friendly_time($site->modified) . '
+						Updated ' . friendly_time(  $site->modified) . '
 					</div>';
 		}
 		$area2 .= '

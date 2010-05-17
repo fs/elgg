@@ -50,6 +50,11 @@
 		}
 		foreach ($result as $gapps_user) {
 			$user = get_user($gapps_user->owner_guid);
+			if (empty($user->access_token) || empty($user->access_secret)) {
+				echo '<p>No access token for ' . $user->username . '.</p>';
+				continue;
+			}
+			
 			$_SESSION['user'] = $user;
 			$client = get_client($user);
 			$all = true;
@@ -143,9 +148,9 @@
 				}
 				
 				if ($is_new_activity) {
-					echo 'New activity added.';
+					echo '<p>New activity added for ' . $user->username . '.</p>';
 				} else {
-					echo 'No new activity.';
+					echo '<p>No new activity for ' . $user->username . '.</p>';
 				}
 
 			}

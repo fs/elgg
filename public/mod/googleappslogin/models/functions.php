@@ -62,12 +62,17 @@
 			$all = true;
 			$oauth_sync_sites = get_plugin_setting('oauth_sync_sites', 'googleappslogin');
 			$count = 0;
+
 			$is_new_activity = false;
 			$is_new_docs = false;
+
 			if ($oauth_sync_sites != 'no') {
+
                                 $res=googleapps_sync_sites(true, $user, true);
+
 				$response_list = $res['response_list'];
-                                $site_entity=$res['site_entity'];
+                                $site_entities=$res['site_entities']; // sites objects
+
 				$max_time = null;
 				$times = array();
 				$site_list = empty($user->site_list) ? array() : unserialize($user->site_list);
@@ -75,8 +80,22 @@
 					$user->last_site_activity = '0';
 				}
 
+                                 
 				// Parse server response for google sites activity stream
+                                $site_entity_n=0;
 				foreach ($response_list as $site) {
+
+
+                                    $site_entity=null;
+                                    /* found current site entity */
+                                    foreach ($site_entities as $site_obj) {
+                                       if ($site_obj->site_id ==$site['site_id']) {
+                                           $site_entity=$site_obj;
+                                           break;
+                                       }
+                                    }
+                                    
+                                        $last_time_site_updated=$site_entity->modified;
 
 					$title = $site['title'];
 					$feed = $site['feed'];
@@ -97,7 +116,7 @@
 					$site_title = $title;
 					$title = 'Changes on ' . $title . ' site';
 
-                                        $last_time_updated=$site_entity->modified; // Last time modified
+                                       
 					// Parse entries for each google site
 
 					foreach ($rss->entry as $item) {
@@ -106,7 +125,7 @@
 						$author_email = @$item->author->email[0];
                                                 $date = $item->updated;
 
-                                                 if (strtotime($date)>$last_time_updated) $last_time_updated=strtotime($date); // last time updated
+                                                 if (strtotime($date)>$last_time_site_updated) $last_time_site_updated=strtotime($date); // update time
 
 						$time = strtotime($date);
 						$access = calc_access($site_access);
@@ -144,22 +163,25 @@
 							}
 
 						}
-					} // sites
+					} // rss in site
 
                                         // change site time
-                                        if( $last_time_updated <> $site_entity->modified ) {
-                                            $site_entity->modified = $last_time_updated;
+                                        if( $last_time_site_updated > $site_entity->modified ) {
+                                            $site_entity->modified = $last_time_site_updated;
                                             $site_entity->save();
-                                            echo "<br />updated site ".$site_entity->title;
-
-                                            echo "<br />New time=".$last_time_updated;
-
+                                            echo "<h1>updated site. Name= ".$site_entity->title;
+                                            echo "<br />New time =".$last_time_site_updated;
+                                            echo "</h1>";
+                                        } else {
+                                            echo "<h1 />site ok. Name= ".$site_entity->title;
+                                            echo "<br />last time =".$last_time_site_updated;
+                                            echo "</h1>";
                                         }
 
-                                        echo $site_entity;
-                                        
 
-				}
+				} // all sites
+
+                                        
 
 				if($response_list) {
 					$max_time = max($times);
@@ -172,11 +194,11 @@
 					$user->save();
 				}
 				
-				if ($is_new_activity) {
-					echo '<p>New activity added for ' . $user->username . '.</p>';
-				} else {
-					echo '<p>No new activity for ' . $user->username . '.</p>';
-				}
+//				if ($is_new_activity) {
+//					echo '<p>New activity added for ' . $user->username . '.</p>';
+//				} else {
+//					echo '<p>No new activity for ' . $user->username . '.</p>';
+//				}
 
 			}
 		} // each user
@@ -394,11 +416,10 @@
 					}
 					if ($modified) {
 						$site_entity->save();
-
-                                                echo "<h1>save site</h1>";
-
+                                                echo "<h1>global site ". $site_entity->title." updated</h1>";
 					}
 				}
+                                
 			}
 		}
 
@@ -426,7 +447,7 @@
 		}
 
 		// 5. Profit
-		return array('response_list'=>$response_list,  'site_entity'=>$site_entity);
+		return array('response_list'=>$response_list,  'site_entities'=>$normalized_sites );
 
 	}
 

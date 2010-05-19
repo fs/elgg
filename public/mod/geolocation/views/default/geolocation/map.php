@@ -79,14 +79,14 @@
 		refreshMap(data);
 	});
 
-	function positionSuccess(position) {
-		// Centre the map on the new location
-		var coords = position.coords || position.coordinate || position;
-		var latLng = new google.maps.LatLng(coords.latitude, coords.longitude);
-		map.panTo(latLng);
-		map.setZoom(12);
-        //map.addOverlay(new GMarker(latLng));
-	}
+//	function positionSuccess(position) {
+//		// Centre the map on the new location
+//		var coords = position.coords || position.coordinate || position;
+//		var latLng = new google.maps.LatLng(coords.latitude, coords.longitude);
+//		map.panTo(latLng);
+//		map.setZoom(12);
+//        //map.addOverlay(new GMarker(latLng));
+//	}
 
 	$(document).ready(function() {
         $('#typesForm').bind('submit', function() {

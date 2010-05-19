@@ -1,3 +1,5 @@
+<?php require_once 'scripts.php'; ?>
+
 <?php if (get_context() == "profile"): ?>
 <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<?= $GLOBALS['google_api'] ?>" type="text/javascript"></script>
 <p class="user_menu_item">
@@ -8,6 +10,7 @@
 </p>
 <div id="layout_map">
 	<div id="content_area_user_title"><h2>Locations on map</h2></div>
+        <div id="my_location_button" onclick="javascript:doGeolocation()"  title="Where am I?"></div>
 	<div id="map">
 		<div style="padding: 1em; color: gray">Loading...</div>
 	</div>

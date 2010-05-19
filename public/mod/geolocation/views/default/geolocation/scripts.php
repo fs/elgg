@@ -6,12 +6,16 @@ function markerClick(url, latlng) {
 	}
 }
 
-function set_location(new_latlng){
+function set_location(new_latlng){        
 	map.panTo(new_latlng);
 	if (map.getZoom() < 10) {
 		map.setZoom(12);
 	}
-	marker.setLatLng(new_latlng);
+                                        var marker = new GMarker(new_latlng, {draggable: true});
+                                        map.addOverlay(marker);
+                                        map.setCenter(latlng, 5);
+
+	//marker.setLatLng(new_latlng);
 	store_point_location(new_latlng);
 }
 

@@ -15,7 +15,7 @@
 				$lng = 0;
 	}
 
-	?>
+?>
 <div style="position:relative;width:650px;margin:0 10px;">
 <div class="geosearch single">
 	<form name="geosearch" id="geosearch" onsubmit="return false;">
@@ -23,13 +23,7 @@
 		<input type="submit" id="query_submit" value="Search" />
 	</form>
 </div>
-<?
-//if ($vars['page'] == 'current') {
-?>
 <div id="my_location_button" onclick="javascript:doGeolocation()"  title="Where am I?"></div>
-<?
-//}
-?>
 <div id="map">
 	<div style="padding: 1em; color: gray">Loading...</div>
 </div></div>
@@ -74,14 +68,17 @@
 
 	var lat = <?= $lat ?> || geoip_latitude();
 	var lng = <?= $lng ?> || geoip_longitude();
-	
+
 	if (GBrowserIsCompatible()) {
-		
+
 		map = new google.maps.Map2(document.getElementById("map"));
 		map.setUIToDefault();
 		var latlng = new GLatLng(lat, lng);
-		var marker = new GMarker(latlng, {draggable: true});
-		map.addOverlay(marker);
+		//var marker = new GMarker(latlng, {draggable: true});
+
+                where_i_am_marker = new GMarker(latlng, {draggable: true});
+
+		map.addOverlay(where_i_am_marker);
 		map.setCenter(latlng, 5);
 
 		GEvent.addListener(marker, "dragstart", function() {

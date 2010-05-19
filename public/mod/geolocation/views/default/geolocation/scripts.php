@@ -1,22 +1,23 @@
 <script type="text/javascript">
 
+    var where_i_am_marker=null;
+
 function markerClick(url, latlng) {
 	return function() {
 		map.openInfoWindowHtml(latlng, url, {maxWidth:300, maxHeight:300, autoScroll:true});
 	}
 }
 
-function set_location(new_latlng){        
-	map.panTo(new_latlng);
+function set_location(new_latlng){                        
+	//map.panTo(new_latlng);
 	if (map.getZoom() < 10) {
 		map.setZoom(12);
 	}
-                                        var marker = new GMarker(new_latlng, {draggable: true});
-                                        map.addOverlay(marker);
-                                        map.setCenter(latlng, 5);
-
-	//marker.setLatLng(new_latlng);
-	store_point_location(new_latlng);
+                                        map.removeOverlay(where_i_am_marker);
+                                        where_i_am_marker = new GMarker(new_latlng, {draggable: true});
+                                        map.addOverlay(where_i_am_marker);
+                                        map.setCenter(latlng, 5);	
+	//store_point_location(new_latlng);
 }
 
 function set_current_location(){
@@ -83,7 +84,7 @@ function showResponse(response, reverse) {
 	} else {
 		latlng = new GLatLng(response.Placemark[0].Point.coordinates[1],
 							 response.Placemark[0].Point.coordinates[0]);
-		set_location(latlng);
+		//set_location(latlng);
 	}
 }
 
@@ -105,7 +106,23 @@ function positionSuccess(position) {
 	// Centre the map on the new location
 	var coords = position.coords;
 	var new_latLng = new GLatLng(coords.latitude, coords.longitude);
-	set_location(new_latLng);
+	
+        set_location(new_latLng);
+
+//        var whereIcon = new GIcon();
+//        whereIcon.image = 'markers/where.png';
+//        whereIcon.printImage = 'markers/where_printImage.gif';
+//        whereIcon.mozPrintImage = 'markers/where_mozPrintImage.gif';
+//        whereIcon.iconSize = new GSize(16,16);
+//        whereIcon.shadow = 'markers/where_shadow.png';
+//        whereIcon.transparent = 'markers/where_transparent.png';
+//        whereIcon.shadowSize = new GSize(24,16);
+//        whereIcon.printShadow = 'markers/where_printShadow.gif';
+//        whereIcon.iconAnchor = new GPoint(8,16);
+//        whereIcon.infoWindowAnchor = new GPoint(8,0);
+//        whereIcon.imageMap = [10,0,11,1,11,2,11,3,11,4,11,5,11,6,9,7,10,8,10,9,10,10,9,11,8,12,4,13,4,14,3,15,2,15,2,14,2,13,3,12,2,11,1,10,1,9,1,8,1,7,1,6,2,5,4,4,3,3,3,2,4,1,4,0];
+
+
 }
 
 $(document).ready(function () {

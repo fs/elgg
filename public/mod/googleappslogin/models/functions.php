@@ -44,6 +44,10 @@
      */
 	function googleapps_cron_fetch_data() {
 
+            set_time_limit(0);
+
+                $a_time=time();
+
 		$result = find_metadata('googleapps_controlled_profile', 'yes', 'user', '', 99999999);
 		if (empty($result)) {
 			return;
@@ -56,6 +60,8 @@
 				echo '<p>No access token for ' . $user->username . '.</p>';
 				continue;
 			}
+
+                        echo "user=".$user->name;
 			
 			$_SESSION['user'] = $user;
 			$client = get_client($user);
@@ -70,11 +76,18 @@
 
                                 $res=googleapps_sync_sites(true, $user, true);
 
-				$response_list = $res['response_list'];
+				$response_list = $res['response_list']; //sites xml list
                                 $site_entities=$res['site_entities']; // sites objects
+
+//                                echo '<pre>';
+//                                print_r($response_list);
+//                                echo '<br /><b>site objs</b><br />';
+//                                print_r($site_entities);
+//                                echo '</pre>';
 
 				$max_time = null;
 				$times = array();
+
 				$site_list = empty($user->site_list) ? array() : unserialize($user->site_list);
 				if (empty($user->last_site_activity)) {
 					$user->last_site_activity = '0';
@@ -82,18 +95,13 @@
 
                                  
 				// Parse server response for google sites activity stream
-                                $site_entity_n=0;
 				foreach ($response_list as $site) {
 
 
-                                    $site_entity=null;
-                                    /* found current site entity */
-                                    foreach ($site_entities as $site_obj) {
-                                       if ($site_obj->site_id ==$site['site_id']) {
-                                           $site_entity=$site_obj;
-                                           break;
-                                       }
-                                    }
+                                        /* found current site entity obj */
+                                        foreach ($site_entities as $site_entity) {
+                                            if ($site_entity->site_id ==$site['site_id']) break;
+                                        }
                                     
                                         $last_time_site_updated=$site_entity->modified;
 
@@ -119,63 +127,75 @@
                                        
 					// Parse entries for each google site
 
+                                        echo "<br /><br /><b>site ".$site_entity->title."</b> ".$site_entity->site_id." <br />";
+
 					foreach ($rss->entry as $item) {
+
+//                                                echo "<pre>\t";
+//                                                print_r($item);
+//                                                echo "</pre>";
+
 						// Get entry data
 						$text = $item->summary->div->asXML();
 						$author_email = @$item->author->email[0];
                                                 $date = $item->updated;
 
-                                                 if (strtotime($date)>$last_time_site_updated) $last_time_site_updated=strtotime($date); // update time
+                                                 if (strtotime($date)>$last_time_site_updated) $last_time_site_updated=strtotime($date); // update site time
 
-						$time = strtotime($date);
-						$access = calc_access($site_access);
-						$times[] = $time;
+						$time = strtotime($date);						
+                                                $access = calc_access($site_access);
+						$times[] = $time; // all user's sites time
 
-						if (   $user->last_site_activity <= $time
-								&& $author_email == $user->email
-								&&  $site['isPublic'] == true )
+						if (   $user->last_site_activity <= $time // not publich already
+								&& $author_email == $user->email // edited by this user
+								/* &&  $site['isPublic'] == true */ )
 							{
+
+                                                    echo "<b>PUBLISH NEW ACTIVITY</b><br />";
                                                     
-							// Initialise a new ElggObject (entity)
-							$site_activity = new ElggObject();
-							$site_activity->subtype = "site_activity";
-							$site_activity->owner_guid = $user->guid;
-							$site_activity->container_guid = $user->guid;
+                                                            // Initialise a new ElggObject (entity)
+                                                            $site_activity = new ElggObject();
+                                                            $site_activity->subtype = "site_activity";
+                                                            $site_activity->owner_guid = $user->guid;
+                                                            $site_activity->container_guid = $user->guid;
 
-							$site_activity->access_id = $access;
-							$site_activity->title = $title;
+                                                            $site_activity->access_id = $access;
+                                                            $site_activity->title = $title;
 
-                                                        $site_activity->updated = $date;
+                                                            $site_activity->updated = $date;
 
-							$site_activity->text = str_replace('<a href', '<a target="_blank" href', $text) . ' on the <a target="_blank" href="' . $site['url'] . '">' . $site_title . '</a> site';
-							$site_activity->site_name = $site_title;
+                                                            $site_activity->text = str_replace('<a href', '<a target="_blank" href', $text) . ' on the <a target="_blank" href="' . $site['url'] . '">' . $site_title . '</a> site';
+                                                            $site_activity->site_name = $site_title;
 
-							// Now save the object
-							if (!$site_activity->save()) {
-								register_error('Site activity has not saves.');
-								//forward($_SERVER['HTTP_REFERER']);
-							}
+                                                            // Now save the object
+                                                            if (!$site_activity->save()) {
+                                                                    register_error('Site activity has not saves.');
+                                                                    //forward($_SERVER['HTTP_REFERER']);
+                                                            }
 
-							// add to river
-							if (add_to_river('river/object/site_activity/create', 'create',
-							$user->guid, $site_activity->guid, "", strtotime($date))) {
-								$is_new_activity = true;
-							}
+                                                            // add to river
+                                                            if (add_to_river('river/object/site_activity/create', 'create',
+                                                            $user->guid, $site_activity->guid, "", strtotime($date))) {
+                                                                    $is_new_activity = true;
+                                                            }
 
 						}
 					} // rss in site
 
                                         // change site time
                                         if( $last_time_site_updated > $site_entity->modified ) {
+                                            
                                             $site_entity->modified = $last_time_site_updated;
                                             $site_entity->save();
-                                            echo "<h1>updated site. Name= ".$site_entity->title;
+
+                                            echo "<b>updated site.</b>";
                                             echo "<br />New time =".$last_time_site_updated;
-                                            echo "</h1>";
+
                                         } else {
-                                            echo "<h1 />site ok. Name= ".$site_entity->title;
+
+                                            echo "site ok.";
                                             echo "<br />last time =".$last_time_site_updated;
-                                            echo "</h1>";
+
                                         }
 
 
@@ -194,19 +214,24 @@
 					$user->save();
 				}
 				
-//				if ($is_new_activity) {
-//					echo '<p>New activity added for ' . $user->username . '.</p>';
-//				} else {
-//					echo '<p>No new activity for ' . $user->username . '.</p>';
-//				}
+				if ($is_new_activity) {
+					echo '<p>New activity added for ' . $user->username . '.</p>';
+				} else {
+					echo '<p>No new activity for ' . $user->username . '.</p>';
+				}
 
 			}
+                        echo "<hr />";
 		} // each user
 
 
 
                 //end
-	
+
+                echo "<br /><br /><b>All finished</b>";
+                $b_time=time();
+                echo "<br>".($b_time-$a_time)." sec";
+                flush();	
 	}
 
 	/**
@@ -416,7 +441,7 @@
 					}
 					if ($modified) {
 						$site_entity->save();
-                                                echo "<h1>global site ". $site_entity->title." updated</h1>";
+                                                echo "<h3>global site ". $site_entity->title." updated</h3>";
 					}
 				}
                                 

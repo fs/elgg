@@ -100,7 +100,8 @@ if ($show_map) {
 
 <div id="layout_map">
 	<div id="content_area_user_title"><h2>Locations on map</h2></div>
-	<div id="map" style="left:10px;">
+	<div id="my_location_button" onclick="javascript:doGeolocation()"  title="Where am I?"></div>
+	<div id="map" style="left:0px;">
 		<div style="padding: 1em; color: gray">Loading...</div>
 	</div>
 </div>

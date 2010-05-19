@@ -108,6 +108,7 @@ function store_point_location(point) {
 				<input type="submit" id="query_submit" value="Search" />
 			</form>
 		</div>
+		<div id="my_location_button" onclick="javascript:doGeolocation()"  title="Where am I?"></div>
 		<div id="map"></div>
 	</div>
 </div>

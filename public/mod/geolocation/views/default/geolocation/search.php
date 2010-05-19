@@ -12,6 +12,7 @@ if (preg_match('/\/pg\/search/', $path) && !empty($results)) {
 	?>
 	<div style="margin-left:230px;">
 	<?
+		echo elgg_view('geolocation/scripts');
 		echo elgg_view('geolocation/search_map', array('entities' => $results));
 	?>
 	</div>

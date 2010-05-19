@@ -6,10 +6,13 @@ function markerClick(url, latlng) {
 	}
 }
 
-function set_location(latlng){
-	map.panTo(latlng);
-	marker.setLatLng(latlng);
-	store_point_location(latlng);
+function set_location(new_latlng){
+	map.panTo(new_latlng);
+	if (map.getZoom() < 10) {
+		map.setZoom(12);
+	}
+	marker.setLatLng(new_latlng);
+	store_point_location(new_latlng);
 }
 
 function set_current_location(){
@@ -81,6 +84,7 @@ function showResponse(response, reverse) {
 }
 
 function doGeolocation() {
+		//console.log(navigator);
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(positionSuccess, positionError);
 		} else {
@@ -90,13 +94,14 @@ function doGeolocation() {
 
 function positionError(err) {
 	//
+	//alert(err);
 }
 
 function positionSuccess(position) {
 	// Centre the map on the new location
-	var coords = position.coords || position.coordinate || position;
-	var latLng = new GLatLng(coords.latitude, coords.longitude);
-	set_location(latlng);
+	var coords = position.coords;
+	var new_latLng = new GLatLng(coords.latitude, coords.longitude);
+	set_location(new_latLng);
 }
 
 $(document).ready(function () {

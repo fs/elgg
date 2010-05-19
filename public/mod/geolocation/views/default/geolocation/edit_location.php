@@ -24,11 +24,11 @@
 	</form>
 </div>
 <?
-if ($vars['page'] == 'current') {
+//if ($vars['page'] == 'current') {
 ?>
 <div id="my_location_button" onclick="javascript:doGeolocation()"  title="Where am I?"></div>
 <?
-}
+//}
 ?>
 <div id="map">
 	<div style="padding: 1em; color: gray">Loading...</div>

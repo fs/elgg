@@ -44,7 +44,7 @@
 <script type="text/javascript">
 	var form = $('#location_form');
 
-	function store_point_location(point) {		
+	function store_point_location(point) {
 		form.find('#<?php echo $vars['page']; ?>_geolocation_latitude').val(point.y);
 		form.find('#<?php echo $vars['page']; ?>_geolocation_longitude').val(point.x);
 	}
@@ -62,42 +62,45 @@
 			latlng = new GLatLng(response.Placemark[0].Point.coordinates[1],
 			response.Placemark[0].Point.coordinates[0]);
 
-			set_location(latlng);
+			set_location(latlng, true);
 		}
 	}
 
 	var lat = <?= $lat ?> || geoip_latitude();
 	var lng = <?= $lng ?> || geoip_longitude();
+        
+//	var lat = <?= $lat ?>;
+//	var lng = <?= $lng ?>;
+
+
 
 	if (GBrowserIsCompatible()) {
 
 		map = new google.maps.Map2(document.getElementById("map"));
 		map.setUIToDefault();
 		var latlng = new GLatLng(lat, lng);
-		//var marker = new GMarker(latlng, {draggable: true});
 
-                where_i_am_marker = new GMarker(latlng, {draggable: true});
+                set_location(latlng, true);
 
-		map.addOverlay(where_i_am_marker);
-		map.setCenter(latlng, 5);
+//		GEvent.addListener(map, "click", function(latlng) {
+//			set_location(latlng, true);
+//		});
 
-		GEvent.addListener(marker, "dragstart", function() {
-			map.closeInfoWindow();
-		});
-
-		GEvent.addListener(marker, "dragend", function(latlng) {
-			store_point_location(latlng);
-		});
-
-		GEvent.addListener(map, "click", function(latlng) {
-			set_location(latlng);
-		});
 
 		$('#geosearch').submit(function() {
 			geocode();
 			return false;
 		});
 	}
+
+function positionSuccess(position) {
+	// Centre the map on the new location
+	var coords = position.coords;
+	var new_latLng = new GLatLng(coords.latitude, coords.longitude);
+
+        set_location(new_latLng, true);
+}
+
 
 </script>
 <?php endif; ?>

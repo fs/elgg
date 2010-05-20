@@ -21,22 +21,27 @@
   var map = new google.maps.Map2(document.getElementById('map'));
   $('#layout_map').hide();
   function show_map_and_marker(type, latlng) {
+
     $('#layout_map div h2').html(type.substr(0, 1).toUpperCase() + type.substr(1) + ' on a map');
-		map.clearOverlays();
 
-                if (!latlng.lat() || !latlng.lng()) {                    
-                        var lat = geoip_latitude();
-                        var lng = geoip_longitude();
-                        var latlng = new GLatLng(lat, lng);
-                } // no coords
+//    map.clearOverlays();
 
-		map.setCenter(latlng, 13);
-		map.addOverlay(new GMarker(latlng));
-                
-                map.setUIToDefault();
+    if (!latlng.lat() || !latlng.lng()) {
+            var lat = geoip_latitude();
+            var lng = geoip_longitude();
+            var latlng = new GLatLng(lat, lng);
+    } // no coords
 
-		$('#layout_map').show();
-		$.facebox($('#layout_map'));
-	}
+
+    set_location(latlng, false);
+
+//    map.setCenter(latlng, 13);
+//    map.addOverlay(new GMarker(latlng));
+
+    map.setUIToDefault();
+
+    $('#layout_map').show();
+    $.facebox($('#layout_map'));
+}
 </script>
 <?php endif; ?>

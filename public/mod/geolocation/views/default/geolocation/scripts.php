@@ -1,6 +1,6 @@
 <script type="text/javascript">
 
-    var where_i_am_marker=null;
+var where_i_am_marker=null;
 
 function markerClick(url, latlng) {
 	return function() {
@@ -8,23 +8,48 @@ function markerClick(url, latlng) {
 	}
 }
 
-function set_location(new_latlng){                        
-	//map.panTo(new_latlng);
+
+function add_Listener_To_Where_I_Am_Marker() {
+    GEvent.addListener(where_i_am_marker, "dragstart", function() {
+            map.closeInfoWindow();
+    });
+
+    GEvent.addListener(where_i_am_marker, "dragend", function(latlng) {
+            store_point_location(latlng);
+    });
+}
+
+function set_location(new_latlng, dragg){
 	if (map.getZoom() < 10) {
 		map.setZoom(12);
 	}
-                                        map.removeOverlay(where_i_am_marker);
-                                        where_i_am_marker = new GMarker(new_latlng, {draggable: true});
-                                        map.addOverlay(where_i_am_marker);
-                                        map.setCenter(latlng, 5);	
-	//store_point_location(new_latlng);
+
+        // Remove old marker
+        if (where_i_am_marker != null) {
+            map.removeOverlay(where_i_am_marker);
+        }
+
+        var whereIcon = new GIcon(G_DEFAULT_ICON);
+        whereIcon.image = '/mod/geolocation/graphics/markers/user.png';
+
+        where_marker_options = {icon:whereIcon, draggable:dragg};
+	where_i_am_marker = new GMarker(new_latlng, where_marker_options );
+
+
+        map.addOverlay(where_i_am_marker);
+        map.setCenter(new_latlng, 12);
+
+	if (dragg) {
+            store_point_location(new_latlng);
+            add_Listener_To_Where_I_Am_Marker();
+        }
 }
 
 function set_current_location(){
 	var lat = geoip_latitude();
 	var lng = geoip_longitude();
 	var latlng = new GLatLng(lat, lng);
-	set_location(latlng);
+	set_location(latlng, true);
 }
 
 function geocode() {
@@ -107,22 +132,7 @@ function positionSuccess(position) {
 	var coords = position.coords;
 	var new_latLng = new GLatLng(coords.latitude, coords.longitude);
 	
-        set_location(new_latLng);
-
-//        var whereIcon = new GIcon();
-//        whereIcon.image = 'markers/where.png';
-//        whereIcon.printImage = 'markers/where_printImage.gif';
-//        whereIcon.mozPrintImage = 'markers/where_mozPrintImage.gif';
-//        whereIcon.iconSize = new GSize(16,16);
-//        whereIcon.shadow = 'markers/where_shadow.png';
-//        whereIcon.transparent = 'markers/where_transparent.png';
-//        whereIcon.shadowSize = new GSize(24,16);
-//        whereIcon.printShadow = 'markers/where_printShadow.gif';
-//        whereIcon.iconAnchor = new GPoint(8,16);
-//        whereIcon.infoWindowAnchor = new GPoint(8,0);
-//        whereIcon.imageMap = [10,0,11,1,11,2,11,3,11,4,11,5,11,6,9,7,10,8,10,9,10,10,9,11,8,12,4,13,4,14,3,15,2,15,2,14,2,13,3,12,2,11,1,10,1,9,1,8,1,7,1,6,2,5,4,4,3,3,3,2,4,1,4,0];
-
-
+        set_location(new_latLng, false);
 }
 
 $(document).ready(function () {

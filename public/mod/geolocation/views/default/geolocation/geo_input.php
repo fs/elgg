@@ -52,8 +52,6 @@ $(function () {
 	
 	$('div.map').show();
 	map = new google.maps.Map2(document.getElementById("map"));
-	center = new GLatLng(lt, lg);
-	map.setCenter(center, 13);
 	map.setUIToDefault();
 	
 	$('div.map').hide();
@@ -65,35 +63,29 @@ $(function () {
 	// Set up our GMarkerOptions object
 	//markerOptions = { icon:blueIcon };
 	
-	p = new GLatLng(lt, lg);
-	marker = new GMarker(center, {draggable: true});
-
-	GEvent.addListener(marker, "dragstart", function() {
-		map.closeInfoWindow();
-	});
-
-	map.addOverlay(marker);
+	latlng = new GLatLng(lt, lg);
+        set_location(latlng, true);
 
 	$('#geosearch').submit(function() {
 		geocode();
 		return false;
 	});
-
-	store_point_location();
-
-	GEvent.addListener(marker, "dragend", store_point_location);
-
-	GEvent.addListener(map, "click", function(overlay, latlng) {
-		marker.setLatLng(latlng);
-		store_point_location(latlng);
-	});
-
+	
 });
+
+function positionSuccess(position) {
+	// Centre the map on the new location
+	var coords = position.coords;
+	var new_latLng = new GLatLng(coords.latitude, coords.longitude);
+
+        set_location(new_latLng, true);
+}
 
 function store_point_location(point) {
 	if (!point) {
-		point = marker.getLatLng();
-	}
+		point = where_i_am_marker.getLatLng();
+	}        
+
 	$form.find('#geolocation_latitude').val(point.y);
 	$form.find('#geolocation_longitude').val(point.x);
 }

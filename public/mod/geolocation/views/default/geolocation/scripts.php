@@ -1,5 +1,4 @@
 <script type="text/javascript">
-
 var where_i_am_marker=null;
 
 function markerClick(url, latlng) {
@@ -30,19 +29,26 @@ function set_location(new_latlng, dragg){
         }
 
         var whereIcon = new GIcon(G_DEFAULT_ICON);
-        whereIcon.image = '/mod/geolocation/graphics/markers/user.png';
+
+        if (!dragg) { // new icon
+            whereIcon.image = '/mod/geolocation/graphics/markers/circle-blue.png';
+            whereIcon.iconSize = new GSize(50,50);
+            whereIcon.shadowSize = new GSize(0,0);
+        } else { // icon user        
+            whereIcon.image = '/mod/geolocation/graphics/markers/user.png';
+        }
 
         where_marker_options = {icon:whereIcon, draggable:dragg};
-	where_i_am_marker = new GMarker(new_latlng, where_marker_options );
-
+        where_i_am_marker = new GMarker(new_latlng, where_marker_options );
 
         map.addOverlay(where_i_am_marker);
         map.setCenter(new_latlng, 12);
 
-	if (dragg) {
+        if (dragg) {
             store_point_location(new_latlng);
             add_Listener_To_Where_I_Am_Marker();
         }
+
 }
 
 function set_current_location(){

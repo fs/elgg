@@ -68,10 +68,6 @@
 
 	var lat = <?= $lat ?> || geoip_latitude();
 	var lng = <?= $lng ?> || geoip_longitude();
-        
-//	var lat = <?= $lat ?>;
-//	var lng = <?= $lng ?>;
-
 
 
 	if (GBrowserIsCompatible()) {

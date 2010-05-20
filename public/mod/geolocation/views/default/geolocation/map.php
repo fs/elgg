@@ -30,9 +30,9 @@
 			var latlng = new GLatLng(points[i].latitude, points[i].longitude);
 			
 			if( typeof(points[i].icon) != "undefined") {
-			var icon = new GIcon(G_DEFAULT_ICON);
-			icon.image = "/mod/geolocation/graphics/markers/" + points[i].icon + ".png";
-			var marker = new GMarker(latlng, {icon: icon});
+                            var icon = new GIcon(G_DEFAULT_ICON);
+                            icon.image = "/mod/geolocation/graphics/markers/" + points[i].icon + ".png";
+                            var marker = new GMarker(latlng, {icon: icon});
 			} else {
 				var marker = new GMarker(latlng);
 			}
@@ -55,9 +55,11 @@
 
 		if (markerClusterer != null) {
 			markerClusterer.clearMarkers();
-        }
-        markerClusterer = new MarkerClusterer(map, markers, [], datajson.marker);
+                }
+
+                markerClusterer = new MarkerClusterer(map, markers, [], datajson.marker);
 	}
+       
 
 	function refreshMap(datajson) {
 		loadMarkers(datajson);
@@ -69,8 +71,9 @@
 
 		if (markerClusterer != null) {
 			markerClusterer.clearMarkers();
-        }
-        markerClusterer = new MarkerClusterer(map, markers, [], datajson.marker);
+                }
+
+                markerClusterer = new MarkerClusterer(map, markers, [], datajson.marker);
 	}
 
 	jQuery(function() {

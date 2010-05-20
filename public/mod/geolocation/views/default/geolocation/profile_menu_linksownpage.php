@@ -20,11 +20,12 @@
 <script type="text/javascript">
   var map = new google.maps.Map2(document.getElementById('map'));
   $('#layout_map').hide();
+
   function show_map_and_marker(type, latlng) {
 
     $('#layout_map div h2').html(type.substr(0, 1).toUpperCase() + type.substr(1) + ' on a map');
 
-//    map.clearOverlays();
+    map.clearOverlays();
 
     if (!latlng.lat() || !latlng.lng()) {
             var lat = geoip_latitude();
@@ -32,11 +33,11 @@
             var latlng = new GLatLng(lat, lng);
     } // no coords
 
+        var marker = new GMarker(latlng);
+        map.addOverlay(marker);
+        map.setCenter(latlng, 12);
 
-    set_location(latlng, false);
-
-//    map.setCenter(latlng, 13);
-//    map.addOverlay(new GMarker(latlng));
+//    set_location(latlng, false);
 
     map.setUIToDefault();
 

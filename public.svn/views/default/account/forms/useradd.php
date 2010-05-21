@@ -9,7 +9,7 @@
  */
 
 $admin_option = false;
-if (($_SESSION['user']->admin) && ($vars['show_admin'])) {
+if (($_SESSION['user']->isAdmin()) && ($vars['show_admin'])) {
 	$admin_option = true;
 }
 
@@ -18,9 +18,10 @@ $form_body .= "<p><label>" . elgg_echo('username') . "<br />" . elgg_view('input
 $form_body .= "<p><label>" . elgg_echo('email') . "<br />" . elgg_view('input/text' , array('internalname' => 'email')) . "</label></p>";
 $form_body .= "<p><label>" . elgg_echo('password') . "<br />" . elgg_view('input/password' , array('internalname' => 'password')) . "</label></p>";
 $form_body .= "<p><label>" . elgg_echo('passwordagain') . "<br />" . elgg_view('input/password' , array('internalname' => 'password2')) . "</label></p>";
+$form_body .= "<p>";
 
 if ($admin_option) {
-	$form_body .= "<p>" . elgg_view('input/checkboxes', array('internalname' => "admin", 'options' => array(elgg_echo('admin_option'))));
+	$form_body .= elgg_view('input/checkboxes', array('internalname' => "admin", 'options' => array(elgg_echo('admin_option'))));
 }
 
 $form_body .= elgg_view('input/submit', array('internalname' => 'submit', 'value' => elgg_echo('register'))) . "</p>";

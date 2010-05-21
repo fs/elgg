@@ -17,10 +17,8 @@
 
 		global $CONFIG;
 
-		// Set up the menu for logged in users
-		if (isloggedin()) {
-			add_menu(elgg_echo('groups'), $CONFIG->wwwroot . "pg/groups/member/");
-		}
+		// Set up the menu
+		add_menu(elgg_echo('groups'), $CONFIG->wwwroot . "pg/groups/world/");
 
 		// Register a page handler, so we can have nice URLs
 		register_page_handler('groups','groups_page_handler');
@@ -173,8 +171,7 @@
 			'description' => 'longtext',
 			'briefdescription' => 'text',
 			'interests' => 'tags',
-			'website' => 'url',
-
+			//'website' => 'url',
 		);
 
 		$CONFIG->group = trigger_plugin_hook('profile:fields', 'group', NULL, $profile_defaults);
@@ -205,7 +202,6 @@
 			if ($page_owner instanceof ElggGroup && get_context() == 'groups') {
 				if (isloggedin()) {
 					if ($page_owner->canEdit()) {
-						add_submenu_item(elgg_echo('groups:edit'),$CONFIG->wwwroot . "mod/groups/edit.php?group_guid=" . $page_owner->getGUID(), '1groupsactions');
 						add_submenu_item(elgg_echo('groups:invite'),$CONFIG->wwwroot . "mod/groups/invite.php?group_guid={$page_owner->getGUID()}", '1groupsactions');
 						if (!$page_owner->isPublicMembership())
 							add_submenu_item(elgg_echo('groups:membershiprequests'),$CONFIG->wwwroot . "mod/groups/membershipreq.php?group_guid={$page_owner->getGUID()}", '1groupsactions');
@@ -239,7 +235,7 @@
 					add_submenu_item(elgg_echo('groups:yours'), $CONFIG->wwwroot . "pg/groups/member/" . $_SESSION['user']->username, '1groupslinks');
 				}
 				add_submenu_item(elgg_echo('groups:all'), $CONFIG->wwwroot . "pg/groups/world/", '1groupslinks');
-			
+
 				if (isloggedin()) {
 					add_submenu_item(elgg_echo('groups:invitations'), $CONFIG->wwwroot . "pg/groups/invitations/" . $_SESSION['user']->username, '1groupslinks');
 				}
@@ -421,26 +417,32 @@
 	function groups_write_acl_plugin_hook($hook, $entity_type, $returnvalue, $params)
 	{
 		$page_owner = page_owner_entity();
-		// get all groups if logged in
-		if ($loggedin = get_loggedin_user()) {
-			$groups = elgg_get_entities_from_relationship(array('relationship' => 'member', 'relationship_guid' => $loggedin->getGUID(), 'inverse_relationship' => FALSE, 'limit' => 999));
-			if (is_array($groups)) {
-				foreach ($groups as $group) {
-					$returnvalue[$group->group_acl] = elgg_echo('groups:group') . ': ' . $group->name;
-				}
+		if (!$loggedin = get_loggedin_user()) {
+			return $returnvalue;
+		}
+
+		// only insert group access for current group
+		if ($page_owner instanceof ElggGroup && $loggedin) {
+			if ($page_owner->isMember($loggedin)) {
+				$returnvalue[$page_owner->group_acl] = elgg_echo('groups:group') . ': ' . $page_owner->name;
+
+				unset($returnvalue[ACCESS_FRIENDS]);
+			}
+		} else {
+			// if the user owns the group, remove all access collections manually
+			// this won't be a problem once the group itself owns the acl.
+			$groups = elgg_get_entities_from_relationship(array(
+				'relationship' => 'member',
+				'relationship_guid' => $loggedin->getGUID(),
+				'inverse_relationship' => FALSE,
+				'limit' => 999
+			));
+
+			foreach ($groups as $group) {
+				unset($returnvalue[$group->group_acl]);
 			}
 		}
 
-		// This doesn't seem to do anything.
-		// There are no hooks to override container permissions for groups
-//
-//		if ($page_owner instanceof ElggGroup)
-//		{
-//			if (can_write_to_container())
-//			{
-//				$returnvalue[$page_owner->group_acl] = elgg_echo('groups:group') . ": " . $page_owner->name;
-//			}
-//		}
 		return $returnvalue;
 	}
 
@@ -577,6 +579,17 @@
 		}
 
 		return $invitations;
+	}
+
+	/**
+	 * Function to use on groups for access. It will house private, loggedin, public,
+	 * and the group itself. This is when you don't want other groups or channels in the access options available
+	 * Returns an array
+	 **/
+
+	function group_access_options($group){
+		$access_array = array(0 => 'private',1 => 'logged in users',2 => 'public',$group->group_acl => 'Group: ' . $group->name );
+		return $access_array;
 	}
 
 	register_extender_url_handler('group_topicpost_url','annotation', 'group_topic_post');

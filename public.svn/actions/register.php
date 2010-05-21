@@ -24,7 +24,7 @@ if (is_array($admin)) {
 	$admin = $admin[0];
 }
 
-if (!$CONFIG->disable_registration) {
+if ($CONFIG->allow_registration) {
 // For now, just try and register the user
 	try {
 		$guid = register_user($username, $password, $name, $email, false, $friend_guid, $invitecode);
@@ -33,7 +33,7 @@ if (!$CONFIG->disable_registration) {
 			if (($guid) && ($admin)) {
 				// Only admins can make someone an admin
 				admin_gatekeeper();
-				$new_user->admin = 'yes';
+				$new_user->makeAdmin();
 			}
 
 			// Send user validation request on register only
@@ -42,7 +42,7 @@ if (!$CONFIG->disable_registration) {
 				request_user_validation($guid);
 			}
 
-			if (!$new_user->admin) {
+			if (!$new_user->isAdmin()) {
 				// Now disable if not an admin
 				// Don't do a recursive disable.  Any entities owned by the user at this point
 				// are products of plugins that hook into create user and might need
@@ -53,7 +53,21 @@ if (!$CONFIG->disable_registration) {
 			system_message(sprintf(elgg_echo("registerok"),$CONFIG->sitename));
 
 			// Forward on success, assume everything else is an error...
-			forward();
+			// If just registered admin user, login the user in and forward to the
+			// plugins simple settings page.
+			if (!datalist_get('first_admin_login')) {
+				login($new_user);
+				// remove the "you've registered!" system_message();
+				$_SESSION['msg']['messages'] = array();
+
+				// remind users to enable / disable desired tools
+				elgg_add_admin_notice('first_installation_plugin_reminder', elgg_echo('firstadminlogininstructions'));
+
+				datalist_set('first_admin_login', time());
+				forward('pg/admin/plugins/simple');
+			} else {
+				forward();
+			}
 		} else {
 			register_error(elgg_echo("registerbad"));
 		}

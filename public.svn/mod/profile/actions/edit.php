@@ -29,14 +29,27 @@ if (!is_array($accesslevel)) {
 	$accesslevel = array();
 }
 
+/**
+ * wrapper for recursive array walk decoding
+ */
+function profile_array_decoder(&$v) {
+	$v = html_entity_decode($v, ENT_COMPAT, 'UTF-8');
+}
+
+
 foreach($CONFIG->profile as $shortname => $valuetype) {
 	// the decoding is a stop gag to prevent &amp;&amp; showing up in profile fields
 	// because it is escaped on both input (get_input()) and output (view:output/text). see #561 and #1405.
 	// must decode in utf8 or string corruption occurs. see #1567.
-	$value = html_entity_decode(get_input($shortname), ENT_COMPAT, 'UTF-8');
+	$value = get_input($shortname);
+	if (is_array($value)) {
+		array_walk_recursive($value, 'profile_array_decoder');
+	} else {
+		$value = html_entity_decode($value, ENT_COMPAT, 'UTF-8');
+	}
 
 	// limit to reasonable sizes.
-	if ($valuetype != 'longtext' && elgg_strlen($value) > 250) {
+	if (!is_array($value) && $valuetype != 'longtext' && elgg_strlen($value) > 250) {
 		$error = sprintf(elgg_echo('profile:field_too_long'), elgg_echo("profile:{$shortname}"));
 		register_error($error);
 		forward($_SERVER['HTTP_REFERER']);
@@ -91,8 +104,10 @@ if (sizeof($input) > 0) {
 	// Notify of profile update
 	trigger_elgg_event('profileupdate',$user->type,$user);
 
-	//add to river
-	add_to_river('river/user/default/profileupdate','update',$_SESSION['user']->guid,$_SESSION['user']->guid,get_default_access($_SESSION['user']));
+	//add to river if edited by self
+	if (get_loggedin_userid() == $user->guid) {
+		add_to_river('river/user/default/profileupdate','update',$_SESSION['user']->guid,$_SESSION['user']->guid,get_default_access($_SESSION['user']));
+ 	}
 
 	system_message(elgg_echo("profile:saved"));
 }

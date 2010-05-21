@@ -27,11 +27,10 @@ $filter = get_input("filter", "newest");
 $tag = get_input('tag');
 
 // friends links
-$area1 = "<div class='submenu page_navigation'>";
-$area1 .= "<ul><li><a href=\"" . $CONFIG->wwwroot."pg/friends/" . page_owner_entity()->username . "\">". elgg_echo('friends') . "</a></li>";
+$area1 = "<ul class='submenu page_navigation'><li><a href=\"" . $CONFIG->wwwroot."pg/friends/" . page_owner_entity()->username . "\">". elgg_echo('friends') . "</a></li>";
 $area1 .= "<li><a href=\"" . $CONFIG->wwwroot."pg/friendsof/" . page_owner_entity()->username . "\">". elgg_echo('friends:of') . "</a></li>";
 $area1 .= "<li class='selected'><a href=\"" . $CONFIG->wwwroot."mod/members/index.php\">". elgg_echo('members:browse') . "</a></li>";
-$area1 .= "</ul></div>";
+$area1 .= "</ul>";
 
 //search members
 $area1 .= elgg_view("members/search");
@@ -46,7 +45,7 @@ $area2 = elgg_view_title($pagetitle);
 //get the correct view based on filter
 switch($filter){
 	case "newest":
-	$content = list_entities("user","",0,10,false);
+	$filter_content = elgg_list_entities(array('type' => 'user', 'offset' => $offset, 'full_view' => FALSE));
 	break;
 	case "pop":
 		$filter_content = list_entities_by_relationship_count('friend', true, '', '', 0, 10, false);
@@ -61,10 +60,16 @@ switch($filter){
 		break;
 	// search based on tags
 	case "search_tags":
-		$filter_content = trigger_plugin_hook('search','',$tag,"");
-		$filter_content .= list_entities_from_metadata("", $tag, "user", "", "", 10, false, false);
+		$options = array();
+		$options['query'] = $tag;
+		$options['type'] = "user";
+		$options['offset'] = $offset;
+		$options['limit'] = $limit;
+		$results = trigger_plugin_hook('search', 'tags', $options, array());
+		$count = $results['count'];
+		$users = $results['entities'];
+		$filter_content = elgg_view_entity_list($users, $count, $offset, $limit, false, false, true);
 		break;
-	case "newest":
 	case 'default':
 		$filter_content = elgg_list_entities(array('type' => 'user', 'offset' => $offset, 'full_view' => FALSE));
 		break;

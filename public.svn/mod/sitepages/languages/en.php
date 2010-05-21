@@ -14,7 +14,7 @@ $english = array(
 	 * Menu items and titles
 	 */
 	'sitepages' => "Site pages",
-	'sitepages:frontpage' => "Frontpage",
+	'sitepages:front' => "Front Page",
 	'sitepages:about' => "About",
 	'sitepages:terms' => "Terms",
 	'sitepages:privacy' => "Privacy",
@@ -35,6 +35,8 @@ $english = array(
 	'sitepages:addcontent' => "You can add content here via your admin tools. Look for the external pages link under admin.",
 	'item:object:front' => 'Front page items',
 
+	'sitepages:error:no_login' => 'The logged out view for the front page must contain a [login_box] or your users can\'t login!',
+
 	/**
 	 * Status messages
 	 */
@@ -48,35 +50,24 @@ $english = array(
 	'sitepages:error' => "There has been an error, please try again and if the problem persists, contact the administrator",
 
 	/**
-	 * Key words
+	 * ECML
 	 */
-	'sitepages:keywords_title' => 'Keywords',
-	'sitepages:keywords_instructions' =>
-		'Keywords are replaced with content when viewed.  They must be surrounded by
-		two square brackets ([[ and ]]).  You can build your own or use the ones listed below.
-		Hover over a keyword to read its description.',
+	'sitepages:ecml:keywords:loginbox:desc' => 'A standard login box.',
+	'sitepages:ecml:keywords:loginbox:usage' => '[loginbox] Useful for the logged out content area.',
 
-	'sitepages:keywords_instructions_more' =>
-		'
-		You can build your own keywords for views and entities.<br /><br />
+	'sitepages:ecml:keywords:sitestats:desc' => 'This does not exist yet.',
+	'sitepages:ecml:keywords:sitestats:usage' => 'This does not exist yet.',
 
-		[[entity: type=type, subtype=subtype, owner=username, limit=number]]<br />
+	'sitepages:ecml:keywords:userlist:desc' => "Lists users.",
+	'sitepages:ecml:keywords:userlist:usage' => "[userlist OPTIONS] Supports only_with_avatars=TRUE|FALSE, list_type=newest|online|random, limit",
 
-		EX: To show 5 blog posts by admin:<br />
-		[[entity: type=object, subtype=blog, owner=admin, limit=5]]
+	'sitepages:ecml:keywords:entity:desc' => 'Displays a list of any Elgg entity.',
+	'sitepages:ecml:keywords:entity:usage' => '[entity] supports all options in elgg_get_entities()',
 
-		<br /><br />
+	'sitepages:ecml:keywords:view:desc' => 'Displays any Elgg view.',
+	'sitepages:ecml:keywords:view:usage' => '[view src="valid/view" arg1=value1 arg2=value2]',
 
-		You can also specify a valid Elgg view:<br />
-		[[view: elgg_view, name=value]]<br />
-
-		Ex: To show a text input with a default value:<br />
-		[[view: input/text, value=This is a default value]]
-
-		<br /><br />',
-
-	'sitepages:keywords:login_box' => 'A standard login box.  Useful for the logged out content area.',
-	'sitepages:keywords:site_stats' => 'This does not exist yet.',
+	'sitepages:ecml:views:custom_frontpage' => "Custom Front Page",
 );
 
 add_translation('en', $english);

@@ -20,14 +20,14 @@ $type_control = elgg_view('input/pulldown', array('internalname' => 'type', 'opt
 	'url' => elgg_echo('url'),
 	'email' => elgg_echo('email')
 )));
-	
-$submit_control = elgg_view('input/submit', array('internalname' => elgg_echo('save'), 'value' => elgg_echo('Add')));
-	
+
+$submit_control = elgg_view('input/submit', array('internalname' => elgg_echo('add'), 'value' => elgg_echo('add')));
+
 $formbody = <<< END
 		<p>$label_text: $label_control
 		$type_text: $type_control
 		$submit_control</p>
 END;
 
-echo "<p>" . elgg_echo('profile:explainchangefields') . "</p>";
+echo "<p class='margin_top'>" . elgg_echo('profile:explainchangefields') . "</p>";
 echo elgg_view('input/form', array('body' => $formbody, 'action' => $vars['url'] . 'action/profile/editdefault'));

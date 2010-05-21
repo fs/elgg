@@ -17,22 +17,26 @@
 	$owner = page_owner_entity();
 	
 	$title = sprintf(elgg_echo("file:friends"),$owner->name);
-	
-	$area2 = elgg_view_title($title);
-	
+	$area1 = elgg_view('page_elements/content_header', array('context' => "friends", 'type' => 'file'));	
 	set_context('search');
+	// offset is grabbed in list_user_friends_objects
 	$content = list_user_friends_objects($owner->guid, 'file', 10, false);
 	set_context('file');
-	$area1 = get_filetype_cloud($owner->guid, true);
+	$area1 .= get_filetype_cloud($owner->guid, true);
 	
 	// handle case where friends don't have any files
 	if (empty($content)) {
-		$area2 .= elgg_view('page_elements/contentwrapper',array('body' => elgg_echo("file:none")));
+		$area2 .= "<p class='margin_top'>".elgg_echo("file:none")."</p>";
 	} else {
 		$area2 .= $content;
 	}
-
-	$body = elgg_view_layout('two_column_left_sidebar',$area1, $area2);
+	
+	//get the latest comments on all files
+	$comments = get_annotations(0, "object", "file", "generic_comment", "", 0, 4, 0, "desc");
+	$area3 = elgg_view('annotation/latest_comments', array('comments' => $comments));	
+	
+	$content = "<div class='files'>".$area1.$area2."</div>";
+	$body = elgg_view_layout('one_column_with_sidebar', $content, $area3);
 	
 	page_draw($title, $body);
 ?>

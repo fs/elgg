@@ -306,14 +306,21 @@ function get_plugin_name($mainfilename = false) {
  *
  * Example file:
  *
- * <plugin_manifest>
- * 	<field key="author" value="Curverider Ltd" />
- *  	<field key="version" value="1.0" />
- * 	<field key="description" value="My plugin description, keep it short" />
- *  	<field key="website" value="http://www.elgg.org/" />
- *  	<field key="copyright" value="(C) Curverider 2008-2010" />
- *  	<field key="licence" value="GNU Public License version 2" />
- * </plugin_manifest>
+ *	<plugin_manifest>
+ *		<!-- Basic information -->
+ *		<field key="name" value="My Plugin" />
+ *		<field key="description" value="My Plugin's concise description" />
+ *		<field key="version" value="1.0" />
+ *		<field key="category" value="theme" />
+ *		<field key="category" value="bundled" />
+ *		<field key="screenshot" value="path/relative/to/my_plugin.jpg" />
+ *		<field key="screenshot" value="path/relative/to/my_plugin_2.jpg" />
+ *
+ *		<field key="author" value="Curverider Ltd" />
+ *		<field key="website" value="http://www.elgg.org/" />
+ *		<field key="copyright" value="(C) Curverider 2008-2010" />
+ *		<field key="licence" value="GNU Public License version 2" />
+ *	</plugin_manifest>
  *
  * @param string $plugin Plugin name.
  * @return array of values
@@ -324,13 +331,32 @@ function load_plugin_manifest($plugin) {
 	$xml = xml_to_object(file_get_contents($CONFIG->pluginspath . $plugin. "/manifest.xml"));
 
 	if ($xml) {
-		$elements = array();
+		// set up some defaults to normalize expected values to arrays
+		$elements = array(
+			'screenshot' => array(),
+			'category' => array()
+		);
 
 		foreach ($xml->children as $element) {
 			$key = $element->attributes['key'];
 			$value = $element->attributes['value'];
 
-			$elements[$key] = $value;
+			// create arrays if multiple fields are set
+			if (array_key_exists($key, $elements)) {
+				if (!is_array($elements[$key])) {
+					$orig = $elements[$key];
+					$elements[$key] = array($orig);
+				}
+
+				$elements[$key][] = $value;
+			} else {
+				$elements[$key] = $value;
+			}
+		}
+
+		// handle plugins that don't define a name
+		if (!isset($elements['name'])) {
+			$elements['name'] = ucwords($plugin);
 		}
 
 		return $elements;
@@ -341,7 +367,7 @@ function load_plugin_manifest($plugin) {
 
 /**
  * This function checks a plugin manifest 'elgg_version' value against the current install
- * returning TRUE if the elgg_version is <= the current install's version.
+ * returning TRUE if the elgg_version is >= the current install's version.
  * @param $manifest_elgg_version_string The build version (eg 2009010201).
  * @return bool
  */
@@ -462,6 +488,36 @@ function set_plugin_usersetting($name, $value, $user_guid = 0, $plugin_name = ""
 	}
 
 	return false;
+}
+
+/**
+ * Clears a user-specific plugin setting
+ *
+ * @param str $name Name of the plugin setting
+ * @param int $user_guid Defaults to logged in user
+ * @param str $plugin_name Defaults to contextual plugin name
+ * @return bool Success
+ */
+function clear_plugin_usersetting($name, $user_guid=0, $plugin_name='') {
+	$plugin_name = sanitise_string($plugin_name);
+	$name = sanitise_string($name);
+
+	if (!$plugin_name) {
+		$plugin_name = get_plugin_name();
+	}
+
+	$user = get_entity((int) $user_guid);
+	if (!$user) {
+		$user = get_loggedin_user();
+	}
+
+	if (($user) && ($user instanceof ElggUser)) {
+		$prefix = "plugin:settings:$plugin_name:$name";
+
+		return remove_private_setting($user->getGUID(), $prefix);
+	}
+
+	return FALSE;
 }
 
 /**
@@ -587,9 +643,13 @@ function get_installed_plugins() {
 		$plugins = get_plugin_list();
 
 		foreach($plugins as $mod) {
+			// require manifest.
+			if (!$manifest = load_plugin_manifest($mod)) {
+				continue;
+			}
 			$installed_plugins[$mod] = array();
 			$installed_plugins[$mod]['active'] = is_plugin_enabled($mod);
-			$installed_plugins[$mod]['manifest'] = load_plugin_manifest($mod);
+			$installed_plugins[$mod]['manifest'] = $manifest;
 		}
 	}
 
@@ -622,6 +682,10 @@ function enable_plugin($plugin, $site_guid = 0) {
 		throw new InvalidClassException(sprintf(elgg_echo('InvalidClassException:NotValidElggStar'), $site_guid, "ElggSite"));
 	}
 
+	if (!$plugin_info = load_plugin_manifest($plugin)) {
+		return FALSE;
+	}
+
 	// getMetadata() doesn't return an array if only one plugin is enabled
 	if ($enabled = $site->enabled_plugins) {
 		if (!is_array($enabled)) {
@@ -634,8 +698,42 @@ function enable_plugin($plugin, $site_guid = 0) {
 	$enabled[] = $plugin;
 	$enabled = array_unique($enabled);
 
-	$return = $site->setMetaData('enabled_plugins', $enabled);
-	$ENABLED_PLUGINS_CACHE = $enabled;
+	if ($return = $site->setMetaData('enabled_plugins', $enabled)) {
+
+		// for other plugins that want to hook into this.
+		if ($return && !trigger_elgg_event('enable', 'plugin', array('plugin' => $plugin, 'manifest' => $plugin_info))) {
+			$return = FALSE;
+		}
+
+		// for this plugin's on_enable
+		if ($return && isset($plugin_info['on_enable'])) {
+			// pull in the actual plugin's start so the on_enable function is callabe
+			// NB: this will not run re-run the init hooks!
+			$start = "{$CONFIG->pluginspath}$plugin/start.php";
+			if (!file_exists($start) || !include($start)) {
+				$return = FALSE;
+			}
+
+			// need language files for the messages
+			$translations = "{$CONFIG->pluginspath}$plugin/languages/";
+			register_translations($translations);
+			if (!is_callable($plugin_info['on_enable'])) {
+				$return = FALSE;
+			} else {
+				$on_enable = call_user_func($plugin_info['on_enable']);
+				// allow null to mean "I don't care" like other subsystems
+				$return = ($on_disable === FALSE) ? FALSE : TRUE;
+			}
+		}
+
+		// disable the plugin if the on_enable or trigger results failed
+		if (!$return) {
+			array_pop($enabled);
+			$site->setMetaData('enabled_plugins', $enabled);
+		}
+
+		$ENABLED_PLUGINS_CACHE = $enabled;
+	}
 
 	return $return;
 }
@@ -666,6 +764,10 @@ function disable_plugin($plugin, $site_guid = 0) {
 		throw new InvalidClassException(sprintf(elgg_echo('InvalidClassException:NotValidElggStar'), $site_guid, "ElggSite"));
 	}
 
+	if (!$plugin_info = load_plugin_manifest($plugin)) {
+		return FALSE;
+	}
+
 	// getMetadata() doesn't return an array if only one plugin is enabled
 	if ($enabled = $site->enabled_plugins) {
 		if (!is_array($enabled)) {
@@ -675,6 +777,8 @@ function disable_plugin($plugin, $site_guid = 0) {
 		$enabled = array();
 	}
 
+	$old_enabled = $enabled;
+
 	// remove the disabled plugin from the array
 	if (FALSE !== $i = array_search($plugin, $enabled)) {
 		unset($enabled[$i]);
@@ -683,7 +787,32 @@ function disable_plugin($plugin, $site_guid = 0) {
 	// if we're unsetting all the plugins, this will return an empty array.
 	// it will fail with FALSE, though.
 	$return = (FALSE === $site->enabled_plugins = $enabled) ? FALSE : TRUE;
-	$ENABLED_PLUGINS_CACHE = $enabled;
+
+	if ($return) {
+		// for other plugins that want to hook into this.
+		if ($return && !trigger_elgg_event('disable', 'plugin', array('plugin' => $plugin, 'manifest' => $plugin_info))) {
+			$return = FALSE;
+		}
+
+		// for this plugin's on_disable
+		if ($return && isset($plugin_info['on_disable'])) {
+			if (!is_callable($plugin_info['on_disable'])) {
+				$return = FALSE;
+			} else {
+				$on_disable = call_user_func($plugin_info['on_disable']);
+				// allow null to mean "I don't care" like other subsystems
+				$return = ($on_disable === FALSE) ? FALSE : TRUE;
+			}
+		}
+
+		// disable the plugin if the on_enable or trigger results failed
+		if (!$return) {
+			$site->enabled_plugins = $old_enabled;
+			$ENABLED_PLUGINS_CACHE = $old_enabled;
+		} else {
+			$ENABLED_PLUGINS_CACHE = $enabled;
+		}
+	}
 
 	return $return;
 }

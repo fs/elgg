@@ -14,27 +14,34 @@
  */
 
 /**
- * Adds messages to the session so they'll be carried over, and forwards the browser.
+ * Forwards the browser.
  * Returns false if headers have already been sent and the browser cannot be moved.
  *
- * @param string $location URL to forward to browser to
+ * @param string $location URL to forward to browser to. Can be relative path.
  * @return nothing|false
  */
 function forward($location = "") {
 	global $CONFIG;
 
 	if (!headers_sent()) {
-		$current_page = current_page_url();
-		// What is this meant to do?
-		//if (strpos($current_page, $CONFIG->wwwroot . "action") ===false)
+		if ($location === REFERER) {
+			$location = $_SERVER['HTTP_REFERER'];
+		}
 
-		$_SESSION['msg'] = array_merge($_SESSION['msg'], system_messages());
+		$current_page = current_page_url();
 		if ((substr_count($location, 'http://') == 0) && (substr_count($location, 'https://') == 0)) {
 			$location = $CONFIG->url . $location;
 		}
 
-		header("Location: {$location}");
-		exit;
+		// return new forward location or false to stop the forward or empty string to exit
+		$params = array('current_url' => $current_page, 'forward_url' => $location);
+		$location = trigger_plugin_hook('forward', 'system', $params, $location);
+		if ($location) {
+			header("Location: {$location}");
+			exit;
+		} else if ($location === '') {
+			exit;
+		}
 	}
 
 	return false;
@@ -134,6 +141,45 @@ function elgg_get_viewtype() {
 
 	return $viewtype;
 }
+
+/**
+ * Register a viewtype to fall back to a default view if view does not exist in
+ * that viewtype.
+ *
+ * This is useful for alternate html viewtypes (such as for mobile devices)
+ *
+ * @param string $viewtype The viewtype to register
+ */
+function elgg_register_viewtype_fallback($viewtype) {
+	global $CONFIG;
+
+	if (!isset($CONFIG->viewtype)) {
+		$CONFIG->viewtype = new stdClass;
+	}
+
+	if (!isset($CONFIG->viewtype->fallback)) {
+		$CONFIG->viewtype->fallback = array();
+	}
+
+	$CONFIG->viewtype->fallback[] = $viewtype;
+}
+
+/**
+ * Checks if this viewtype falls back to default
+ *
+ * @param string $viewtype
+ * @return boolean
+ */
+function elgg_does_viewtype_fallback($viewtype) {
+	global $CONFIG;
+
+	if (isset($CONFIG->viewtype) && isset($CONFIG->viewtype->fallback)) {
+		return in_array($viewtype, $CONFIG->viewtype->fallback);
+	}
+	
+	return FALSE;
+}
+
 
 /**
  * Return the location of a given view.
@@ -253,6 +299,11 @@ function elgg_view($view, $vars = array(), $bypass = false, $debug = false, $vie
 		$viewtype = elgg_get_viewtype();
 	}
 
+	// Viewtypes can only be alphanumeric
+	if (preg_match('[\W]', $viewtype)) {
+		return '';
+	}
+
 	// Set up any extensions to the requested view
 	if (isset($CONFIG->views->extensions[$view])) {
 		$viewlist = $CONFIG->views->extensions[$view];
@@ -274,7 +325,7 @@ function elgg_view($view, $vars = array(), $bypass = false, $debug = false, $vie
 			$error = "$viewtype/$view view does not exist.";
 
 			// attempt to load default view
-			if ($viewtype != 'default') {
+			if ($viewtype != 'default' && elgg_does_viewtype_fallback($viewtype)) {
 				if (file_exists($default_view_file) && include($default_view_file)) {
 					// default view found
 					$error .= " Using default/$view instead.";
@@ -285,7 +336,7 @@ function elgg_view($view, $vars = array(), $bypass = false, $debug = false, $vie
 			}
 
 			// log warning
-			elgg_log($error, 'WARNING');
+			elgg_log($error, 'NOTICE');
 		}
 	}
 
@@ -293,8 +344,16 @@ function elgg_view($view, $vars = array(), $bypass = false, $debug = false, $vie
 	$content = ob_get_clean();
 
 	// Plugin hook
-	$content = trigger_plugin_hook('display', 'view',
+	$content = trigger_plugin_hook('view', $view_orig,
 		array('view' => $view_orig, 'vars' => $vars), $content);
+
+	// backward compatibility with less grandular hook will be gone in 2.0
+	$content_tmp = trigger_plugin_hook('display', 'view', array('view' => $view_orig, 'vars' => $vars), $content);
+
+	if ($content_tmp != $content) {
+		$content = $content_tmp;
+		elgg_deprecated_notice('The display:view plugin hook is deprecated by view:view_name or view:all', 1.8);
+	}
 
 	// Return $content
 	return $content;
@@ -417,11 +476,10 @@ function elgg_view_regenerate_simplecache() {
 
 function elgg_view_enable_simplecache() {
 	global $CONFIG;
-	if(!$CONFIG->simplecache_enabled) {
-		datalist_set('simplecache_enabled',1);
-		$CONFIG->simplecache_enabled = 1;
-		elgg_view_regenerate_simplecache();
-	}
+
+	datalist_set('simplecache_enabled',1);
+	$CONFIG->simplecache_enabled = 1;
+	elgg_view_regenerate_simplecache();
 }
 
 /**
@@ -559,7 +617,7 @@ function elgg_get_views($dir, $base) {
 }
 
 /**
- * @deprecated 1.7.  Use elgg_extend_view().
+ * @deprecated 1.7.  Use elgg_get_views().
  * @param $dir
  * @param $base
  */
@@ -747,8 +805,17 @@ function elgg_view_annotation(ElggAnnotation $annotation, $bypass = true, $debug
  */
 function elgg_view_entity_list($entities, $count, $offset, $limit, $fullview = true, $viewtypetoggle = true, $pagination = true) {
 	$count = (int) $count;
-	$offset = (int) $offset;
 	$limit = (int) $limit;
+
+	// do not require views to explicitly pass in the offset
+	if (!$offset = (int) $offset) {
+		$offset = sanitise_int(get_input('offset', 0));
+	}
+
+	// do not require views to explicitly pass in the offset
+	if (!$offset = (int) $offset) {
+		$offset = sanitise_int(get_input('offset', 0));
+	}
 
 	$context = get_context();
 
@@ -882,127 +949,335 @@ function elgg_view_title($title, $submenu = false) {
 }
 
 /**
- * Adds an item to the submenu
+ * Deprecated by elgg_add_submenu_item()
  *
- * @param string $label The human-readable label
- * @param string $link The URL of the submenu item
- * @param boolean $onclick Used to provide a JS popup to confirm delete
- * @param mixed $selected BOOL to force on/off, NULL to allow auto selection
+ * @see elgg_add_submenu_item()
+ * @deprecated 1.8
  */
-function add_submenu_item($label, $link, $group = 'a', $onclick = false, $selected = NULL) {
-	global $CONFIG;
+function add_submenu_item($label, $link, $group = 'default', $onclick = false, $selected = NULL) {
+	elgg_deprecated_notice('add_submenu_item was deprecated by elgg_add_submenu_item', 1.8);
 
-	if (!isset($CONFIG->submenu)) {
-		$CONFIG->submenu = array();
-	}
-	if (!isset($CONFIG->submenu[$group])) {
-		$CONFIG->submenu[$group] = array();
+	$item = array(
+		'text' => $label,
+		'href' => $link,
+		'selected' => $selected
+	);
+
+	if (!$group) {
+		$group = 'default';
 	}
 
-	$item = new stdClass;
-	$item->value = $link;
-	$item->name = $label;
-	$item->onclick = $onclick;
-	$item->selected = $selected;
-	$CONFIG->submenu[$group][] = $item;
+	if ($onclick) {
+		$js = "onclick=\"javascript:return confirm('". elgg_echo('deleteconfirm') . "')\"";
+		$item['vars'] = array('js' => $js);
+	}
+	// submenu items were added in the page setup hook usually by checking
+	// the context.  We'll pass in the current context here, which will
+	// emulate that effect.
+	// if context == 'main' (default) it probably means they always wanted
+	// the menu item to show up everywhere.
+	$context = get_context();
+
+	if ($context == 'main') {
+		$context = 'all';
+	}
+	return elgg_add_submenu_item($item, $context, $group);
 }
 
 /**
- * Gets a formatted list of submenu items
+ * Add an entry to the submenu.
  *
- * @params bool preselected Selected menu item
- * @params bool preselectedgroup Selected menu item group
- * @return string List of items
+ * @param array $item The item as array(
+ * 	'title' => 'Text to display',
+ * 	'url' => 'URL of the link',
+ * 	'id' => 'entry_unique_id' //used by children items to identify parents
+ * 	'parent_id' => 'id_of_parent',
+ * 	'selected' => BOOL // Is this item selected? (If NULL or unset will attempt to guess)
+ * 	'vars' => array() // Array of vars to pass to the navigation/submenu_item view
+ * )
+ *
+ * @param string $context Context in which to display this menu item.  'all' will make it show up all the time. Use sparingly.
+ * @param string $group Group for the item. Each submenu group has its own <ul>
+ * @return BOOL
+ * @since 1.8
  */
-function get_submenu() {
-	$submenu_total = "";
+function elgg_add_submenu_item(array $item, $context = 'all', $group = 'default') {
 	global $CONFIG;
 
-	if (isset($CONFIG->submenu) && $submenu_register = $CONFIG->submenu) {
-		ksort($submenu_register);
-		$selected_key = NULL;
-		$selected_group = NULL;
+	if (!isset($CONFIG->submenu_items)) {
+		$CONFIG->submenu_items = array();
+	}
 
-		foreach($submenu_register as $groupname => $submenu_register_group) {
-			$submenu = "";
+	if (!isset($CONFIG->submenu_items[$context])) {
+		$CONFIG->submenu_items[$context] = array();
+	}
 
-			foreach($submenu_register_group as $key => $item) {
-				$selected = false;
-				// figure out the selected item if required
-				// if null, try to figure out what should be selected.
-				// warning: Fuzzy logic.
-				if (!$selected_key && !$selected_group) {
-					if ($item->selected === NULL) {
-						$uri_info = parse_url($_SERVER['REQUEST_URI']);
-						$item_info = parse_url($item->value);
+	if (!isset($CONFIG->submenu_items[$context][$group])) {
+		$CONFIG->submenu_items[$context][$group] = array();
+	}
 
-						// don't want to mangle already encoded queries but want to
-						// make sure we're comparing encoded to encoded.
-						// for the record, queries *should* be encoded
-						$uri_params = array();
-						$item_params = array();
-						if (isset($uri_info['query'])) {
-							$uri_info['query'] = html_entity_decode($uri_info['query']);
-							$uri_params = elgg_parse_str($uri_info['query']);
-						}
-						if (isset($item_info['query'])) {
-							$item_info['query'] = html_entity_decode($item_info['query']);
-							$item_params = elgg_parse_str($item_info['query']);
-						}
+	if (!isset($item['text'])) {
+		return FALSE;
+	}
 
-						$uri_info['path'] = trim($uri_info['path'], '/');
-						$item_info['path'] = trim($item_info['path'], '/');
+	// we use persistent object properties in the submenu
+	// setup function, so normalize the array to an object.
+	// we pass it in as an array because this would be the only
+	// place in elgg that we ask for an object like this.
+	// consistency ftw.
+	$item_obj = new StdClass();
 
-						// only if we're on the same path
-						// can't check server because sometimes it's not set in REQUEST_URI
-						if ($uri_info['path'] == $item_info['path']) {
+	foreach ($item as $k => $v) {
+		switch ($k) {
+			case 'parent_id':
+			case 'id':
+				// make sure '' and false make sense
+				$v = (empty($v)) ? NULL : $v;
 
-							// if no query terms, we have a match
-							if (!isset($uri_info['query']) && !isset($item_info['query'])) {
-								$selected_key = $key;
-								$selected_group = $groupname;
-								$selected = TRUE;
-							} else {
-								if ($uri_info['query'] == $item_info['query']) {
-									$selected_key = $key;
-									$selected_group = $groupname;
-									$selected = TRUE;
-								} elseif (!count(array_diff($uri_params, $item_params))) {
-									$selected_key = $key;
-									$selected_group = $groupname;
-									$selected = TRUE;
-								}
-							}
-						}
-					// if TRUE or FALSE, set selected to this item.
-					// Group doesn't seem to have anything to do with selected?
-					} else {
-						$selected = $item->selected;
-						$selected_key = $key;
-						$selected_group = $groupname;
-					}
-				}
-
-				$submenu .= elgg_view('canvas_header/submenu_template', array(
-						'href' => $item->value,
-						'label' => $item->name,
-						'onclick' => $item->onclick,
-						'selected' => $selected,
-					));
-
-			}
-
-			$submenu_total .= elgg_view('canvas_header/submenu_group', array(
-					'submenu' => $submenu,
-					'group_name' => $groupname
-				));
-
+			default:
+				$item_obj->$k = $v;
+				break;
 		}
 	}
 
-	return $submenu_total;
+	$CONFIG->submenu_items[$context][$group][] = $item_obj;
+
+	return TRUE;
 }
 
+/**
+ * Properly nest all submenu entries for contexts $context and 'all'
+ *
+ * @param string $context
+ * @param bool $sort Sort the menu items alphabetically
+ * @since 1.8
+ */
+function elgg_prepare_submenu($context = 'main', $sort = FALSE) {
+	global $CONFIG;
+
+	if (!isset($CONFIG->submenu_items) || !($CONFIG->submenu_items)) {
+		return FALSE;
+	}
+
+	$groups = array();
+
+	if (isset($CONFIG->submenu_items['all'])) {
+		$groups = $CONFIG->submenu_items['all'];
+	}
+
+	if (isset($CONFIG->submenu_items[$context])) {
+		$groups = array_merge_recursive($groups, $CONFIG->submenu_items[$context]);
+	}
+
+	if (!$groups) {
+		return FALSE;
+	}
+
+	foreach ($groups as $group => $items) {
+		if ($sort) {
+			usort($items, 'elgg_submenu_item_cmp');
+		}
+
+		$parsed_menu = array();
+		// determin which children need to go in this item.
+		foreach ($items as $i => $item) {
+			// can only support children if there's an id
+			if (isset($item->id)) {
+				foreach ($items as $child_i => $child_item) {
+					// don't check ourselves or used children.
+					if ($child_i == $i || $child_item->used == TRUE) {
+						continue;
+					}
+
+					if (isset($child_item->parent_id) && $child_item->parent_id == $item->id) {
+						if (!isset($item->children)) {
+							$item->children = array();
+						}
+						$item->children[] = $child_item;
+						$child_item->parent = $item;
+						// don't unset because we still need to check this item for children
+						$child_item->used = TRUE;
+					}
+				}
+
+				// if the parent doesn't have a url, make it the first child item.
+				if (isset($item->children) && $item->children && !$item->href) {
+					$child = $item->children[0];
+					while ($child && !isset($child->href)) {
+						if (isset($child->children) && isset($child->children[0])) {
+							$child = $child->children[0];
+						} else {
+							$child = NULL;
+						}
+					}
+
+					if ($child && isset($child->href)) {
+						$item->href = $child->href;
+					} else {
+						// @todo There are no URLs anywhere in this tree.
+						$item->href = $CONFIG->url;
+					}
+				}
+			}
+
+			// only add top-level elements to the menu.
+			// the rest are children.
+			if (!isset($item->parent_id)) {
+				$parsed_menu[] = $item;
+			}
+		}
+
+		$CONFIG->submenu[$context][$group] = $parsed_menu;
+	}
+
+	return TRUE;
+}
+
+/**
+ * Helper function used to sort submenu items by their display text.
+ *
+ * @param object $a
+ * @param object $b
+ * @since 1.8
+ */
+function elgg_submenu_item_cmp($a, $b) {
+	$a = $a->text;
+	$b = $b->text;
+
+	return strnatcmp($a, $b);
+}
+
+/**
+ * Use elgg_get_submenu().
+ *
+ * @see elgg_get_submenu()
+ * @deprecated 1.8
+ */
+function get_submenu() {
+	elgg_deprecated_notice("get_submenu() has been deprecated by elgg_get_submenu()", 1.8);
+	return elgg_get_submenu();
+}
+
+/**
+ * Return the HTML for a sidemenu.
+ *
+ * @param string $context The context of the submenu (defaults to main)
+ * @param BOOL $sort Sort by display name?
+ * @return string Formatted HTML.
+ * @since 1.8
+ */
+function elgg_get_submenu($context = NULL, $sort = FALSE) {
+	global $CONFIG;
+
+	if (!$context) {
+		$context = get_context();
+	}
+
+	if (!elgg_prepare_submenu($context, $sort)) {
+		return '';
+	}
+
+	$groups = $CONFIG->submenu[$context];
+	$submenu_html = '';
+
+	foreach ($groups as $group => $items) {
+		// how far down we are in children arrays
+		$depth = 0;
+		// push and pop parent items
+		$temp_items = array();
+
+		while ($item = current($items)) {
+			$t = '';
+			// ignore parents created by a child but parent never defined properly
+			if (!isset($item->text) || !($item->text)) {
+				next($items);
+				continue;
+			}
+
+			// try to guess if this should be selected if they don't specify
+			if ((!isset($item->selected) || $item->selected === NULL) && isset($item->href)) {
+				$item->selected = elgg_http_url_is_identical(full_url(), $item->href);
+			}
+
+			// traverse up the parent tree if matached to mark all parents as selected/expanded.
+			if ($item->selected && isset($item->parent)) {
+				$parent = $item->parent;
+				while ($parent) {
+					$parent->selected = TRUE;
+					if (isset($parent->parent)) {
+						$parent = $parent->parent;
+					} else {
+						$parent = NULL;
+					}
+				}
+			}
+
+			// get the next item
+			if (isset($item->children) && $item->children) {
+				$depth++;
+				array_push($temp_items, $items);
+				$items = $item->children;
+			} elseif ($depth > 0) {
+				// check if there are more children elements in the current items
+				// pop back up to the parent(s) if not
+				if ($item = next($items)) {
+					continue;
+				} else {
+					while($depth > 0) {
+						$depth--;
+						$items = array_pop($temp_items);
+						if ($item = next($items)) {
+							break;
+						}
+					}
+				}
+			} else {
+				next($items);
+			}
+		}
+
+		$submenu_html .= elgg_view('navigation/submenu_group', array('group' => $group, 'items' => $items));
+	}
+
+	// include the JS for the expand menus too
+	return elgg_view('navigation/submenu_js') . $submenu_html;
+}
+
+/**
+ * Automatically views likes and a like input relating to the given entity
+ *
+ * @param ElggEntity $entity The entity to like
+ * @return string|false The HTML (etc) for the likes, or false on failure
+ * @since 1.8
+ */
+function elgg_view_likes($entity){
+	if (!($entity instanceof ElggEntity)) {
+		return false;
+	}
+	if ($likes = trigger_plugin_hook('likes', $entity->getType(), array('entity' => $entity), false)) {
+		return $likes;
+	} else {
+		//display the form
+		$likes = elgg_view('likes/forms/edit', array('entity' => $entity));
+		return $likes;
+	}
+}
+
+/**
+ * Count the number of likes attached to an entity
+ *
+ * @param ElggEntity $entity
+ * @return int Number of likes
+ * @since 1.8
+ */
+function elgg_count_likes($entity) {
+	if ($likeno = trigger_plugin_hook('likes:count', $entity->getType(),
+		array('entity' => $entity), false)) {
+		return $likeno;
+	} else {
+		return count_annotations($entity->getGUID(), "", "", "likes");
+	}
+}
 
 /**
  * Automatically views comments and a comment form relating to the given entity
@@ -1075,14 +1350,18 @@ function set_template_handler($function_name) {
 }
 
 /**
- * Extends a view by adding other views to be displayed at the same time.
+ * Extends a view.
  *
- * @param string $view The view to add to.
- * @param string $view_name The name of the view to extend
- * @param int $priority The priority, from 0 to 1000, to add at (lowest numbers will be displayed first)
+ * The addititional views are displayed before or after the primary view. 
+ * Priorities less than 500 are displayed before the primary view and 
+ * greater than 500 after. The default priority is 501. 
+ *
+ * @param string $view The view to extend.
+ * @param string $view_extension This view is added to $view
+ * @param int $priority The priority, from 0 to 1000, to add at (lowest numbers displayed first)
  * @param string $viewtype Not used
  */
-function elgg_extend_view($view, $view_name, $priority = 501, $viewtype = '') {
+function elgg_extend_view($view, $view_extension, $priority = 501, $viewtype = '') {
 	global $CONFIG;
 
 	if (!isset($CONFIG->views)) {
@@ -1101,8 +1380,41 @@ function elgg_extend_view($view, $view_name, $priority = 501, $viewtype = '') {
 		$priority++;
 	}
 
-	$CONFIG->views->extensions[$view][$priority] = "{$view_name}";
+	$CONFIG->views->extensions[$view][$priority] = "{$view_extension}";
 	ksort($CONFIG->views->extensions[$view]);
+}
+
+/**
+ * Unextends a view.
+ *
+ * @param string $view The view that was extended.
+ * @param string $view_extension This view that was added to $view
+ * @return bool
+ * @since 1.7.2
+ */
+function elgg_unextend_view($view, $view_extension) {
+	global $CONFIG;
+
+	if (!isset($CONFIG->views)) {
+		return FALSE;
+	}
+
+	if (!isset($CONFIG->views->extensions)) {
+		return FALSE;
+	}
+
+	if (!isset($CONFIG->views->extensions[$view])) {
+		return FALSE;
+	}
+
+	$priority = array_search($view_extension, $CONFIG->views->extensions[$view]);
+	if ($priority === FALSE) {
+		return FALSE;
+	}
+
+	unset($CONFIG->views->extensions[$view][$priority]);
+	
+	return TRUE;
 }
 
 /**
@@ -1218,75 +1530,6 @@ function page_draw($title, $body, $sidebar = "") {
 }
 
 /**
- * Displays a UNIX timestamp in a friendly way (eg "less than a minute ago")
- *
- * @param int $time A UNIX epoch timestamp
- * @return string The friendly time
- */
-function friendly_time($time) {
-	$diff = time() - ((int) $time);
-
-	$minute = 60;
-	$hour = $minute * 60;
-	$day = $hour * 24;
-
-	if ($diff < $minute) {
-		$friendly_time = elgg_echo("friendlytime:justnow");
-	} else if ($diff < $hour) {
-		$diff = round($diff / $minute);
-		if ($diff == 0) {
-			$diff = 1;
-		}
-
-		if ($diff > 1) {
-			$friendly_time = sprintf(elgg_echo("friendlytime:minutes"), $diff);
-		} else {
-			$friendly_time = sprintf(elgg_echo("friendlytime:minutes:singular"), $diff);
-		}
-	} else if ($diff < $day) {
-		$diff = round($diff / $hour);
-		if ($diff == 0) {
-			$diff = 1;
-		}
-
-		if ($diff > 1) {
-			$friendly_time = sprintf(elgg_echo("friendlytime:hours"), $diff);
-		} else {
-			$friendly_time = sprintf(elgg_echo("friendlytime:hours:singular"), $diff);
-		}
-	} else {
-		$diff = round($diff / $day);
-		if ($diff == 0) {
-			$diff = 1;
-		}
-
-		if ($diff > 1) {
-			$friendly_time = sprintf(elgg_echo("friendlytime:days"), $diff);
-		} else {
-			$friendly_time = sprintf(elgg_echo("friendlytime:days:singular"), $diff);
-		}
-	}
-
-	$timestamp = htmlentities(date(elgg_echo('friendlytime:date_format'), $time));
-	return "<acronym title=\"$timestamp\">$friendly_time</acronym>";
-}
-
-/**
- * When given a title, returns a version suitable for inclusion in a URL
- *
- * @param string $title The title
- * @return string The optimised title
- */
-function friendly_title($title) {
-	$title = trim($title);
-	$title = strtolower($title);
-	$title = preg_replace("/[^\w ]/","",$title);
-	$title = str_replace(" ","-",$title);
-	$title = str_replace("--","-",$title);
-	return $title;
-}
-
-/**
  * Library loading and handling
  */
 
@@ -1305,23 +1548,25 @@ function get_library_files($directory, $exceptions = array(), $list = array()) {
  * @param array $exceptions Array of filenames to ignore
  * @param array $list Array of files to append to
  * @param mixed $extensions Array of extensions to allow, NULL for all. (With a dot: array('.php'))
- * @return array
+ * @return array of filenames including $directory
  */
 function elgg_get_file_list($directory, $exceptions = array(), $list = array(), $extensions = NULL) {
+	$directory = sanitise_filepath($directory);
 	if ($handle = opendir($directory)) {
 		while (($file = readdir($handle)) !== FALSE) {
-			if (!is_file($file) || in_array($file, $exceptions)) {
+			if (!is_file($directory . $file) || in_array($file, $exceptions)) {
 				continue;
 			}
 
 			if (is_array($extensions)) {
 				if (in_array(strrchr($file, '.'), $extensions)) {
-					$list[] = $directory . "/" . $file;
+					$list[] = $directory . $file;
 				}
 			} else {
-				$list[] = $directory . "/" . $file;
+				$list[] = $directory . $file;
 			}
 		}
+		closedir($handle);
 	}
 
 	return $list;
@@ -1341,7 +1586,20 @@ function sanitised() {
 		$save_vars = get_input('db_install_vars');
 		$result = "";
 		if ($save_vars) {
+			$rtn = db_check_settings($save_vars['CONFIG_DBUSER'],
+									$save_vars['CONFIG_DBPASS'],
+									$save_vars['CONFIG_DBNAME'],
+									$save_vars['CONFIG_DBHOST'] );
+			if ($rtn == FALSE) {
+				register_error(elgg_view("messages/sanitisation/dbsettings_error"));
+				register_error(elgg_view("messages/sanitisation/settings",
+								array(	'settings.php' => $result,
+										'sticky' => $save_vars)));
+				return FALSE;
+			}
+
 			$result = create_settings($save_vars, dirname(dirname(__FILE__)) . "/settings.example.php");
+
 
 			if (file_put_contents(dirname(dirname(__FILE__)) . "/settings.php", $result)) {
 				// blank result to stop it being displayed in textarea
@@ -1453,11 +1711,12 @@ function get_register($register_name) {
  * @param string $menu_name The name of the menu item
  * @param string $menu_url The URL of the page
  * @param array $menu_children Optionally, an array of submenu items (not currently used)
- * @param string $context (not used and will likely be deprecated)
+ * @param string $context
  * @return true|false Depending on success
  */
 function add_menu($menu_name, $menu_url, $menu_children = array(), $context = "") {
 	global $CONFIG;
+
 	if (!isset($CONFIG->menucontexts)) {
 		$CONFIG->menucontexts = array();
 	}
@@ -1466,8 +1725,12 @@ function add_menu($menu_name, $menu_url, $menu_children = array(), $context = ""
 		$context = get_plugin_name();
 	}
 
+	$value = new stdClass();
+	$value->url = $menu_url;
+	$value->context = $context;
+
 	$CONFIG->menucontexts[] = $context;
-	return add_to_register('menu', $menu_name, $menu_url, $menu_children);
+	return add_to_register('menu', $menu_name, $value, $menu_children);
 }
 
 /**
@@ -1941,6 +2204,7 @@ function elgg_log($message, $level='NOTICE') {
  * @return void
  */
 function elgg_dump($value, $to_screen = TRUE, $level = 'NOTICE') {
+	global $CONFIG;
 
 	// plugin can return false to stop the default logging method
 	$params = array('level' => $level,
@@ -1948,6 +2212,13 @@ function elgg_dump($value, $to_screen = TRUE, $level = 'NOTICE') {
 					'to_screen' => $to_screen);
 	if (!trigger_plugin_hook('debug', 'log', $params, true)) {
 		return;
+	}
+
+	// Do not want to write to screen before page creation has started.
+	// This is not fool-proof but probably fixes 95% of the cases when logging
+	// results in data sent to the browser before the page is begun.
+	if (!isset($CONFIG->pagesetupdone)) {
+		$to_screen = FALSE;
 	}
 
 	if ($to_screen == TRUE) {
@@ -2374,8 +2645,12 @@ function elgg_normalise_plural_options_array($options, $singulars) {
 function full_url() {
 	$s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : "";
 	$protocol = substr(strtolower($_SERVER["SERVER_PROTOCOL"]), 0, strpos(strtolower($_SERVER["SERVER_PROTOCOL"]), "/")) . $s;
-	$port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":".$_SERVER["SERVER_PORT"]);
-	return $protocol . "://" . $_SERVER['SERVER_NAME'] . $port . $_SERVER['REQUEST_URI'];
+	$port = ($_SERVER["SERVER_PORT"] == "80" || $_SERVER["SERVER_PORT"] == "443") ? "" : (":".$_SERVER["SERVER_PORT"]);
+
+	$quotes = array('\'', '"');
+	$encoded = array('%27', '%22');
+
+	return $protocol . "://" . $_SERVER['SERVER_NAME'] . $port . str_replace($quotes, $encoded, $_SERVER['REQUEST_URI']);
 }
 
 /**
@@ -2553,10 +2828,11 @@ interface Friendable {
  * Rebuilds a parsed (partial) URL
  *
  * @param array $parts Associative array of URL components like parse_url() returns
+ * @param bool $htmlencode HTML Encode the url?
  * @return str Full URL
  * @since 1.7
  */
-function elgg_http_build_url(array $parts) {
+function elgg_http_build_url(array $parts, $html_encode = TRUE) {
 	// build only what's given to us.
 	$scheme = isset($parts['scheme']) ? "{$parts['scheme']}://" : '';
 	$host = isset($parts['host']) ? "{$parts['host']}" : '';
@@ -2566,7 +2842,11 @@ function elgg_http_build_url(array $parts) {
 
 	$string = $scheme . $host . $port . $path . $query;
 
-	return $string;
+	if ($html_encode) {
+		return elgg_format_url($string);
+	} else {
+		return $string;
+	}
 }
 
 
@@ -2574,10 +2854,11 @@ function elgg_http_build_url(array $parts) {
  * Adds action tokens to URL
  *
  * @param str $link Full action URL
+ * @param bool $htmlencode html encode the url?
  * @return str URL with action tokens
  * @since 1.7
  */
-function elgg_add_action_tokens_to_url($url) {
+function elgg_add_action_tokens_to_url($url, $html_encode = TRUE) {
 	$components = parse_url($url);
 
 	if (isset($components['query'])) {
@@ -2596,7 +2877,7 @@ function elgg_add_action_tokens_to_url($url) {
 	$components['query'] = http_build_query($query);
 
 	// rebuild the full url
-	return elgg_http_build_url($components);
+	return elgg_http_build_url($components, $html_encode);
 }
 
 /**
@@ -2661,6 +2942,157 @@ function elgg_http_add_url_query_elements($url, array $elements) {
 	return $string;
 }
 
+
+/**
+ * Breadcrumb support.
+ */
+
+/**
+ * Adds a breadcrumb to the stack
+ *
+ * @param string $title The title to display
+ * @param string $link Optional. The link for the title.
+ */
+function elgg_push_breadcrumb($title, $link = NULL) {
+	global $CONFIG;
+	if (!is_array($CONFIG->breadcrumbs)) {
+		$CONFIG->breadcrumbs = array();
+	}
+
+	// avoid key collisions.
+	$CONFIG->breadcrumbs[] = array('title' => $title, 'link' => $link);
+}
+
+/**
+ * Removes last breadcrumb entry.
+ *
+ * @return array popped item.
+ */
+function elgg_pop_breadcrumb() {
+	global $CONFIG;
+
+	if (is_array($CONFIG->breadcrumbs)) {
+		array_pop($CONFIG->breadcrumbs);
+	}
+
+	return FALSE;
+}
+
+/**
+ * Returns all breadcrumbs
+ *
+ * @return array Breadcrumbs
+ */
+function elgg_get_breadcrumbs() {
+	global $CONFIG;
+
+	return (is_array($CONFIG->breadcrumbs)) ? $CONFIG->breadcrumbs : array();
+}
+
+
+/**
+ * Sticky forms
+ */
+
+/**
+ * Load all the REQUEST variables into the sticky form cache
+ *
+ * Call this from an action when you want all your submitted variables
+ * available if the submission fails validation and is sent back to the form
+ */
+function elgg_make_sticky_form($form_name) {
+	global $CONFIG;
+
+	$CONFIG->active_sticky_form = $form_name;
+	elgg_clear_sticky_form($form_name);
+
+	if (!isset($_SESSION['sticky_forms'])) {
+		$_SESSION['sticky_forms'] = array();
+	}
+	$_SESSION['sticky_forms'][$form_name] = array();
+
+	foreach($_REQUEST as $key => $var) {
+		// will go through XSS filtering on the get function
+		$_SESSION['sticky_forms'][$form_name][$key] = $var;
+	}
+}
+
+
+/**
+ * Clear the sticky form cache
+ *
+ * Call this if validation is successful in the action handler or
+ * when they sticky values have been used to repopulate the form
+ * after a validation error.
+ *
+ * @param string $name Form namespace
+ */
+function elgg_clear_sticky_form($form_name) {
+	unset($_SESSION['sticky_forms'][$form_name]);
+}
+
+/**
+ * Has this form been made sticky
+ *
+ * @param string $name Form namespace
+ * @return boolean
+ */
+function elgg_is_sticky_form($form_name) {
+	return isset($_SESSION['sticky_forms'][$form_name]);
+}
+
+/**
+ * Get a specific stick variable
+ *
+ * @param string $variable The name of the variable
+ * @param mixed $default Default value if the variable does not exist in sticky cache
+ * @param boolean $filter_result Filter for bad input if true
+ * @return mixed
+ *
+ * @todo should this filter the default value?
+ */
+function elgg_get_sticky_value($form_name, $variable, $default = NULL, $filter_result = true) {
+	if (isset($_SESSION['sticky_forms'][$form_name][$variable])) {
+		$value = $_SESSION['sticky_forms'][$form_name][$variable];
+		if ($filter_result) {
+			// XSS filter result
+			$value = filter_tags($value);
+		}
+		return $value;
+	}
+	return $default;
+}
+
+/**
+ * Clear a specific sticky variable
+ *
+ * @param string $variable The name of the variable to clear
+ */
+function elgg_clear_sticky_value($form_name, $variable) {
+	unset($_SESSION['sticky_forms'][$form_name][$variable]);
+}
+
+/**
+ * Returns the current active sticky form.
+ * @return mixed Str | FALSE
+ */
+function elgg_get_active_sticky_form() {
+	global $CONFIG;
+
+	if (isset($CONFIG->active_sticky_form)) {
+		$form_name = $CONFIG->active_sticky_form;
+	} else {
+		return FALSE;
+	}
+
+	return (elgg_is_sticky_form($form_name)) ? $form_name : FALSE;
+}
+
+function elgg_set_active_sticky_form($form_name) {
+	global $CONFIG;
+
+	$CONFIG->active_sticky_form = $form_name;
+}
 /**
  * Returns the PHP INI setting in bytes
  *
@@ -2721,7 +3153,8 @@ function __elgg_shutdown_hook() {
 	trigger_elgg_event('shutdown', 'system');
 
 	$time = (float)(microtime(TRUE) - $START_MICROTIME);
-	elgg_log("Page {$_SERVER['REQUEST_URI']} generated in $time seconds", 'DEBUG');
+	// demoted to NOTICE from DEBUG so javascript is not corrupted
+	elgg_log("Page {$_SERVER['REQUEST_URI']} generated in $time seconds", 'NOTICE');
 }
 
 /**
@@ -2737,6 +3170,19 @@ function elgg_init() {
 	register_shutdown_function('__elgg_shutdown_hook');
 }
 
+function elgg_walled_garden_index() {
+	global $CONFIG;
+
+	$login = elgg_view('account/forms/login');
+	$layout = elgg_view_layout('one_column', $login);
+
+	echo page_draw('', $layout);
+	
+	// @hack Index must exit to keep plugins from continuing to extend
+	exit;
+	return TRUE;
+}
+
 /**
  * Boot Elgg
  * @return unknown_type
@@ -2745,6 +3191,8 @@ function elgg_boot() {
 	// Actions
 	register_action('comments/add');
 	register_action('comments/delete');
+	register_action('likes/add');
+	register_action('likes/delete');
 
 	elgg_view_register_simplecache('css');
 	elgg_view_register_simplecache('js/friendsPickerv1');
@@ -2757,8 +3205,163 @@ function elgg_boot() {
 function elgg_api_test($hook, $type, $value, $params) {
 	global $CONFIG;
 	$value[] = $CONFIG->path . 'engine/tests/api/entity_getter_functions.php';
+	$value[] = $CONFIG->path . 'engine/tests/api/helpers.php';
 	$value[] = $CONFIG->path . 'engine/tests/regression/trac_bugs.php';
 	return $value;
+}
+
+/**
+ * Sorts out the featured URLs and the "more" dropdown
+ * @return array ('featured_urls' and 'more')
+ * @since 1.8
+ */
+function elgg_get_nav_items() {
+	$menu_items = get_register('menu');
+	$featured_urls_info = get_config('menu_items_featured_urls');
+
+	$more = array();
+	$featured_urls = array();
+	$featured_urls_sanitised = array();
+
+	// easier to compare with in_array() than embedded foreach()es
+	$valid_urls = array();
+	foreach ($menu_items as $info) {
+		$valid_urls[] = $info->value->url;
+	}
+
+	// make sure the url is a valid link.
+	// this prevents disabled plugins leaving behind
+	// valid links when no using a pagehandler.
+	foreach ($featured_urls_info as $info) {
+		if (in_array($info->value->url, $valid_urls)) {
+			$featured_urls[] = $info->value->url;
+			$featured_urls_sanitised[] = $info;
+		}
+	}
+
+	// add toolbar entries if not hiding dupes.
+	foreach ($menu_items as $name => $info) {
+		if (!in_array($info->value->url, $featured_urls)) {
+			$more[] = $info;
+		}
+	}
+
+	return array(
+		'featured' => $featured_urls_sanitised,
+		'more' => $more
+	);
+}
+
+/**
+ * Hook that registers the custom menu items.
+ * @since 1.8
+ */
+function add_custom_menu_items() {
+	if ($custom_items = get_config('menu_items_custom_items')) {
+		foreach ($custom_items as $url => $name) {
+			add_menu($name, $url);
+		}
+	}
+}
+
+/**
+ * Test two URLs to see if they are functionally identical.
+ *
+ * @param string $url1
+ * @param string $url2
+ * @param array $ignore_params - GET params to ignore in the comparison
+ * @return BOOL
+ * @since 1.8
+ */
+function elgg_http_url_is_identical($url1, $url2, $ignore_params = array('offset', 'limit')) {
+	global $CONFIG;
+
+	// if the server portion is missing but it starts with / then add the url in.
+	if (elgg_substr($url1, 0, 1) == '/') {
+		$url1 = $CONFIG->url . ltrim($url1, '/');
+	}
+
+	if (elgg_substr($url1, 0, 1) == '/') {
+		$url2 = $CONFIG->url . ltrim($url2, '/');
+	}
+
+	// @todo - should probably do something with relative URLs
+
+	if ($url1 == $url2) {
+		return TRUE;
+	}
+
+	$url1_info = parse_url($url1);
+	$url2_info = parse_url($url2);
+
+	$url1_info['path'] = trim($url1_info['path'], '/');
+	$url2_info['path'] = trim($url2_info['path'], '/');
+
+	// compare basic bits
+	$parts = array('scheme', 'host', 'path');
+
+	foreach ($parts as $part) {
+		if ((isset($url1_info[$part]) && isset($url2_info[$part])) && $url1_info[$part] != $url2_info[$part]) {
+			return FALSE;
+		} elseif (isset($url1_info[$part]) && !isset($url2_info[$part])) {
+			return FALSE;
+		} elseif (!isset($url1_info[$part]) && isset($url2_info[$part])) {
+			return FALSE;
+		}
+	}
+
+	// quick compare of get params
+	if (isset($url1_info['query']) && isset($url2_info['query']) && $url1_info['query'] == $url2_info['query']) {
+		return TRUE;
+	}
+
+	// compare get params that might be out of order
+	$url1_params = array();
+	$url2_params = array();
+
+	if (isset($url1_info['query'])) {
+		if ($url1_info['query'] = html_entity_decode($url1_info['query'])) {
+			$url1_params = elgg_parse_str($url1_info['query']);
+		}
+	}
+
+	if (isset($url2_info['query'])) {
+		if ($url2_info['query'] = html_entity_decode($url2_info['query'])) {
+			$url2_params = elgg_parse_str($url2_info['query']);
+		}
+	}
+
+	// drop ignored params
+	foreach ($ignore_params as $param) {
+		if (isset($url1_params[$param])) {
+			unset($url1_params[$param]);
+		}
+		if (isset($url2_params[$param])) {
+			unset($url2_params[$param]);
+		}
+	}
+
+	// array_diff_assoc only returns the items in arr1 that aren't in arrN
+	// but not the items that ARE in arrN but NOT in arr1
+	// if arr1 is an empty array, this function will return 0 no matter what.
+	// since we only care if they're different and not how different,
+	// add the results together to get a non-zero (ie, different) result
+	$diff_count = count(array_diff_assoc($url1_params, $url2_params));
+	$diff_count += count(array_diff_assoc($url2_params, $url1_params));
+	if ($diff_count > 0) {
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+function elgg_walled_garden() {
+	global $CONFIG;
+
+	// check for external page view
+	if (isset($CONFIG->site) && $CONFIG->site instanceof ElggSite) {
+		$CONFIG->site->check_walled_garden();
+	}
 }
 
 /**
@@ -2770,9 +3373,21 @@ define('ACCESS_LOGGED_IN', 1);
 define('ACCESS_PUBLIC', 2);
 define('ACCESS_FRIENDS', -2);
 
+/**
+ * @since 1.7
+ */
 define('ELGG_ENTITIES_ANY_VALUE', NULL);
 define('ELGG_ENTITIES_NO_VALUE', 0);
+
+/**
+ * @since 1.7.2
+ */
+define('REFERRER', -1);
+define('REFERER', -1);
 
 register_elgg_event_handler('init', 'system', 'elgg_init');
 register_elgg_event_handler('boot', 'system', 'elgg_boot', 1000);
 register_plugin_hook('unit_test', 'system', 'elgg_api_test');
+
+register_elgg_event_handler('init', 'system', 'add_custom_menu_items', 1000);
+register_elgg_event_handler('init', 'system', 'elgg_walled_garden', 1000);

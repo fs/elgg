@@ -1,61 +1,85 @@
 <?php
 /**
  * Main site-wide navigation
+ *
  **/
- 
-echo "<div id='elgg_main_nav' class='clearfloat'>";
-echo "<ul class='navigation'>";
 
-if(is_plugin_enabled('riverdashboard')){
-	if(get_context() == 'riverdashboard')
-		$selected = 'class="selected"';
-	else
-		$selected = "";
-	echo "<li {$selected}><a href=\"{$vars['url']}mod/riverdashboard/\" id='activity'><span>Activity</span></a></li>";
-}
-if(is_plugin_enabled('thewire') && isloggedin()){
-	if(get_context() == 'thewire')
-		$selected = 'class="selected"';
-	else
-		$selected = "";
-	echo "<li {$selected}><a href=\"{$vars['url']}mod/thewire/everyone.php\" id='thewire'><span>" . elgg_echo('thewire:title') . "</span></a></li>";
-}
-if(is_plugin_enabled('blog')){
-	if(get_context() == 'blog')
-		$selected = 'class="selected"';
-	else
-		$selected = "";
-	echo "<li {$selected}><a href=\"{$vars['url']}mod/blog/all.php\" id='blogs'><span>Blogs</span></a></li>";
-}
-if(is_plugin_enabled('pages')){
-	if(get_context() == 'pages')
-		$selected = 'class="selected"';
-	else
-		$selected = "";
-	echo "<li {$selected}><a href=\"{$vars['url']}mod/pages/all.php\" id='pages'><span>Pages</span></a></li>";
-}
-if(is_plugin_enabled('file')){
-	if(get_context() == 'file')
-		$selected = 'class="selected"';
-	else
-		$selected = "";
-	echo "<li {$selected}><a href=\"{$vars['url']}mod/file/all.php\" id='files'><span>Files</span></a></li>";
-}
-if(is_plugin_enabled('bookmarks')){
-	if(get_context() == 'bookmarks')
-		$selected = 'class="selected"';
-	else
-		$selected = "";
-	echo "<li {$selected}><a href=\"{$vars['url']}mod/bookmarks/all.php\" id='bookmarks'><span>Bookmarks</span></a></li>";
-}
-if(is_plugin_enabled('groups')){
-	if(get_context() == 'groups')
-		$selected = 'class="selected"';
-	else
-		$selected = "";
-	echo "<li {$selected}><a href=\"{$vars['url']}pg/groups/world/\" id='groups'><span>". elgg_echo('groups') . "</span></a></li>";
-}
-echo "</ul>";
-echo "</div>";
+$nav_items = elgg_get_nav_items();
+$featured = $nav_items['featured'];
+$more = $nav_items['more'];
 
+$nav_html = '';
+$more_nav_html = '';
+$context = get_context();
+
+// sort more links alphabetically
+$more_sorted = array();
+foreach ($more as $info) {
+	$more_sorted[] = $info->name;
+}
+
+// required because array multisort is case sensitive
+$more_sorted_lower = array_map('elgg_strtolower', $more_sorted);
+array_multisort($more_sorted_lower, $more);
+
+$item_count = 0;
+
+// if there are no featured items, display the standard tools in alphabetical order
+if ($featured) {
+	foreach ($featured as $info) {
+		$selected = ($info->value->context == $context) ? 'class="selected"' : '';
+		$title = htmlentities($info->name, ENT_QUOTES, 'UTF-8');
+		$url = htmlentities($info->value->url, ENT_QUOTES, 'UTF-8');
+
+		$nav_html .= "<li $selected><a href=\"$url\" title=\"$title\"><span>$title</span></a></li>";
+	}
+} elseif ($more) {
+	for ($i=0; $i<6; $i++) {
+		if (!array_key_exists($i, $more)) {
+			break;
+		}
+		$info = $more[$i];
+
+		$selected = ($info->value->context == $context) ? 'class="selected"' : '';
+		$title = htmlentities($info->name, ENT_QUOTES, 'UTF-8');
+		$url = htmlentities($info->value->url, ENT_QUOTES, 'UTF-8');
+
+		$nav_html .= "<li $selected><a href=\"$url\" title=\"$title\"><span>$title</span></a></li>";
+		$more[$i]->used = TRUE;
+		$item_count++;
+	}
+}
+
+// display the rest.
+foreach ($more as $info) {
+	if ($info->used) {
+		continue;
+	}
+	$selected = ($info->value->context == $context) ? 'class="selected"' : '';
+	$title = htmlentities($info->name, ENT_QUOTES, 'UTF-8');
+	$url = htmlentities($info->value->url, ENT_QUOTES, 'UTF-8');
+
+	$more_nav_html .= "<li $selected><a href=\"$url\" title=\"$title\"><span>$title</span></a></li>\n";
+	$item_count++;
+}
+
+if ($more_nav_html) {
+	$more = elgg_echo('more');
+	$nav_html .= "<li class='navigation_more'><a class='subnav' title=\"$more\"><span>$more</span></a>
+		<ul>
+			$more_nav_html
+		</ul>
+	</li>";
+}
+
+// only display, if there are nav items to display
+if ($nav_html) {
+	echo <<<___END
+	<div id="elgg_main_nav" class="clearfloat">
+		<ul class="navigation">
+			$nav_html
+		</ul>
+	</div>
+___END;
+}
 ?>

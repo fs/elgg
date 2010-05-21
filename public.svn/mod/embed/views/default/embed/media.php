@@ -1,13 +1,13 @@
-<h1 class="mediaModalTitle">Embed / Upload Media</h1>
+<h2 class="media_modal_title">Embed / Upload Media</h2>
 <?php
 
 	echo elgg_view('embed/tabs',array('tab' => 'media', 'internalname' => $vars['internalname']));
 ?>
-	<div id='mediaEmbed'>
+	<div id="media_embed">
 <?php
 	echo elgg_view('embed/pagination',array(
 												'offset' => $vars['offset'],
-												'baseurl' => $vars['url'] . 'pg/embed/media?internalname=' . $vars['internalname'] . "&amp;simpletype=" . $vars['simpletype'],
+												'baseurl' => $vars['url'] . 'pg/embed/media?internalname=' . $vars['internalname'] . "&simpletype=" . $vars['simpletype'],
 												'limit' => $vars['limit'],
 												'count' => $vars['count']
 											));
@@ -22,7 +22,7 @@
 	$entities = $vars['entities'];
 	if (is_array($entities) && !empty($entities)) {
 		
-		echo "<p class=\"embedInstructions\">" . elgg_echo('embed:instructions') . "</p>";
+		echo "<p class='embed_instructions'>" . elgg_echo('embed:instructions') . "</p>";
 		
 		foreach($entities as $entity) {
 			if ($entity instanceof ElggEntity) {

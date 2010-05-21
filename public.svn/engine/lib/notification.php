@@ -51,6 +51,19 @@ function register_notification_handler($method, $handler, $params = NULL) {
 }
 
 /**
+ * This function unregisters a handler for a given notification type (eg "email")
+ *
+ * @param string $method The method
+ */
+function unregister_notification_handler($method) {
+	global $NOTIFICATION_HANDLERS;
+
+	if (isset($NOTIFICATION_HANDLERS[$method])) {
+		unset($NOTIFICATION_HANDLERS[$method]);
+	}
+}
+
+/**
  * Notify a user via their preferences.
  *
  * @param mixed $to Either a guid or an array of guid's to notify.
@@ -101,6 +114,11 @@ function notify_user($to, $from, $subject, $message, array $params = NULL, $meth
 			if ($methods) {
 				// Deliver
 				foreach ($methods as $method) {
+
+					if (!isset($NOTIFICATION_HANDLERS[$method])) {
+						continue;
+					}
+
 					// Extract method details from list
 					$details = $NOTIFICATION_HANDLERS[$method];
 					$handler = $details->handler;
@@ -225,9 +243,6 @@ function email_notify_handler(ElggEntity $from, ElggUser $to, $subject, $message
 		throw new NotificationException(sprintf(elgg_echo('NotificationException:NoEmailAddress'), $to->guid));
 	}
 
-	// Sanitise subject
-	$subject = preg_replace("/(\r\n|\r|\n)/", " ", $subject); // Strip line endings
-
 	// To
 	$to = $to->email;
 
@@ -239,55 +254,84 @@ function email_notify_handler(ElggEntity $from, ElggUser $to, $subject, $message
 	} else if (($site) && (isset($site->email))) {
 		// Has the current site got a from email address?
 		$from = $site->email;
-	} else if (isset($from->url))  {
-		// If we have a url then try and use that.
-		$breakdown = parse_url($from->url);
-		$from = 'noreply@' . $breakdown['host']; // Handle anything with a url
 	} else {
 		// If all else fails, use the domain of the site.
 		$from = 'noreply@' . get_site_domain($CONFIG->site_guid);
 	}
 
-	if (is_callable('mb_internal_encoding')) {
-		mb_internal_encoding('UTF-8');
+	return elgg_send_email($from, $to, $subject, $message);
+}
+
+/**
+ * Send an email to any email address
+ *
+ * @param string $from Email address or string: "name <email>"
+ * @param string $to Email address or string: "name <email>"
+ * @param string $subject The subject of the message
+ * @param string $body The message body
+ * @param array $params Optional parameters (none used in this function)
+ * @return bool
+ */
+function elgg_send_email($from, $to, $subject, $body, array $params = NULL) {
+	global $CONFIG;
+
+	if (!$from) {
+		throw new NotificationException(sprintf(elgg_echo('NotificationException:NoEmailAddress'), 'from'));
 	}
-	$site = get_entity($CONFIG->site_guid);
-	$sitename = $site->name;
-	if (is_callable('mb_encode_mimeheader')) {
-		$sitename = mb_encode_mimeheader($site->name,"UTF-8", "B");
+
+	if (!$to) {
+		throw new NotificationException(sprintf(elgg_echo('NotificationException:NoEmailAddress'), 'to'));
+	}
+
+	// return TRUE/FALSE to stop elgg_send_email() from sending
+	$mail_params = array(	'to' => $to,
+							'from' => $from,
+							'subject' => $subject,
+							'body' => $body,
+							'params' => $params);
+	$result = trigger_plugin_hook('email', 'system', $mail_params, NULL);
+	if ($result !== NULL) {
+		return $result;
 	}
 
 	$header_eol = "\r\n";
-	if (
-		(isset($CONFIG->broken_mta)) &&
-		($CONFIG->broken_mta)
-	) {
+	if (isset($CONFIG->broken_mta) && $CONFIG->broken_mta) {
 		// Allow non-RFC 2822 mail headers to support some broken MTAs
 		$header_eol = "\n";
 	}
 
-	$from_email = "\"$sitename\" <$from>";
+	// Windows is somewhat broken, so we use just address for to and from
 	if (strtolower(substr(PHP_OS, 0 , 3)) == 'win') {
-		// Windows is somewhat broken, so we use a different format from header
-		$from_email = "$from";
+		// strip name from to and from
+		if (strpos($to, '<')) {
+			preg_match('/<(.*)>/', $to, $matches);
+			$to = $matches[1];
+		}
+		if (strpos($from, '<')) {
+			preg_match('/<(.*)>/', $from, $matches);
+			$from = $matches[1];
+		}
 	}
 
-	$headers = "From: $from_email{$header_eol}"
+	$headers = "From: $from{$header_eol}"
 		. "Content-Type: text/plain; charset=UTF-8; format=flowed{$header_eol}"
 		. "MIME-Version: 1.0{$header_eol}"
 		. "Content-Transfer-Encoding: 8bit{$header_eol}";
 
+
+	// Sanitise subject by stripping line endings
+	$subject = preg_replace("/(\r\n|\r|\n)/", " ", $subject);
 	if (is_callable('mb_encode_mimeheader')) {
 		$subject = mb_encode_mimeheader($subject,"UTF-8", "B");
 	}
 
 	// Format message
-	$message = html_entity_decode($message, ENT_COMPAT, 'UTF-8'); // Decode any html entities
-	$message = strip_tags($message); // Strip tags from message
-	$message = preg_replace("/(\r\n|\r)/", "\n", $message); // Convert to unix line endings in body
-	$message = preg_replace("/^From/", ">From", $message); // Change lines starting with From to >From
+	$body = html_entity_decode($body, ENT_COMPAT, 'UTF-8'); // Decode any html entities
+	$body = strip_tags($body); // Strip tags from message
+	$body = preg_replace("/(\r\n|\r)/", "\n", $body); // Convert to unix line endings in body
+	$body = preg_replace("/^From/", ">From", $body); // Change lines starting with From to >From
 
-	return mail($to, $subject, wordwrap($message), $headers);
+	return mail($to, $subject, wordwrap($body), $headers);
 }
 
 /**

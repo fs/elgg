@@ -27,15 +27,12 @@
 				global $CONFIG;
 				
 			// Set up menu for logged in users
-				if (isloggedin()) {
-					add_menu(elgg_echo('thewire'), $CONFIG->wwwroot . "pg/thewire/". $_SESSION['user']->username);
-				} 
+				add_menu(elgg_echo('thewire:title'), $CONFIG->wwwroot . "pg/thewire");
 				
 			// Extend system CSS with our own styles, which are defined in the thewire/css view
 				elgg_extend_view('css','thewire/css');
 				
 		    //extend views
-				elgg_extend_view('activity/thewire', 'thewire/activity_view');
 				elgg_extend_view('profile/status', 'thewire/profile_status');
 				
 			// Register a page handler, so we can have nice URLs
@@ -97,7 +94,7 @@
 				}
 			// If the URL is just 'thewire/username', or just 'thewire/', load the standard thewire index
 			} else {
-				@include(dirname(__FILE__) . "/index.php");
+				require(dirname(__FILE__) . "/index.php");
 				return true;
 			}
 			
@@ -168,10 +165,6 @@
 			
 			// Set its description appropriately
 			$thewire->description = elgg_substr(strip_tags($post), 0, 160);
-			/*if (is_callable('mb_substr'))
-				$thewire->description = mb_substr(strip_tags($post), 0, 160);
-			else
-				$thewire->description = substr(strip_tags($post), 0, 160);*/
 			
 		    // add some metadata
 	        $thewire->method = $method; //method, e.g. via site, sms etc

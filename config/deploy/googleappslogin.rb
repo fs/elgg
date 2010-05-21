@@ -6,7 +6,7 @@ set :port, 22
 set :use_sudo, false
 set :app_dir, "/home/ubuntu/elgg/current/mod/googleappslogin/"
 set :deploy_to, "/home/ubuntu/elgg/googleappslogin/"
-set :repository, "http://tgs.unfuddle.com/svn/tgs_elgg-google"
+set :repository, "http://tgs.unfuddle.com/svn/tgs_elgg-google/trunk"
 #set :branch, "staging"
 
 namespace :deploy do

@@ -146,6 +146,8 @@ abstract class ElggEntity implements
 
 		$this->attributes['guid'] = "";
 
+		$this->attributes['subtype'] = $orig_entity->getSubtype();
+
 		// copy metadata over to new entity - slightly convoluted due to
 		// handling of metadata arrays
 		if (is_array($metadata_array)) {
@@ -204,8 +206,6 @@ abstract class ElggEntity implements
 	 * A: Because overload operators cause problems during subclassing, so we put the code here and
 	 * create overloads in subclasses.
 	 *
-	 * @todo Move "title" logic to applicable extending classes.
-	 *
 	 * @param string $name
 	 * @param mixed $value
 	 */
@@ -214,11 +214,6 @@ abstract class ElggEntity implements
 			// Check that we're not trying to change the guid!
 			if ((array_key_exists('guid', $this->attributes)) && ($name=='guid')) {
 				return false;
-			}
-
-			// strip out tags from title
-			if ($name == 'title') {
-				$value = strip_tags($value);
 			}
 
 			$this->attributes[$name] = $value;
@@ -1462,6 +1457,44 @@ function add_subtype($type, $subtype, $class = "") {
 }
 
 /**
+ * Removes a registered subtype
+ *
+ * @param string $type
+ * @param string $subtype
+ */
+function remove_subtype($type, $subtype) {
+	global $CONFIG;
+
+	$type = sanitise_string($type);
+	$subtype = sanitise_string($subtype);
+
+	return delete_data("DELETE FROM {$CONFIG->dbprefix}entity_subtypes WHERE type = '$type' AND subtype = '$subtype'");
+}
+
+/**
+ * Update the registered information
+ *
+ * @param string $type
+ * @param string $subtype
+ * @param string $class
+ */
+function update_subtype($type, $subtype, $class = '') {
+	global $CONFIG;
+
+	if (!$id = get_subtype_id($type, $subtype)) {
+		return FALSE;
+	}
+	$type = sanitise_string($type);
+	$subtype = sanitise_string($subtype);
+
+	return update_data("UPDATE {$CONFIG->dbprefix}entity_subtypes
+		SET type = '$type', subtype = '$subtype', class = '$class'
+		WHERE id = $id
+	");
+}
+
+
+/**
  * Update an existing entity.
  *
  * @param int $guid
@@ -1714,9 +1747,9 @@ function get_entity($guid) {
  *
  * @param array $options Array in format:
  *
- * 	types => NULL|STR entity type (SQL: type = '$type' OR...see below...)
+ * 	types => NULL|STR entity type (SQL: type IN ('type1', 'type2') Joined with subtypes by AND...see below)
  *
- * 	subtypes => NULL|STR entity subtype (SQL: subtype = '$subtype'...see above)
+ * 	subtypes => NULL|STR entity subtype (SQL: subtype IN ('subtype1', 'subtype2))
  *
  * 	type_subtype_pairs => NULL|ARR (array('type' => 'subtype')) (SQL: type = '$type' AND subtype = '$subtype') pairs
  *
@@ -1779,7 +1812,7 @@ function elgg_get_entities(array $options = array()) {
 
 	$options = array_merge($defaults, $options);
 
-	$singulars = array('type', 'subtype', 'owner_guid', 'container_guid', 'site_guid');
+	$singulars = array('type', 'subtype', 'owner_guid', 'container_guid', 'site_guid', 'type_subtype_pair');
 	$options = elgg_normalise_plural_options_array($options, $singulars);
 
 	// evaluate where clauses
@@ -1898,9 +1931,14 @@ function elgg_get_entities(array $options = array()) {
 function get_entities($type = "", $subtype = "", $owner_guid = 0, $order_by = "", $limit = 10, $offset = 0,
 $count = false, $site_guid = 0, $container_guid = null, $timelower = 0, $timeupper = 0) {
 	elgg_deprecated_notice('get_entities() was deprecated by elgg_get_entities().', 1.7);
+
 	// rewrite owner_guid to container_guid to emulate old functionality
-	$container_guid = $owner_guid;
-	$owner_guid = NULL;
+	if ($owner_guid != "") {
+		if (is_null($container_guid)) {
+			$container_guid = $owner_guid;
+			$owner_guid = NULL;
+		}
+	}
 
 	$options = array();
 	if ($type) {
@@ -1931,9 +1969,8 @@ $count = false, $site_guid = 0, $container_guid = null, $timelower = 0, $timeupp
 		$options['order_by'] = $order_by;
 	}
 
-	if ($limit) {
-		$options['limit'] = $limit;
-	}
+	// need to pass 0 for all option
+	$options['limit'] = $limit;
 
 	if ($offset) {
 		$options['offset'] = $offset;
@@ -1952,11 +1989,11 @@ $count = false, $site_guid = 0, $container_guid = null, $timelower = 0, $timeupp
 	}
 
 	if ($timeupper) {
-		$options['time_upper'] = $timeupper;
+		$options['created_time_upper'] = $timeupper;
 	}
 
 	if ($timelower) {
-		$options['time_lower'] = $timelower;
+		$options['created_time_lower'] = $timelower;
 	}
 
 	$r = elgg_get_entities($options);
@@ -2282,8 +2319,8 @@ function elgg_get_entity_site_where_sql($table, $site_guids) {
  */
 function elgg_list_entities($options) {
 	$defaults = array(
-		'offset' => 0,
-		'limit' => 10,
+		'offset' => (int) max(get_input('offset', 0), 0),
+		'limit' => (int) max(get_input('limit', 10), 0),
 		'full_view' => TRUE,
 		'view_type_toggle' => FALSE,
 		'pagination' => TRUE
@@ -2825,7 +2862,7 @@ function can_edit_entity($entity_guid, $user_guid = 0) {
 				$return = true;
 			}
 			if ($container_entity = get_entity($entity->container_guid)) {
-				if ($container_entity->canEdit()) {
+				if ($container_entity->canEdit($user->getGUID())) {
 					$return = true;
 				}
 			}
@@ -3628,6 +3665,28 @@ function recursive_delete_permissions_check($hook, $entity_type, $returnvalue, $
 
 	// consult next function
 	return NULL;
+}
+
+/**
+ * Checks if $entity is an ElggEntity and optionally for type and subtype.
+ *
+ * @param $entity
+ * @param $type
+ * @param $subtype
+ * @return Bool
+ */
+function elgg_instanceof($entity, $type = NULL, $subtype = NULL) {
+	$return = ($entity instanceof ElggEntity);
+
+	if ($type) {
+		$return = $return && ($entity->getType() == $type);
+	}
+
+	if ($subtype) {
+		$return = $return && ($entity->getSubtype() == $subtype);
+	}
+
+	return $return;
 }
 
 /**

@@ -43,6 +43,7 @@ class ElggUser extends ElggEntity
 		$this->attributes['language'] = "";
 		$this->attributes['code'] = "";
 		$this->attributes['banned'] = "no";
+		$this->attributes['admin'] = 'no';
 		$this->attributes['tables_split'] = 2;
 	}
 
@@ -197,6 +198,46 @@ class ElggUser extends ElggEntity
 	 */
 	public function isBanned() {
 		return $this->banned == 'yes';
+	}
+
+	/**
+	 * Is this user admin?
+	 *
+	 * @return bool
+	 */
+	public function isAdmin() {
+
+		// for backward compatibility we need to pull this directly
+		// from the attributes instead of using the magic methods.
+		// this can be removed in 1.9
+		// return $this->admin == 'yes';
+		return $this->attributes['admin'] == 'yes';
+	}
+
+	/**
+	 * Make the user an admin
+	 *
+	 * @return bool
+	 */
+	public function makeAdmin() {
+		if (make_user_admin($this->guid)) {
+			$this->attributes['admin'] = 'yes';
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+	/**
+	 * Remove the admin flag for user
+	 *
+	 * @return bool
+	 */
+	public function removeAdmin() {
+		if (remove_user_admin($this->guid)) {
+			$this->attributes['admin'] = 'no';
+			return TRUE;
+		}
+		return FALSE;
 	}
 
 	/**
@@ -375,6 +416,30 @@ class ElggUser extends ElggEntity
 			'language',
 		));
 	}
+
+	// backward compatibility with admin flag
+	// remove for 1.9
+	public function __set($name, $value) {
+		if ($name == 'admin' || $name == 'siteadmin') {
+			elgg_deprecated_notice('The admin/siteadmin metadata are not longer used.  Use ElggUser->makeAdmin() and ElggUser->removeAdmin().', '1.7.1');
+
+			if ($value == 'yes' || $value == '1') {
+				$this->makeAdmin();
+			} else {
+				$this->removeAdmin();
+			}
+		}
+		return parent::__set($name, $value);
+	}
+
+	public function __get($name) {
+		if ($name == 'admin' || $name == 'siteadmin') {
+			elgg_deprecated_notice('The admin/siteadmin metadata are not longer used.  Use ElggUser->isAdmin().', '1.7.1');
+			return $this->isAdmin();
+		}
+
+		return parent::__get($name);
+	}
 }
 
 /**
@@ -501,9 +566,11 @@ function ban_user($user_guid, $reason = "") {
 			// Set ban flag
 			return update_data("UPDATE {$CONFIG->dbprefix}users_entity set banned='yes' where guid=$user_guid");
 		}
+
+		return FALSE;
 	}
 
-	return false;
+	return FALSE;
 }
 
 /**
@@ -534,9 +601,81 @@ function unban_user($user_guid) {
 
 			return update_data("UPDATE {$CONFIG->dbprefix}users_entity set banned='no' where guid=$user_guid");
 		}
+
+		return FALSE;
 	}
 
-	return false;
+	return FALSE;
+}
+
+/**
+ * Makes user $guid an admin.
+ *
+ * @param int $guid
+ * @return bool
+ */
+function make_user_admin($user_guid) {
+	global $CONFIG;
+
+	$user = get_entity((int)$user_guid);
+
+	if (($user) && ($user instanceof ElggUser) && ($user->canEdit())) {
+		if (trigger_elgg_event('make_admin', 'user', $user)) {
+
+			// invalidate memcache for this user
+			static $newentity_cache;
+			if ((!$newentity_cache) && (is_memcache_available())) {
+				$newentity_cache = new ElggMemcache('new_entity_cache');
+			}
+
+			if ($newentity_cache) {
+				$newentity_cache->delete($user_guid);
+			}
+
+			$r = update_data("UPDATE {$CONFIG->dbprefix}users_entity set admin='yes' where guid=$user_guid");
+			invalidate_cache_for_entity($user_guid);
+			return $r;
+		}
+
+		return FALSE;
+	}
+
+	return FALSE;
+}
+
+/**
+ * Removes user $guid's admin flag.
+ *
+ * @param int $guid
+ * @return bool
+ */
+function remove_user_admin($user_guid) {
+	global $CONFIG;
+
+	$user = get_entity((int)$user_guid);
+
+	if (($user) && ($user instanceof ElggUser) && ($user->canEdit())) {
+		if (trigger_elgg_event('remove_admin', 'user', $user)) {
+
+			// invalidate memcache for this user
+			static $newentity_cache;
+			if ((!$newentity_cache) && (is_memcache_available())) {
+				$newentity_cache = new ElggMemcache('new_entity_cache');
+			}
+
+			if ($newentity_cache) {
+				$newentity_cache->delete($user_guid);
+			}
+
+			$r = update_data("UPDATE {$CONFIG->dbprefix}users_entity set admin='no' where guid=$user_guid");
+			invalidate_cache_for_entity($user_guid);
+			return $r;
+		}
+
+		return FALSE;
+	}
+
+	return FALSE;
 }
 
 /**
@@ -1355,7 +1494,7 @@ function register_user($username, $password, $name, $email, $allow_multiple_emai
 	$username = trim($username);
 	// no need to trim password.
 	$password = $password;
-	$name = trim($name);
+	$name = trim(strip_tags($name));
 	$email = trim($email);
 
 	// A little sanity checking
@@ -1398,10 +1537,6 @@ function register_user($username, $password, $name, $email, $allow_multiple_emai
 
 	access_show_hidden_entities($access_status);
 
-	// Check to see if we've registered the first admin yet.
-	// If not, this is the first admin user!
-	$have_admin = datalist_get('admin_registered');
-
 	// Otherwise ...
 	$user = new ElggUser();
 	$user->username = $username;
@@ -1428,9 +1563,13 @@ function register_user($username, $password, $name, $email, $allow_multiple_emai
 		}
 	}
 
+	// Check to see if we've registered the first admin yet.
+	// If not, this is the first admin user!
+	$have_admin = datalist_get('admin_registered');
 	global $registering_admin;
+
 	if (!$have_admin) {
-		$user->admin = true;
+		$user->makeAdmin();
 		set_user_validation_status($user->getGUID(), TRUE, 'first_run');
 		datalist_set('admin_registered', 1);
 		$registering_admin = true;
@@ -1463,7 +1602,7 @@ function collections_submenu_items() {
 	global $CONFIG;
 	$user = get_loggedin_user();
 	add_submenu_item(elgg_echo('friends:collections'), $CONFIG->wwwroot . "pg/collections/" . $user->username);
-	add_submenu_item(elgg_echo('friends:collections:add'),$CONFIG->wwwroot."pg/collections/add");
+	add_submenu_item(elgg_echo('friends:collections:add'), $CONFIG->wwwroot . "pg/collections/add");
 }
 
 /**
@@ -1474,10 +1613,9 @@ function friends_page_handler($page_elements) {
 	if (isset($page_elements[0]) && $user = get_user_by_username($page_elements[0])) {
 		set_page_owner($user->getGUID());
 	}
-	if ($_SESSION['guid'] == page_owner()) {
+	if (get_loggedin_userid() == page_owner()) {
 		// collections_submenu_items(); disabled for now as we no longer use friends collections (replaced by shared access)
 	}
-
 	require_once(dirname(dirname(dirname(__FILE__))) . "/friends/index.php");
 }
 
@@ -1489,26 +1627,26 @@ function friends_of_page_handler($page_elements) {
 	if (isset($page_elements[0]) && $user = get_user_by_username($page_elements[0])) {
 		set_page_owner($user->getGUID());
 	}
-	if ($_SESSION['guid'] == page_owner()) {
+	if (get_loggedin_userid() == page_owner()) {
 		// collections_submenu_items(); disabled for now as we no longer use friends collections (replaced by shared access)
 	}
 	require_once(dirname(dirname(dirname(__FILE__))) . "/friends/of.php");
 }
 
 /**
- * Page handler for friends of
+ * Page handler for friends collections
  *
  */
 function collections_page_handler($page_elements) {
 	if (isset($page_elements[0])) {
 		if ($page_elements[0] == "add") {
-			set_page_owner($_SESSION['guid']);
+			set_page_owner(get_loggedin_userid());
 			collections_submenu_items();
 			require_once(dirname(dirname(dirname(__FILE__))) . "/friends/add.php");
 		} else {
 			if ($user = get_user_by_username($page_elements[0])) {
 				set_page_owner($user->getGUID());
-				if ($_SESSION['guid'] == page_owner()) {
+				if (get_loggedin_userid() == page_owner()) {
 					collections_submenu_items();
 				}
 				require_once(dirname(dirname(dirname(__FILE__))) . "/friends/collections.php");
@@ -1530,6 +1668,22 @@ function dashboard_page_handler($page_elements) {
  */
 function registration_page_handler($page_elements) {
 	require_once(dirname(dirname(dirname(__FILE__))) . "/account/register.php");
+}
+
+/**
+ * Display a login box.
+ *
+ * This is a fallback for non-JS users who click on the
+ * dropdown login link.
+ */
+function elgg_user_login_page_handler() {
+	$content = elgg_view_layout('one_column', elgg_view('account/forms/login'));
+	$content = '
+	<div id="elgg_content" class="clearfloat">
+	' .	elgg_view('account/forms/login') . '
+	</div>
+	';
+	page_draw('test', $content);
 }
 
 /**
@@ -1626,17 +1780,20 @@ function users_init() {
 	global $CONFIG;
 
 	// add Friends to tools menu - if profile mod is running
+	// now added to toolbar
+	/*
 	if ( isloggedin() && is_plugin_enabled('profile') ) {
 		$user = get_loggedin_user();
-		add_menu(elgg_echo('friends'), $CONFIG->wwwroot . "pg/friends/" . $user->username);
+		add_menu(elgg_echo('friends'), $CONFIG->wwwroot . "pg/friends/" . $user->username, array(), 'core:friends');
 	}
+	*/
 
 	register_page_handler('friends', 'friends_page_handler');
 	register_page_handler('friendsof', 'friends_of_page_handler');
-	//register_page_handler('collections', 'collections_page_handler');
 	register_page_handler('dashboard', 'dashboard_page_handler');
 	register_page_handler('register', 'registration_page_handler');
 	register_page_handler('resetpassword', 'elgg_user_resetpassword_page_handler');
+	register_page_handler('login', 'elgg_user_login_page_handler');
 
 	register_action("register", true);
 	register_action("useradd", true);

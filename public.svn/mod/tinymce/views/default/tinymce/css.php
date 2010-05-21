@@ -1,3 +1,8 @@
+<?php
+/**
+* TinyMCE CSS
+*/
+?>
 #elgg_page_contents .mceButton {
 background-color: #e9e8e8;
 	border-color: #B2B2B2;

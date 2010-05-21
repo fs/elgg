@@ -60,8 +60,8 @@ class ElggSession implements ArrayAccess {
 			return ElggSession::$__localcache[$key];
 		}
 
-		$value = null;
-		$value = trigger_plugin_hook('session:get', $key, null, $value);
+		$value = NULL;
+		$value = trigger_plugin_hook('session:get', $key, NULL, $value);
 
 		ElggSession::$__localcache[$key] = $value;
 
@@ -92,17 +92,17 @@ class ElggSession implements ArrayAccess {
 			return true;
 		}
 	}
-	
-	
+
+
 	// Alias functions
 	function get($key) {
 		return $this->offsetGet($key);
 	}
-	
+
 	function set($key, $value) {
 		return $this->offsetSet($key, $value);
 	}
-	
+
 	function del($key) {
 		return $this->offsetUnset($key);
 	}
@@ -110,10 +110,11 @@ class ElggSession implements ArrayAccess {
 
 
 /**
- * Return the current logged in user, or null if no user is logged in.
+ * Return the current logged in user, or NULL if no user is logged in.
  *
  * If no user can be found in the current session, a plugin hook - 'session:get' 'user' to give plugin
  * authors another way to provide user details to the ACL system without touching the session.
+ * @return ElggUser|NULL
  */
 function get_loggedin_user() {
 	global $SESSION;
@@ -122,7 +123,7 @@ function get_loggedin_user() {
 		return $SESSION['user'];
 	}
 
-	return false;
+	return NULL;
 }
 
 /**
@@ -133,8 +134,9 @@ function get_loggedin_user() {
  */
 function get_loggedin_userid() {
 	$user = get_loggedin_user();
-	if ($user)
+	if ($user) {
 		return $user->guid;
+	}
 
 	return 0;
 }
@@ -166,16 +168,16 @@ function isloggedin() {
  */
 function isadminloggedin() {
 	if (!is_installed()) {
-		return false;
+		return FALSE;
 	}
 
 	$user = get_loggedin_user();
 
-	if ((isloggedin()) && (($user->admin || $user->siteadmin))) {
-		return true;
+	if ((isloggedin()) && $user->isAdmin()) {
+		return TRUE;
 	}
 
-	return false;
+	return FALSE;
 }
 
 /**
@@ -187,40 +189,41 @@ function isadminloggedin() {
  */
 function elgg_is_admin_user($user_guid) {
 	global $CONFIG;
+	// cannot use magic metadata here because of recursion
 
-	// cannot use metadata here because of recursion
+	// must support the old way of getting admin from metadata
+	// in order to run the upgrade to move it into the users table.
+	$version = (int) datalist_get('version');
 
-	// caching is done at the db level so no need to here.
-	$query = "SELECT * FROM {$CONFIG->dbprefix}users_entity as e,
-		{$CONFIG->dbprefix}metastrings as ms1,
-		{$CONFIG->dbprefix}metastrings as ms2,
-		{$CONFIG->dbprefix}metadata as md
-		WHERE (
-			(
-				(ms1.string = 'admin' AND ms2.string = 'yes')
-				OR (ms1.string = 'admin' AND ms2.string = '1')
-			)
-			AND md.name_id = ms1.id	AND md.value_id = ms2.id
-			AND e.guid = md.entity_guid
-			AND e.guid = {$user_guid}
-			AND e.banned = 'no'
+	if ($version < 2010040201) {
+		$admin = get_metastring_id('admin');
+		$yes = get_metastring_id('yes');
+		$one = get_metastring_id('1');
+
+		$query = "SELECT * FROM {$CONFIG->dbprefix}users_entity as e,
+			{$CONFIG->dbprefix}metadata as md
+			WHERE (
+				md.name_id = '$admin'
+				AND md.value_id IN ('$yes', '$one')
+				AND e.guid = md.entity_guid
+				AND e.guid = {$user_guid}
+				AND e.banned = 'no'
 			)";
-//		OR (
-//			ms1.string = 'admin' AND ms2.string = '1'
-//			AND md.name_id = ms1.id	AND md.value_id = ms2.id
-//			AND e.guid = md.entity_guid
-//			AND e.guid = {$user_guid}
-//			AND e.banned = 'no'
-//			)";
-
+	} else {
+		$query = "SELECT * FROM {$CONFIG->dbprefix}users_entity as e
+			WHERE (
+				e.guid = {$user_guid}
+				AND e.admin = 'yes'
+			)";
+	}
 
 	// normalizing the results from get_data()
 	// See #1242
 	$info = get_data($query);
-	if (!((is_array($info) && count($info) < 1) || $info === false)) {
-		return true;
+	if (!((is_array($info) && count($info) < 1) || $info === FALSE)) {
+		return TRUE;
 	}
-	return false;
+	return FALSE;
 }
 
 /**
@@ -254,7 +257,7 @@ function pam_auth_userpass($credentials = NULL) {
 		if ($user = get_user_by_username($credentials['username'])) {
 
 			// Let admins log in without validating their email, but normal users must have validated their email or been admin created
-			if ((!$user->admin) && (!$user->validated) && (!$user->admin_created)) {
+			if ((!$user->isAdmin()) && (!$user->validated) && (!$user->admin_created)) {
 				return false;
 			}
 
@@ -335,7 +338,7 @@ function reset_login_failure_count($user_guid) {
  * @return bool on exceeded limit.
  */
 function check_rate_limit_exceeded($user_guid) {
-	// 5 failures in 5 minutes causes temporary block on logins	
+	// 5 failures in 5 minutes causes temporary block on logins
 	$limit = 5;
 	$user_guid = (int)$user_guid;
 	$user = get_entity($user_guid);
@@ -416,13 +419,6 @@ function login(ElggUser $user, $persistent = false) {
 	set_last_login($_SESSION['guid']);
 	reset_login_failure_count($user->guid); // Reset any previous failed login attempts
 
-	// Set admin shortcut flag if this is an admin
-//	if (isadminloggedin()) {
-//		//@todo REMOVE THIS.
-//		global $is_admin;
-//		$is_admin = true;
-//	}
-
 	return true;
 }
 
@@ -434,7 +430,7 @@ function login(ElggUser $user, $persistent = false) {
 function logout() {
 	global $CONFIG;
 
-	if (isset($_SESSION['user'])) {	
+	if (isset($_SESSION['user'])) {
 		if (!trigger_elgg_event('logout','user',$_SESSION['user'])) {
 			return false;
 		}
@@ -461,17 +457,6 @@ function logout() {
 	$_SESSION['msg'] = $old_msg;
 
 	return TRUE;
-}
-
-/**
- * Returns a fingerprint for an elgg session.
- *
- * @return string
- */
-function get_session_fingerprint() {
-	global $CONFIG;
-
-	return md5($_SERVER['HTTP_USER_AGENT'] . get_site_secret());
 }
 
 /**
@@ -509,16 +494,6 @@ function session_init($event, $object_type, $object) {
 	session_name('Elgg');
 	session_start();
 
-	// Do some sanity checking by generating a fingerprint (makes some XSS attacks harder)
-	if (isset($_SESSION['__elgg_fingerprint'])) {
-		if ($_SESSION['__elgg_fingerprint'] != get_session_fingerprint()) {
-			session_destroy();
-			return false;
-		}
-	} else {
-		$_SESSION['__elgg_fingerprint'] = get_session_fingerprint();
-	}
-
 	// Generate a simple token (private from potentially public session id)
 	if (!isset($_SESSION['__elgg_session'])) {
 		$_SESSION['__elgg_session'] = md5(microtime().rand());
@@ -532,7 +507,7 @@ function session_init($event, $object_type, $object) {
 		unset($_SESSION['id']);
 		unset($_SESSION['guid']);
 		unset($_SESSION['code']);
-		
+
 		// is there a remember me cookie
 		if (isset($_COOKIE['elggperm'])) {
 			// we have a cookie, so try to log the user in
@@ -545,7 +520,7 @@ function session_init($event, $object_type, $object) {
 				$_SESSION['guid'] = $_SESSION['id'];
 				$_SESSION['code'] = $_COOKIE['elggperm'];
 			}
-		} 
+		}
 	} else {
 		// we have a session and we have already checked the fingerprint
 		// reload the user object from database in case it has changed during the session

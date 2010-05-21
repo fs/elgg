@@ -16,8 +16,11 @@
 		$area2 = elgg_view_title(elgg_echo("thewire:everyone"));
 		
 		//add form
-		$area2 .= elgg_view("thewire/forms/add");
-		$area2 .= elgg_list_entities(array('types' => 'object', 'subtypes' => 'thewire')); 
+		if (isloggedin()) {
+			$area2 .= elgg_view("thewire/forms/add");
+		}
+		$offset = (int)get_input('offset', 0);
+		$area2 .= elgg_list_entities(array('types' => 'object', 'subtypes' => 'thewire', 'offset' => $offset));
 
 	    $body = elgg_view_layout("one_column_with_sidebar", $area2);
 		

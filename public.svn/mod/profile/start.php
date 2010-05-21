@@ -23,9 +23,10 @@ function profile_init() {
 	register_entity_url_handler('profile_url', 'user', 'all');
 
 	// Set up the menu for logged-in users
-	if (isloggedin()) {
-		add_menu(elgg_echo('profile:yours'), $_SESSION['user']->getURL() . '/extend');
-	}
+	elgg_extend_view('elgg_topbar/extend', 'profile/topbar_extend');
+	//if (isloggedin()) {
+	//	add_menu(elgg_echo('profile:yours'), $_SESSION['user']->getURL() . '/extend');
+	//}
 
 	// Metadata on users needs to be independent
 	register_metadata_as_independent('user');
@@ -47,15 +48,6 @@ function profile_init() {
 	elgg_extend_view('metatags', 'profile/metatags');
 	elgg_extend_view('css', 'profile/css');
 	elgg_extend_view('js/initialise_elgg', 'profile/javascript');
-
-	if (get_context() == 'profile') {
-		elgg_extend_view('canvas_header/submenu', 'profile/submenu');
-	}
-
-	// Extend context menu with admin links
-	if (isadminloggedin()){
-		elgg_extend_view('profile/menu/links', 'profile/menu/adminwrapper', 10000);
-	}
 
 	// Now override icons
 	register_plugin_hook('entity:icon:url', 'user', 'profile_usericon_hook');
@@ -85,22 +77,21 @@ function profile_fields_setup() {
 		'twitter' => 'text'
 	);
 
-	// TODO: Have an admin interface for this
-	$n = 0;
-	$loaded_defaults = array();
-	while ($translation = get_plugin_setting("admin_defined_profile_$n", 'profile')){
-		// Add a translation
-		add_translation(get_current_language(), array("profile:admin_defined_profile_$n" => $translation));
-
-		// Detect type
-		$type = get_plugin_setting("admin_defined_profile_type_$n", 'profile');
-		if (!$type) $type = 'text';
-
-		// Set array
-		$loaded_defaults["admin_defined_profile_$n"] = $type;
-
-		$n++;
+	$loaded_default = array();
+	if ($fieldlist = get_plugin_setting('user_defined_fields','profile')) {
+		if (!empty($fieldlist)) {
+			$fieldlistarray = explode(',',$fieldlist);
+			$loaded_defaults = array();
+			foreach($fieldlistarray as $listitem) {
+				if ($translation = get_plugin_setting("admin_defined_profile_{$listitem}", 'profile')) {
+					$type = get_plugin_setting("admin_defined_profile_type_{$listitem}", 'profile');
+					$loaded_defaults["admin_defined_profile_{$listitem}"] = $type;
+					add_translation(get_current_language(), array("profile:admin_defined_profile_{$listitem}" => $translation));
+				}
+			}
+		}
 	}
+
 	if (count($loaded_defaults)) {
 		$CONFIG->profile_using_custom = true;
 		$profile_defaults = $loaded_defaults;
@@ -283,7 +274,7 @@ function profile_usericon_hook($hook, $entity_type, $returnvalue, $params){
 
 		if ($filehandler->exists()) {
 			//$url = $CONFIG->url . "pg/icon/$username/$size/$icontime.jpg";
-			return $CONFIG->wwwroot . 'mod/profile/icondirect.php?lastcache='.$icontime.'&amp;username='.$entity->username.'&amp;size='.$size;
+			return $CONFIG->wwwroot . 'mod/profile/icondirect.php?lastcache='.$icontime.'&username='.$entity->username.'&joindate=' . $entity->time_created . '&guid=' . $entity->guid . '&size='.$size;
 		}
 	}
 }
@@ -304,7 +295,7 @@ register_action("profile/cropicon",false,$CONFIG->pluginspath . "profile/actions
 register_action("profile/editdefault",false,$CONFIG->pluginspath . "profile/actions/editdefault.php", true);
 register_action("profile/editdefault/delete",false,$CONFIG->pluginspath . "profile/actions/deletedefaultprofileitem.php", true);
 register_action("profile/editdefault/reset",false,$CONFIG->pluginspath . "profile/actions/resetdefaultprofile.php", true);
-
-
-// Define widgets for use in this context
-use_widgets('profile');
+register_action("profile/editdefault/reorder",false,$CONFIG->pluginspath . "profile/actions/reorder.php", true);
+register_action("profile/editdefault/editfield",false,$CONFIG->pluginspath . "profile/actions/editfield.php", true);
+register_action("profile/addcomment",false,$CONFIG->pluginspath . "profile/actions/addcomment.php");
+register_action("profile/deletecomment",false,$CONFIG->pluginspath . "profile/actions/deletecomment.php");

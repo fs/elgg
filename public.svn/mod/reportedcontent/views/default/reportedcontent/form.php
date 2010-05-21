@@ -22,7 +22,7 @@ $shares = array();
 $owner = $vars['user'];
 
 ?>
-<form action="<?php echo $vars['url']; ?>action/reportedcontent/add" method="post">
+<form action="<?php echo $vars['url']; ?>action/reportedcontent/add" method="post" class="margin_top">
 <?php echo elgg_view('input/securitytoken'); ?>
 
 	<p>
@@ -51,10 +51,10 @@ $owner = $vars['user'];
 			?>
 		</label>
 	</p>
-	<p class="longtext_editarea">
+	<p class="longtext_inputarea">
 		<label>
 			<?php 	echo elgg_echo('reportedcontent:description'); ?>
-			<br />
+		</label>
 			<?php
 
 					echo elgg_view('input/longtext',array(
@@ -63,7 +63,6 @@ $owner = $vars['user'];
 					)); 
 			
 			?>
-		</label>
 	</p>
 	<p>
 		<input type="submit" value="<?php echo elgg_echo('reportedcontent:report'); ?>" />

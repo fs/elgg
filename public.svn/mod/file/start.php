@@ -11,17 +11,14 @@
 	/**
 	 * Override the ElggFile so that 
 	 */
-	class FilePluginFile extends ElggFile
-	{
-		protected function initialise_attributes()
-		{
+	class FilePluginFile extends ElggFile {
+		protected function initialise_attributes() {
 			parent::initialise_attributes();
 			
 			$this->attributes['subtype'] = "file";
 		}
 		
-		public function __construct($guid = null) 
-		{			
+		public function __construct($guid = null) {			
 			parent::__construct($guid);
 		}
 	}
@@ -30,31 +27,23 @@
 	/**
 	 * File plugin initialisation functions.
 	 */
-	function file_init() 
-	{
+	function file_init() {
 		global $CONFIG;
 				
-		// Set up menu (tools dropdown or other uses as defined by theme)
-		if (isloggedin()) {
-			add_menu(elgg_echo('file'), $CONFIG->wwwroot . "pg/file/" . get_loggedin_user()->username);
-		} else {
-			add_menu(elgg_echo('file'), $CONFIG->wwwroot . "pg/file/world/world/" );
-		}
+		// Set up menu (tools dropdown)
+		add_menu(elgg_echo('files'), $CONFIG->wwwroot . "pg/file/");
 				
 		// Extend CSS
 		elgg_extend_view('css', 'file/css');
 		
-		// Extend hover-over and profile menu	
-		elgg_extend_view('profile/menu/links','file/menu');
-		
 	    // extend group main page
-		elgg_extend_view('groups/left_column','file/groupprofile_files');
+		elgg_extend_view('groups/tool_latest','file/groupprofile_files');
 		
 		// Register a page handler, so we can have nice URLs
 		register_page_handler('file','file_page_handler');
 			
 		// Add a new file widget
-		add_widget_type('filerepo',elgg_echo("file:widget"),elgg_echo("file:widget:description"));
+		add_widget_type('filerepo',elgg_echo("file"),elgg_echo("file:widget:description"));
 		
 		// Register a URL handler for files
 		register_entity_url_handler('file_url','object','file');
@@ -90,23 +79,6 @@
 				    add_submenu_item(sprintf(elgg_echo("file:group"),$page_owner->name), $CONFIG->wwwroot . "pg/file/" . $page_owner->username);
 			    }
 			}
-			
-		// General submenu options
-		
-			if (get_context() == "file") {
-				if ((page_owner() == $_SESSION['guid'] || !page_owner()) && isloggedin()) {
-					add_submenu_item(sprintf(elgg_echo("file:yours"),$page_owner->name), $CONFIG->wwwroot . "pg/file/" . $page_owner->username);
-					add_submenu_item(sprintf(elgg_echo('file:yours:friends'),$page_owner->name), $CONFIG->wwwroot . "pg/file/". $page_owner->username . "/friends/");
-				} else if (page_owner()) {
-					add_submenu_item(sprintf(elgg_echo("file:user"),$page_owner->name), $CONFIG->wwwroot . "pg/file/" . $page_owner->username);
-					if ($page_owner instanceof ElggUser) // This one's for users, not groups
-						add_submenu_item(sprintf(elgg_echo('file:friends'),$page_owner->name), $CONFIG->wwwroot . "pg/file/". $page_owner->username . "/friends/");
-				}
-				add_submenu_item(elgg_echo('file:all'), $CONFIG->wwwroot . "pg/file/world/world/");
-				if (can_write_to_container($_SESSION['guid'], page_owner()) && isloggedin())
-					add_submenu_item(elgg_echo('file:upload'), $CONFIG->wwwroot . "pg/file/". $page_owner->username . "/new/");
-			}
-		
 	}
 
 	/**
@@ -123,10 +95,8 @@
 			set_input('username',$page[0]);
 		}
 		
-		if (isset($page[1])) 
-		{
-    		switch($page[1]) 
-    		{
+		if (isset($page[1])) {
+    		switch($page[1]) {
     			case "read":
     				set_input('guid',$page[2]);
 					include(dirname(dirname(dirname(__FILE__))) . "/entities/index.php");
@@ -141,9 +111,7 @@
     				include($CONFIG->pluginspath . "file/upload.php");
           		break;
     		}
-		}
-		else
-		{
+		} else {
 			// Include the standard profile index
 			include($CONFIG->pluginspath . "file/index.php");
 		}
@@ -158,8 +126,7 @@
 		 * @param unknown_type $returnvalue
 		 * @param unknown_type $params
     */
-		function file_notify_message($hook, $entity_type, $returnvalue, $params)
-		{
+		function file_notify_message($hook, $entity_type, $returnvalue, $params) {
 			$entity = $params['entity'];
 			$to_entity = $params['to_entity'];
 			$method = $params['method'];
@@ -268,5 +235,8 @@
 	register_action("file/upload", false, $CONFIG->pluginspath . "file/actions/upload.php");
 	register_action("file/save", false, $CONFIG->pluginspath . "file/actions/save.php");
 	register_action("file/delete", false, $CONFIG->pluginspath. "file/actions/delete.php");
+
+	// temporary - see #2010
+	register_action("file/download", false, $CONFIG->pluginspath. "file/actions/download.php");
 	
 ?>

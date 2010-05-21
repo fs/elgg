@@ -46,13 +46,41 @@
 .usericon {
 	position:relative;
 }
-.usericon.tiny {
+.usericon.tiny,
+img.tiny {
 	width:25px;
 	height:25px;
+	/* remove the border-radius if you don't want rounded avatars in supported browsers */
+	-webkit-border-radius: 3px; 
+	-moz-border-radius: 3px;
+	-moz-background-clip:  border;
+	
+	-o-background-size: 25px;
+	-webkit-background-size: 25px;
+	-khtml-background-size: 25px;
+	-moz-background-size: 25px;
 }
-.usericon.small {
+.usericon.small,
+img.small {
 	width:40px;
 	height:40px;
+	/* remove the border-radius if you don't want rounded avatars in supported browsers */
+	-webkit-border-radius: 5px; 
+	-moz-border-radius: 5px;
+	-moz-background-clip:  border;
+	
+	-o-background-size: 40px;
+	-webkit-background-size: 40px;
+	-khtml-background-size: 40px;
+	-moz-background-size: 40px;
+}
+img.large {
+	width:200px;
+	height:200px;
+}
+img.medium {
+	width:100px;
+	height:100px;
 }
 
 /* ***************************************
@@ -210,10 +238,21 @@
 
 
 /* ***************************************
+	commentwall within profile
+*************************************** */
+#comment_wall_add textarea {
+	width:685px;
+}
+#comment_wall_add #postit {
+	float:right;
+}
+
+
+/* ***************************************
 	twitter panel within profile
 *************************************** */
 ul#twitter_update_list li {
-	background-image: url(<?php echo $vars['url']; ?>mod/elgg_layout/graphics/speech_bubble_tail.gif);
+	background-image: url(<?php echo $vars['url']; ?>mod/profile/graphics/speech_bubble_tail.gif);
 	background-position:right bottom;
 	background-repeat: no-repeat;
 	list-style-image:none;
@@ -239,7 +278,7 @@ ul#twitter_update_list li span a {
 	display:inline !important;
 }
 p.visit_twitter a {
-    background:url(<?php echo $vars['url']; ?>mod/elgg_layout/graphics/twitter16px.png) left no-repeat;
+    background:url(<?php echo $vars['url']; ?>mod/profile/graphics/twitter16px.png) left no-repeat;
     padding:0 0 0 20px;
     margin:0;
 }
@@ -307,17 +346,28 @@ p.visit_twitter a {
 	border-top: 1px solid #dedede;
 	margin-top:30px;
 }
-.default_profile_reset input[type="submit"] {
-	background: #dedede;
-	border-color: #dedede;
-	color:#666666;
-	text-shadow: none;
+.default_profile_reset .action_button {
 	float:right;
 }
-.default_profile_reset input[type="submit"]:hover {
-	background: red;
-	border-color: red;
-	color:white;
+/* field re-order */
+#sortable_profile_fields {
+	padding:0;
+	border-top:1px solid #cccccc;
+}
+#sortable_profile_fields li {
+	padding:5px 0 5px 0;
+	border-bottom:1px solid #cccccc;
+}
+#sortable_profile_fields li img.handle {
+	margin-right: 7px;
+	cursor: move;
+}
+#sortable_profile_fields .ui-sortable-helper {
+	background: #eeeeee;
+	color:#333333;
+	padding: 5px 0 5px 0;
+	margin: 0;
+	width:100%;
 }
 
 
@@ -334,22 +384,22 @@ p.visit_twitter a {
 	bottom:0;
 }
 .avatar_menu_arrow {
-	background: url(<?php echo $vars['url']; ?>_graphics/avatar_menu_arrows.gif) no-repeat left top;
+	background: url(<?php echo $vars['url']; ?>_graphics/elgg_sprites.png) no-repeat -150px top;
 	width:15px;
 	height:15px;
 }
 .avatar_menu_arrow_on {
-	background: url(<?php echo $vars['url']; ?>_graphics/avatar_menu_arrows.gif) no-repeat left -16px;
+	background: url(<?php echo $vars['url']; ?>_graphics/elgg_sprites.png) no-repeat -150px -16px;
 	width:15px;
 	height:15px;
 }
 .avatar_menu_arrow_hover {
-	background: url(<?php echo $vars['url']; ?>_graphics/avatar_menu_arrows.gif) no-repeat left -32px;
+	background: url(<?php echo $vars['url']; ?>_graphics/elgg_sprites.png) no-repeat -150px -32px;
 	width:15px;
 	height:15px;
 }
 /* user avatar submenu options */
-.usericon div.sub_menu { 
+.usericon .sub_menu { 
 	display:none; 
 	position:absolute; 
 	padding:0; 
@@ -361,50 +411,51 @@ p.visit_twitter a {
 	width:164px; 
 	background:#FFFFFF; 
 	text-align:left;
-	-webkit-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.50); /* safari v3+ */
-	-moz-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.50); /* FF v3.5+ */
+	-webkit-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.50);
+	-moz-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.50);
+	font-size:14px;
 }
 div.usericon a.icon img {
 	z-index:10;
 }
-.usericon div.sub_menu a:link, 
-.usericon div.sub_menu a:visited, 
-.usericon div.sub_menu a:hover { 
+.usericon .sub_menu a:link, 
+.usericon .sub_menu a:visited, 
+.usericon .sub_menu a:hover { 
 	display:block;
 }	
-.usericon div.sub_menu a:hover {
+.usericon .sub_menu a:hover {
 	background:#cccccc;
 	text-decoration:none;
 }
-.usericon div.sub_menu h3 {
-	font-size:1.3em;
-	line-height: 1.1em;
-	padding:0;
-	border-bottom:solid 1px #dddddd;
-	color: #4690d6;
-	margin:0 !important;
-}
-.usericon div.sub_menu h3 a {
-	padding:3px 3px 3px 6px !important;
-}
-.usericon div.sub_menu p {
-	margin:0 !important;
+.usericon .sub_menu .displayname {
 	padding:0 !important;
-	height:auto !important;
-	line-height:1.2em !important;
-	font-size:12px !important;
+	margin:0 !important;
+	border-bottom:solid 1px #dddddd !important;
+	font-size:14px !important;
 }
-.usericon div.sub_menu p a {
-	padding:3px 3px 3px 6px !important;
+.usericon .sub_menu .displayname a {
+	padding:3px 3px 3px 8px;
+	font-size:14px;
+}
+.usericon .sub_menu .displayname a .username {
+	display:block;
+	font-weight: normal;
+	font-size:12px;
+	text-align: left;
+	margin:0;
+}
+.usericon .sub_menu a {
+	padding:2px 3px 2px 8px;
+	font-size:12px;
 }
 /* admin menu options in avatar submenu */
 .user_menu_admin {
 	border-top:solid 1px #dddddd;
 }
-.user_menu_admin a {
+.usericon .sub_menu li.user_menu_admin a {
 	color:red;
 }
-.user_menu_admin a:hover {
-	color:white !important;
-	background:red !important;
+.usericon .sub_menu li.user_menu_admin a:hover {
+	color:white;
+	background:red;
 }

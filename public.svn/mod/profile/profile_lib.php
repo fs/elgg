@@ -22,10 +22,6 @@ function profile_get_user_profile_html($user, $section = 'activity') {
 	$view_options = array('entity' => $user);
 
 	switch($section){
-		case 'widgets':
-			$body .= elgg_view_layout('widgets', $view_options);
-			break;
-
 		case 'friends':
 			$body .= elgg_view('profile/profile_contents/friends', $view_options);
 			break;
@@ -33,7 +29,13 @@ function profile_get_user_profile_html($user, $section = 'activity') {
 		case 'twitter':
 			$body .= elgg_view('profile/profile_contents/twitter', $view_options);
 			break;
-
+		case 'feeds':
+			$body .= elgg_view('profile/profile_contents/feeds', $view_options);
+			break;
+		case 'commentwall':
+			$comments = $user->getAnnotations('commentwall', 200, 0, 'desc');
+			$body .= elgg_view('profile/profile_contents/commentwall', array("entity" => $user, "comments" => $comments));
+			break;
 		case 'details':
 			$body .= elgg_view('profile/profile_contents/details', $view_options);
 			break;

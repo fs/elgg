@@ -6,7 +6,7 @@ set :port, 22
 set :use_sudo, false
 set :app_dir, "/home/ubuntu/elgg/current/mod/geolocation/"
 set :deploy_to, "/home/ubuntu/elgg/geolocation/"
-set :repository, "http://tgs.unfuddle.com/svn/tgs_geolocation"
+set :repository, "http://tgs.unfuddle.com/svn/tgs_geolocation/trunk"
 #set :branch, "staging"
 
 namespace :deploy do

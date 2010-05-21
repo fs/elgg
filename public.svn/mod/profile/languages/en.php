@@ -1,12 +1,6 @@
 <?php
 /**
  * Elgg profile plugin language pack
- *
- * @package ElggProfile
- * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
- * @author Curverider Ltd
- * @copyright Curverider Ltd 2008-2010
- * @link http://elgg.com/
  */
 
 $english = array(
@@ -16,7 +10,7 @@ $english = array(
  */
 
 	'profile' => "Profile",
-	'profile:edit:default' => 'Replace profile fields',
+	'profile:edit:default' => 'Profile fields',
 	'profile:preview' => 'Preview',
 
 /**
@@ -27,16 +21,16 @@ $english = array(
 	'profile:user' => "%s's profile",
 
 	'profile:edit' => "Edit profile",
-	'profile:profilepictureinstructions' => "The profile picture is the image that's displayed on your profile page. <br /> You can change it as often as you'd like. (File formats accepted: GIF, JPG or PNG)",
-	'profile:icon' => "Profile picture",
+	'profile:profilepictureinstructions' => "Your avatar is the image that's displayed on your profile page. <br /> You can change it as often as you'd like. (File formats accepted: GIF, JPG or PNG)",
+	'profile:icon' => "Avatar",
 	'profile:createicon' => "Create your avatar",
 	'profile:currentavatar' => "Current avatar",
 	'profile:createicon:header' => "Profile picture",
-	'profile:profilepicturecroppingtool' => "Profile picture cropping tool",
-	'profile:createicon:instructions' => "Click and drag a square below to match how you want your picture cropped.  A preview of your cropped picture will appear in the box on the right.  When you are happy with the preview, click 'Create your avatar'. This cropped image will be used throughout the site as your avatar. ",
+	'profile:profilepicturecroppingtool' => "Avatar cropping tool",
+	'profile:createicon:instructions' => "Click and drag a square below to match how you want your avatar cropped.  A preview will appear in the box on the right.  When you are happy with the preview, click 'Create your avatar'. This cropped version will be used throughout the site as your avatar. ",
 
-	'profile:editdetails' => "Edit details",
-	'profile:editicon' => "Edit profile icon",
+	'profile:editdetails' => "Edit profile",
+	'profile:editicon' => "Edit avatar",
 
 	'profile:aboutme' => "About me",
 	'profile:description' => "About me",
@@ -69,7 +63,7 @@ $english = array(
 	'profile:defaultprofile:reset' => 'Default system profile reset',
 
 	'profile:resetdefault' => 'Reset default profile',
-	'profile:explainchangefields' => 'You can replace the existing profile fields with your own using the form below. First you give the new profile field a label, for example, \'Favourite team\'. Next you need to select the field type, for example, tags, url, text and so on. At any time you can revert back to the default profile set up.',
+	'profile:explainchangefields' => 'You can replace the existing profile fields with your own using the form below. <br /><br />Give the new profile field a label, for example, \'Favorite team\', then select the field type (eg. text, url, tags), and click the \'Add\' button. To re-order the fields drag on the handle next to the field label. To edit a field label - click on the label\'s text to make it editable. <br />At any time you can revert back to the default profile set up, but you will loose any information already entered into custom fields on profile pages.',
 
 
 /**
@@ -78,6 +72,40 @@ $english = array(
 
 	'profile:saved' => "Your profile was successfully saved.",
 	'profile:icon:uploaded' => "Your profile picture was successfully uploaded.",
+
+/**
+ * Profile comment wall
+ **/
+	'profile:commentwall:add' => "Add to the wall",
+	'profile:commentwall:posted' => "You successfully posted on the comment wall.",
+	'profile:commentwall:deleted' => "You successfully deleted the message.",
+	'profile:commentwall:blank' => "Sorry; you need to actually put something in the message area before we can save it.",
+	'profile:commentwall:notfound' => "Sorry; we could not find the specified item.",
+	'profile:commentwall:notdeleted' => "Sorry; we could not delete this message.",
+	'profile:commentwall:none' => "No comment wall posts found.",
+	'profile:commentwall:somethingwentwrong' => "Something went wrong when trying to save your message, make sure you actually wrote a message.",
+	'profile:commentwall:failure' => "An unexpected error occurred when adding your message. Please try again.",
+
+/**
+ * Email messages commentwall
+ */
+
+	'profile:comment:subject' => 'You have a new message board comment!',
+	'profile:comment:body' => "You have a new message board comment from %s. It reads:
+
+
+%s
+
+
+To view your message board comments, click here:
+
+	%s
+
+To view %s's profile, click here:
+
+	%s
+
+You cannot reply to this email.",
 
 /**
  * Profile error messages

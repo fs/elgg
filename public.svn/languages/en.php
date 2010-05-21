@@ -1,6 +1,6 @@
 <?php
 /**
- * Core English Lange
+ * Core English Language
  *
  * @package ElggLanguage
  * @subpackage Core
@@ -30,6 +30,8 @@ $english = array(
 
 	'loggedinrequired' => "You must be logged in to view that page.",
 	'adminrequired' => "You must be an administrator to view that page.",
+	'membershiprequired' => "You must be a member of this group to view that page.",
+
 
 /**
  * Errors
@@ -40,6 +42,7 @@ $english = array(
 
 	'actionundefined' => "The requested action (%s) was not defined in the system.",
 	'actionloggedout' => "Sorry, you cannot perform this action while logged out.",
+	'actionunauthorized' => 'You are unauthorized to perform this action',
 
 	'SecurityException:Codeblock' => "Denied access to execute privileged code block",
 	'DatabaseException:WrongCredentials' => "Elgg couldn't connect to the database using the given credentials.",
@@ -91,7 +94,7 @@ $english = array(
 	'ImportException:NotAllImported' => "Not all elements were imported.",
 
 	'InvalidParameterException:UnrecognisedFileMode' => "Unrecognised file mode '%s'",
-	'InvalidParameterException:MissingOwner' => "File %s (%d) is missing an owner!",
+	'InvalidParameterException:MissingOwner' => "File %s (file guid:%d) (owner guid:%d) is missing an owner!",
 	'IOException:CouldNotMake' => "Could not make %s",
 	'IOException:MissingFileName' => "You must specify a name before opening a file.",
 	'ClassNotFoundException:NotFoundNotSavedWithFile' => "Filestore not found or class not saved with file!",
@@ -197,6 +200,7 @@ $english = array(
 	'name' => "Display name",
 	'email' => "Email address",
 	'username' => "Username",
+	'loginusername' => "Username or email",
 	'password' => "Password",
 	'passwordagain' => "Password (again for verification)",
 	'admin_option' => "Make this user an admin?",
@@ -329,16 +333,6 @@ To remove a widget drag it back to the <b>Widget gallery</b>.",
 	'riveritem:plural:user' => 'some users',
 
 /**
- * Plugins
- */
-	'plugins:settings:save:ok' => "Settings for the %s plugin were saved successfully.",
-	'plugins:settings:save:fail' => "There was a problem saving settings for the %s plugin.",
-	'plugins:usersettings:save:ok' => "User settings for the %s plugin were saved successfully.",
-	'plugins:usersettings:save:fail' => "There was a problem saving  user settings for the %s plugin.",
-	'admin:plugins:label:version' => "Version",
-	'item:object:plugin' => 'Plugin configuration settings',
-
-/**
  * Notifications
  */
 	'notifications:usersettings' => "Notification settings",
@@ -390,7 +384,7 @@ To remove a widget drag it back to the <b>Widget gallery</b>.",
 	'registerbad' => "Your registration was unsuccessful. The username may already exist, your passwords might not match, or your username or password may be too short.",
 	'registerdisabled' => "Registration has been disabled by the system administrator",
 
-	'firstadminlogininstructions' => 'Your new Elgg site has been successfully installed and your administrator account created. You can now configure your site further by enabling various installed plugin tools.',
+	'firstadminlogininstructions' => "Enable and disable plugins to customize your new Elgg site! (Remember to hit 'Save' when you're done.)",
 
 	'registration:notemail' => 'The email address you provided does not appear to be a valid email address.',
 	'registration:userexists' => 'That username already exists',
@@ -434,7 +428,7 @@ To remove a widget drag it back to the <b>Widget gallery</b>.",
 	'user:password:resetreq:success' => 'Successfully requested a new password, email sent',
 	'user:password:resetreq:fail' => 'Could not request a new password.',
 
-	'user:password:text' => 'To generate a new password, enter your username below. We will send the address of a unique verification page to you via email click on the link in the body of the message and a new password will be sent to you.',
+	'user:password:text' => 'To request a new password, enter your username below and click the Request button.',
 
 	'user:persistent' => 'Remember me',
 /**
@@ -444,31 +438,53 @@ To remove a widget drag it back to the <b>Widget gallery</b>.",
 	'admin:configuration:success' => "Your settings have been saved.",
 	'admin:configuration:fail' => "Your settings could not be saved.",
 
+	'admin:unknown_section' => 'Invalid Admin Section.',
+
 	'admin' => "Administration",
 	'admin:description' => "The admin panel allows you to control all aspects of the system, from user management to how plugins behave. Choose an option below to get started.",
 
-	'admin:user' => "User Administration",
-	'admin:user:description' => "This admin panel allows you to control user settings for your site. Choose an option below to get started.",
-	'admin:user:adduser:label' => "Click here to add a new user...",
-	'admin:user:opt:linktext' => "Configure users...",
-	'admin:user:opt:description' => "Configure users and account information. ",
+	'admin:overview' => 'Overview',
 
-	'admin:site' => "Site Administration",
+	'admin:appearance' => 'Appearance',
+
+	'admin:users' => "Users",
+	'admin:users:online' => 'Currently Online',
+	'admin:users:newest' => 'Newest',
+	'admin:users:add' => 'Add',
+	'admin:users:description' => "This admin panel allows you to control user settings for your site. Choose an option below to get started.",
+	'admin:users:adduser:label' => "Click here to add a new user...",
+	'admin:users:opt:linktext' => "Configure users...",
+	'admin:users:opt:description' => "Configure users and account information. ",
+	'admin:users:find' => 'Find',
+
+	'admin:site' => "Site Settings",
+	'admin:site:basic' => 'Basic',
+	'admin:site:advanced' => 'Advanced',
 	'admin:site:description' => "This admin panel allows you to control global settings for your site. Choose an option below to get started.",
 	'admin:site:opt:linktext' => "Configure site...",
-	'admin:site:opt:description' => "Configure the site technical and non-technical settings. ",
 	'admin:site:access:warning' => "Changing the access setting only affects the permissions on content created in the future.",
 
-	'admin:plugins' => "Tool Administration",
+/**
+ * Plugins
+ */
+	'plugins:settings:save:ok' => "Settings for the %s plugin were saved successfully.",
+	'plugins:settings:save:fail' => "There was a problem saving settings for the %s plugin.",
+	'plugins:usersettings:save:ok' => "User settings for the %s plugin were saved successfully.",
+	'plugins:usersettings:save:fail' => "There was a problem saving  user settings for the %s plugin.",
+	'item:object:plugin' => 'Plugin configuration settings',
+
+	'admin:plugins' => "Plugins",
 	'admin:plugins:description' => "This admin panel allows you to control and configure tools installed on your site.",
 	'admin:plugins:opt:linktext' => "Configure tools...",
 	'admin:plugins:opt:description' => "Configure the tools installed on the site. ",
 	'admin:plugins:label:author' => "Author",
 	'admin:plugins:label:copyright' => "Copyright",
+	'admin:plugins:label:categories' => 'Categories',
 	'admin:plugins:label:licence' => "Licence",
 	'admin:plugins:label:website' => "URL",
 	'admin:plugins:label:moreinfo' => 'more info',
 	'admin:plugins:label:version' => 'Version',
+	'admin:plugins:label:directory' => 'Directory',
 	'admin:plugins:warning:elggversionunknown' => 'Warning: This plugin does not specify a compatible Elgg version.',
 	'admin:plugins:warning:elggtoolow' => 'Warning: This plugin requires a later version of Elgg!',
 	'admin:plugins:reorder:yes' => "Plugin %s was reordered successfully.",
@@ -477,6 +493,15 @@ To remove a widget drag it back to the <b>Widget gallery</b>.",
 	'admin:plugins:disable:no' => "Plugin %s could not be disabled.",
 	'admin:plugins:enable:yes' => "Plugin %s was enabled successfully.",
 	'admin:plugins:enable:no' => "Plugin %s could not be enabled.",
+	'admin:plugins:categories:all' => 'All categories',
+	'admin:plugins:plugin_website' => 'Plugin website',
+	'admin:plugins:author' => '%s',
+	'admin:plugins:version' => 'Version %s',
+	'admin:plugins:simple' => 'Simple',
+	'admin:plugins:advanced' => 'Advanced',
+	'admin:plugin_settings' => 'Plugin Settings',
+	'admin:plugins:simple_simple_fail' => 'Could not save settings.',
+	'admin:plugins:simple_simple_success' => 'Settings saved.',
 
 	'admin:statistics' => "Statistics",
 	'admin:statistics:description' => "This is an overview of statistics on your site. If you need more detailed statistics, a professional administration feature is available.",
@@ -509,6 +534,14 @@ To remove a widget drag it back to the <b>Widget gallery</b>.",
 
 	'admin:user:removeadmin:yes' => "User is no longer an admin.",
 	'admin:user:removeadmin:no' => "We could not remove administrator privileges from this user.",
+
+	'admin:menu_items' => 'Menu Items',
+	'admin:menu_items:configure' => 'Configure main menu items',
+	'admin:menu_items:description' => 'Select which menu items you want to show as featured links.  Unused items will be added as "More" at the end of the list.',
+	'admin:menu_items:hide_toolbar_entries' => 'Remove links from tool bar menu?',
+	'admin:menu_items:saved' => 'Menu items saved.',
+	'admin:add_menu_item' => 'Add a custom menu item',
+	'admin:add_menu_item:description' => 'Fill out the Display name and URL to add custom items to your navigation menu.',
 
 /**
  * User settings
@@ -543,6 +576,7 @@ To remove a widget drag it back to the <b>Widget gallery</b>.",
  */
 
 	'save' => "Save",
+	'reset' => 'Reset',
 	'publish' => "Publish",
 	'cancel' => "Cancel",
 	'saving' => "Saving ...",
@@ -623,6 +657,8 @@ To remove a widget drag it back to the <b>Widget gallery</b>.",
 	'annotations' => "Annotations",
 	'relationships' => "Relationships",
 	'metadata' => "Metadata",
+	'tagcloud' => "Tag cloud",
+	'tagcloud:allsitetags' => "All site tags",
 
 /**
  * Input / output strings
@@ -708,6 +744,8 @@ Creating this is easy. Copy the contents of the textbox below into a text editor
 
 Alternatively, you can enter your database settings below and we will try and do this for you...",
 
+	'installation:error:db:title' => "Database settings error",
+	'installation:error:db:text' => "Check your database settings again as Elgg could not connect and access the database.",
 	'installation:error:configuration' => "Once you've corrected any configuration issues, press reload to try again.",
 
 	'installation' => "Installation",
@@ -726,12 +764,12 @@ Alternatively, you can enter your database settings below and we will try and do
 
 	'installation:settings:dbwizard:savefail' => "We were unable to save the new settings.php. Please save the following file as engine/settings.php using a text editor.",
 
-	'installation:sitename' => "The name of your site (eg \"My social networking site\"):",
-	'installation:sitedescription' => "Short description of your site (optional)",
-	'installation:wwwroot' => "The site URL, followed by a trailing slash:",
-	'installation:path' => "The full path to your site root on your disk, followed by a trailing slash:",
-	'installation:dataroot' => "The full path to the directory where uploaded files will be stored, followed by a trailing slash:",
-	'installation:dataroot:warning' => "You must create this directory manually. It should sit in a different directory to your Elgg installation.",
+	'installation:sitename' => "The name of your site:",
+	'installation:sitedescription' => "Short description of your site (optional):",
+	'installation:wwwroot' => "The site URL:",
+	'installation:path' => "The full path of the Elgg installation:",
+	'installation:dataroot' => "The full path the data directory:",
+	'installation:dataroot:warning' => "You must create this directory manually. It should be in a different directory to your Elgg installation.",
 	'installation:sitepermissions' => "The default access permissions:",
 	'installation:language' => "The default language for your site:",
 	'installation:debug' => "Debug mode provides extra information which can be used to diagnose faults. However, it can slow your system down so should only be used if you are having problems:",
@@ -739,11 +777,18 @@ Alternatively, you can enter your database settings below and we will try and do
 	'installation:debug:error' => 'Display only critical errors',
 	'installation:debug:warning' => 'Display errors and warnings',
 	'installation:debug:notice' => 'Log all errors, warnings and notices',
+
+	// Walled Garden support
+	'installation:registration:description' => 'User registration is enabled by default. Turn this off if you do not want new users to be able to register on their own.',
+	'installation:registration:label' => 'Allow new users to register',
+	'installation:walled_garden:description' => 'Enable the site to run as a private network. This will not allow non logged-in users to view any site pages other than those specifically marked as public.',
+	'installation:walled_garden:label' => 'Restrict pages to logged-in users',
+
 	'installation:httpslogin' => "Enable this to have user logins performed over HTTPS. You will need to have https enabled on your server for this to work.",
 	'installation:httpslogin:label' => "Enable HTTPS logins",
 	'installation:view' => "Enter the view which will be used as the default for your site or leave this blank for the default view (if in doubt, leave as default):",
 
-	'installation:siteemail' => "Site email address (used when sending system emails)",
+	'installation:siteemail' => "Site email address (used when sending system emails):",
 
 	'installation:disableapi' => "The RESTful API is a flexible and extensible interface that enables applications to use certain Elgg features remotely.",
 	'installation:disableapi:label' => "Enable the RESTful API",
@@ -757,9 +802,9 @@ Alternatively, you can enter your database settings below and we will try and do
 	'installation:viewpathcache:description' => "The view filepath cache decreases the loading times of plugins by caching the location of their views.",
 	'installation:viewpathcache:label' => "Use view filepath cache (recommended)",
 
-	'upgrading' => 'Upgrading',
+	'upgrading' => 'Upgrading...',
 	'upgrade:db' => 'Your database was upgraded.',
-	'upgrade:core' => 'Your elgg installation was upgraded',
+	'upgrade:core' => 'Your elgg installation was upgraded.',
 
 /**
  * Welcome
@@ -820,6 +865,22 @@ If you requested this click on the link below, otherwise ignore this email.
 	'xmlrpc:noinputdata'	=>	"Input data missing",
 
 /**
+ * Likes
+ **/
+	'likes:this' => 'liked this',
+	'likes:deleted' => 'Your like has been removed',
+	'likes:remove' => 'See who else liked this',
+	'likes:notdeleted' => 'There was a problem removing your like',
+	'likes:likes' => 'You now like this item',
+	'likes:failure' => 'There was a problem liking this item',
+	'likes:alreadyliked' => 'You have already liked this item',
+	'likes:notfound' => 'The item you are trying to like cannot be found',
+	'likes:likethis' => 'Like this',
+	'likes:userlikedthis' => 'user liked this',
+	'likes:userslikedthis' => 'users like this',
+	'likes:river:annotate' => 'likes',
+
+/**
  * Comments
  */
 
@@ -828,7 +889,9 @@ If you requested this click on the link below, otherwise ignore this email.
 	'riveraction:annotation:generic_comment' => '%s commented on %s',
 
 	'generic_comments:add' => "Add a comment",
+	'generic_comments:post' => "Post comment",
 	'generic_comments:text' => "Comment",
+	'generic_comments:latest' => "Latest comments",
 	'generic_comment:posted' => "Your comment was successfully posted.",
 	'generic_comment:deleted' => "Your comment was successfully deleted.",
 	'generic_comment:blank' => "Sorry, you need to actually put something in your comment before we can save it.",

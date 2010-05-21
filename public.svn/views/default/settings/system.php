@@ -53,17 +53,8 @@ if ((isset($CONFIG->disable_api)) && ($CONFIG->disable_api == true)) {
 $form_body .= elgg_view("input/checkboxes", array('options' => array(elgg_echo('installation:disableapi:label')), 'internalname' => 'api', 'value' => $on ));
 $form_body .= "</p>";
 
-$form_body .= "<p>" . elgg_echo('installation:usage') . "<br />";
-$on = elgg_echo('installation:usage:label');
-
-if (isset($CONFIG->ping_home)) {
-	$on = ($vars['config']->ping_home!='disabled' ? elgg_echo('installation:usage:label') : "");
-}
-$form_body .= elgg_view("input/checkboxes", array('options' => array(elgg_echo('installation:usage:label')), 'internalname' => 'usage', 'value' => $on ));
-$form_body .= "</p>";
-
 $form_body .= elgg_view('input/hidden', array('internalname' => 'settings', 'value' => 'go'));
 
 $form_body .= "<div class='divider'></div>".elgg_view('input/submit', array('value' => elgg_echo("save")));
-$form_body = "<div class='admin_settings site_admin'>".$form_body."</div>";
+$form_body = "<div class='admin_settings site_admin margin_top'>".$form_body."</div>";
 echo elgg_view('input/form', array('action' => $action, 'body' => $form_body));

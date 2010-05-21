@@ -423,9 +423,11 @@ function authenticate_method($method) {
 		}
 	}
 
-	// check user authentication if required
+	$user_auth_result = pam_authenticate();
+
+	// check if user authentication is required
 	if ($API_METHODS[$method]["require_user_auth"] == true) {
-		if (pam_authenticate() == false) {
+		if ($user_auth_result == false) {
 			throw new APIException(elgg_echo('APIException:UserAuthenticationFailed'));
 		}
 	}
@@ -1435,17 +1437,6 @@ function __php_api_exception_handler($exception) {
  */
 function service_handler($handler, $request) {
 	global $CONFIG;
-
-	// setup the input parameters since this comes through rewrite rule
-	$query = substr($_SERVER['REQUEST_URI'], strpos($_SERVER['REQUEST_URI'], '?')+1);
-	if (isset($query)) {
-		$query_arr = elgg_parse_str($query);
-		if (is_array($query_arr)) {
-			foreach($query_arr as $name => $val) {
-				set_input($name, $val);
-			}
-		}
-	}
 
 	set_context('api');
 

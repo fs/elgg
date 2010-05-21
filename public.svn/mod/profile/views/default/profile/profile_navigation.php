@@ -7,7 +7,6 @@ if (isset($vars['section'])) {
 
 $profile = $vars['entity'];
 $activity = '';
-$widgets = '';
 $friends = '';
 $extend = '';
 $twitter = '';
@@ -20,10 +19,6 @@ switch($section){
 		$friends = 'class="selected"';
 		break;
 
-	case 'widgets':
-		$widgets = 'class="selected"';
-		break;
-
 	case 'details':
 		$details = 'class="selected"';
 		break;
@@ -31,7 +26,10 @@ switch($section){
 	case 'twitter':
 		$twitter = 'class="selected"';
 		break;
-
+		
+	case 'commentwall':
+		$commentwall = 'class="selected"';
+		break;
 	case 'activity':
 	default:
 		$activity = 'class="selected"';
@@ -43,8 +41,8 @@ switch($section){
 <ul>
 	<li <?php echo $activity; ?>><a href="<?php echo $url; ?>">Activity</a></li>
 	<li <?php echo $details; ?>><a href="<?php echo $url . 'details'; ?>">Details</a></li>
-	<li <?php echo $widgets; ?>><a href="<?php echo $url . 'widgets'; ?>">Widgets</a></li>
 	<li <?php echo $friends; ?>><a href="<?php echo $url . 'friends'; ?>">Friends</a></li>
+	<li <?php echo $commentwall; ?>><a href="<?php echo $url . 'commentwall'; ?>">Comment Wall</a></li>
 	<?php
 		//check to see if the twitter username is set
 		if($vars['entity']->twitter){
@@ -52,6 +50,8 @@ switch($section){
 			<li <?php echo $twitter; ?>><a href="<?php echo $url . 'twitter'; ?>">Twitter</a></li>
 	<?php
 		}
+		//insert a view which others can extend
+		echo elgg_view('profilenav/extend', $profile);
 	?>
 </ul>
 </div>

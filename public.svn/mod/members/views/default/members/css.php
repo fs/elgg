@@ -9,10 +9,6 @@
  * @link http://elgg.com/
  */
 ?>
-
-.members_list {
-
-}
 .members .group_count {
 	font-weight: bold;
 	color: #666666;
@@ -28,5 +24,5 @@
 	margin:4px 0 5px 0;
 }
 #memberssearchform .search_input {
-	width:176px;
+	width:196px;
 }

@@ -21,20 +21,19 @@
 function action($action, $forwarder = "") {
 	global $CONFIG;
 
-	// set GET params
-	elgg_set_input_from_uri();
-
 	// @todo REMOVE THESE ONCE #1509 IS IN PLACE.
 	// Allow users to disable plugins without a token in order to
 	// remove plugins that are imcompatible.
 	// Installation cannot use tokens because it requires site secret to be
 	// working. (#1462)
 	// Login and logout are for convenience.
+	// file/download (see #2010)
 	$exceptions = array(
 		'systemsettings/install',
 		'admin/plugins/disable',
 		'logout',
-		'login'
+		'login',
+		'file/download',
 	);
 
 	if (!in_array($action, $exceptions)) {
@@ -52,7 +51,7 @@ function action($action, $forwarder = "") {
 
 	if (isset($CONFIG->actions[$action])) {
 		if ((isadminloggedin()) || (!$CONFIG->actions[$action]['admin'])) {
-			if ($CONFIG->actions[$action]['public'] || $_SESSION['id'] != -1) {
+			if ($CONFIG->actions[$action]['public'] || get_loggedin_userid()) {
 
 				// Trigger action event TODO: This is only called before the primary action is called. We need to rethink actions for 1.5
 				$event_result = true;
@@ -70,6 +69,8 @@ function action($action, $forwarder = "") {
 			} else {
 				register_error(elgg_echo('actionloggedout'));
 			}
+		} else {
+			register_error(elgg_echo('actionunauthorized'));
 		}
 	} else {
 		register_error(sprintf(elgg_echo('actionundefined'),$action));
@@ -195,14 +196,11 @@ function generate_action_token($timestamp) {
 	// Current session id
 	$session_id = session_id();
 
-	// Get user agent
-	$ua = $_SERVER['HTTP_USER_AGENT'];
-
 	// Session token
 	$st = $_SESSION['__elgg_session'];
 
 	if (($site_secret) && ($session_id)) {
-		return md5($site_secret.$timestamp.$session_id.$ua.$st);
+		return md5($site_secret.$timestamp.$session_id.$st);
 	}
 
 	return FALSE;
@@ -232,6 +230,19 @@ function get_site_secret() {
 	}
 
 	return $secret;
+}
+
+/**
+ * Check if an action is registered and its file exists.
+ *
+ * @param string $action
+ * @return BOOL
+ * @since 1.8
+ */
+function elgg_action_exist($action) {
+	global $CONFIG;
+
+	return (isset($CONFIG->actions[$action]) && file_exists($CONFIG->actions[$action]['file']));
 }
 
 // Register some actions ***************************************************

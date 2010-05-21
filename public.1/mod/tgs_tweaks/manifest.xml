@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin_manifest>
+    <field key="author" value="Mike Hourahine" />
+    <field key="version" value="0.1" />
+    <field key="description" value="Elgg Tweaks for TGS." />
+    <field key="website" value="http://thinkglobalschool.com" />
+    <field key="copyright" value="(C) THINK Global School 2010" />
+    <field key="licence" value="License here" />
+    <field key="elgg_version" value="2009030702" />    
+</plugin_manifest>

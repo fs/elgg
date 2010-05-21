@@ -243,6 +243,60 @@ class ElggSite extends ElggEntity {
 			'url',
 		));
 	}
+	
+	public function check_walled_garden() {
+		global $CONFIG;
+		
+		if ($CONFIG->walled_garden && !isloggedin()) {
+			// hook into the index system call at the highest priority
+			register_plugin_hook('index', 'system', 'elgg_walled_garden_index', 1);
+			
+			if (!$this->is_public_page()) {
+				register_error(elgg_echo('loggedinrequired'));
+				forward();
+			}
+		}
+	}
+	
+	public function is_public_page($url='') {
+		global $CONFIG;
+		
+		if (empty($url)) {
+			$url = current_page_url();
+			
+			// do not check against URL queries
+			if ($pos = strpos($url, '?')) {
+				$url = substr($url, 0, $pos);
+			}
+		}
+		
+		// default public pages
+		$defaults = array(
+			$CONFIG->url,
+			"{$CONFIG->url}action/login",
+			"{$CONFIG->url}pg/register/",
+			"{$CONFIG->url}action/register",
+			"{$CONFIG->url}account/forgotten_password.php",
+			"{$CONFIG->url}action/user/requestnewpassword",
+			"{$CONFIG->url}pg/resetpassword",
+			"{$CONFIG->url}upgrade.php",
+			"{$CONFIG->url}xml-rpc.php",
+			"{$CONFIG->url}mt/mt-xmlrpc.cgi",
+		);
+		
+		// include a hook for plugin authors to include public pages
+		$plugins = trigger_plugin_hook('public_pages', 'walled_garden', NULL, array());
+		
+		// lookup admin-specific public pages
+		
+		// allow public pages
+		if (in_array($url, array_merge($defaults, $plugins))) {
+			return TRUE;
+		}
+		
+		// non-public page
+		return FALSE;
+	}
 }
 
 /**

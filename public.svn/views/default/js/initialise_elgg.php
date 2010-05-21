@@ -4,26 +4,6 @@ $(document).ready(function () {
 	// toggle widget box contents
 	$('a.toggle_box_contents').bind('click', toggleContent);
 
-/*  // replaced with elgg_slide_toggle
-	@todo - PH update widget canvases with the new toggle function
-	// toggle widget box edit panel
-	$('a.toggle_box_edit_panel').click(function () {
-		$(this.parentNode.parentNode).children(".collapsable_box_editpanel").slideToggle("fast");
-		return false;
-	});
-
-	// toggle customise edit panel
-	$('a.toggle_customise_edit_panel').click(function () {
-		$('div#customise_editpanel').slideToggle("fast");
-		return false;
-	});	
-
-	$('a.collapsibleboxlink').click(function () {
-		$(this.parentNode.parentNode).children(".collapsible_box").slideToggle("fast");
-		return false;
-	});
-*/
-
 	// WIDGET GALLERY EDIT PANEL
 	// Sortable widgets
 	var els = ['#leftcolumn_widgets', '#middlecolumn_widgets', '#rightcolumn_widgets', '#widget_picker_gallery' ];
@@ -73,23 +53,38 @@ $(document).ready(function () {
 		hoverClass: 'droppable-hover'
 	});
 
+	// user likes
+	$(".likes_list_button").click(function(event) {	
+		if ($(this).next(".likes_list").css('display') == 'none') {	// show list
+			var topPosition = - $(this).next(".likes_list").height();
+			topPosition10 = topPosition + 10 + "px";
+			topPosition = topPosition + "px";
+			$('.likes_list').css('top',topPosition10);
+			$('.likes_list').css('left', -$('.likes_list').width()+40);
+			$(this).next(".likes_list").animate({opacity: "toggle", top: topPosition}, 500);
+		} else { // hide list
+			var topPosition = - $(this).next(".likes_list").height() + 5;
+			$(this).next(".likes_list").animate({opacity: "toggle", top: topPosition}, 500);
+		}
+	});
+
 }); /* end document ready function */
 
 // display & hide elgg system messages
 function elgg_system_message() {
-	$("#elgg_system_message").animate({opacity: 0.9}, 1000); 
+	$("#elgg_system_message").animate({opacity: 0.9}, 1000);
 	$("#elgg_system_message").animate({opacity: 0.9}, 5000);
 	$("#elgg_system_message").fadeOut('slow');
-    
+
 	$("#elgg_system_message").click(function () {
 		$("#elgg_system_message").stop();
 		$("#elgg_system_message").fadeOut('slow');
 	return false;
-    });	
+	});
 }
 
 // reusable slide in/out toggle function
-function elgg_slide_toggle(activateLink,parentElement,toggleElement) {
+function elgg_slide_toggle(activateLink, parentElement, toggleElement) {
 	$(activateLink).closest(parentElement).find(toggleElement).animate({"height": "toggle"}, { duration: 400 });
 	return false;
 }
@@ -241,50 +236,50 @@ this.each(function() {
 	var root = this, zIndex = 5000;
 
 	function getSubnav(ele) {
-	  if (ele.nodeName.toLowerCase() == 'li') {
+	if (ele.nodeName.toLowerCase() == 'li') {
 		var subnav = $('> ul', ele);
 		return subnav.length ? subnav[0] : null;
-	  } else {
+	} else {
 
 		return ele;
-	  }
+	}
 	}
 
 	function getActuator(ele) {
-	  if (ele.nodeName.toLowerCase() == 'ul') {
+	if (ele.nodeName.toLowerCase() == 'ul') {
 		return $(ele).parents('li')[0];
-	  } else {
+	} else {
 		return ele;
-	  }
+	}
 	}
 
 	function hide() {
-	  var subnav = getSubnav(this);
-	  if (!subnav) return;
-	  $.data(subnav, 'cancelHide', false);
-	  setTimeout(function() {
+	var subnav = getSubnav(this);
+	if (!subnav) return;
+	$.data(subnav, 'cancelHide', false);
+	setTimeout(function() {
 		if (!$.data(subnav, 'cancelHide')) {
-		  $(subnav).slideUp(100);
+		$(subnav).slideUp(100);
 		}
-	  }, 250);
+	}, 250);
 	}
 
 	function show() {
-	  var subnav = getSubnav(this);
-	  if (!subnav) return;
-	  $.data(subnav, 'cancelHide', true);
-	  $(subnav).css({zIndex: zIndex++}).slideDown(options.speed);
-	  if (this.nodeName.toLowerCase() == 'ul') {
+	var subnav = getSubnav(this);
+	if (!subnav) return;
+	$.data(subnav, 'cancelHide', true);
+	$(subnav).css({zIndex: zIndex++}).slideDown(options.speed);
+	if (this.nodeName.toLowerCase() == 'ul') {
 		var li = getActuator(this);
 		$(li).addClass('hover');
 		$('> a', li).addClass('hover');
-	  }
+	}
 	}
 
 	$('ul, li', this).hover(show, hide);
 	$('li', this).hover(
-	  function() { $(this).addClass('hover'); $('> a', this).addClass('hover'); },
-	  function() { $(this).removeClass('hover'); $('> a', this).removeClass('hover'); }
+	function() { $(this).addClass('hover'); $('> a', this).addClass('hover'); },
+	function() { $(this).removeClass('hover'); $('> a', this).removeClass('hover'); }
 	);
 
 });

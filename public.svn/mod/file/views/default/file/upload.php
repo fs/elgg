@@ -41,8 +41,7 @@
 	
 	
 ?>
-<div class="contentWrapper">
-<form action="<?php echo $vars['url']; ?>action/<?php echo $action; ?>" enctype="multipart/form-data" method="post">
+<form action="<?php echo $vars['url']; ?>action/<?php echo $action; ?>" enctype="multipart/form-data" method="post" class="margin_top">
 <p>
 	<label>
 <?php
@@ -73,8 +72,8 @@
 ?>
 	</label>
 </p>
-<p class="longtext_editarea">
-	<label><?php echo elgg_echo("description"); ?><br />
+<p class="longtext_inputarea">
+	<label><?php echo elgg_echo("description"); ?></label>
 <?php
 
 	echo elgg_view("input/longtext",array(
@@ -82,7 +81,6 @@
 									"value" => $description,
 													));
 ?>
-	</label>
 </p>
 <p>
 	<label><?php echo elgg_echo("tags"); ?><br />
@@ -131,4 +129,3 @@
 </p>
 
 </form>
-</div>

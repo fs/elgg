@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin_manifest>
+    <field key="author" value="Aaron Saray and Cash Costello" />
+    <field key="version" value="1.6.1" />
+    <field key="description" value="Tools for Elgg Development. Place at top of plugin list." />
+    <field key="website" value="http://code.google.com/p/elgg-developer-tools/" />
+    <field key="copyright" value="Aaron Saray and Cash Costello" />
+    <field key="licence" value="GNU Public License version 2" />
+    <field key="elgg_version" value="2009030702" />    
+</plugin_manifest>

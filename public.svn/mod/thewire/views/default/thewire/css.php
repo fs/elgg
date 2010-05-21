@@ -56,6 +56,9 @@
 	background-repeat: no-repeat;
 	background-position: right bottom; 
 }
+.members_list .wire_post { /* when displayed in lists of friends */
+	margin-top:4px;
+}
 .wire_post_contents {
 	background-color: #eeeeee;
 	margin:0;
@@ -72,6 +75,7 @@
 	margin-top:-3px;
 	float:left;
 	width:620px;
+	overflow: hidden;
 }
 .wire_post_options {
 	float:right;
@@ -96,5 +100,7 @@
 	right:5px;
 }
 
-
-
+/* river wire entry */
+.river_item .reply_link {
+	display:block;
+}

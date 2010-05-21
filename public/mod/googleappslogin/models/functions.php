@@ -48,7 +48,7 @@
 
                 $a_time=time();
 
-		$result = find_metadata('googleapps_controlled_profile', 'yes', 'user', '', 10);
+		$result = find_metadata('googleapps_controlled_profile', 'yes', 'user', '',  1000);
 		if (empty($result)) {
 			return;
 		}

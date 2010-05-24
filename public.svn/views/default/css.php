@@ -22,11 +22,10 @@
 	CONTENT HEADER
 	DEFAULT COMMENTS
 	ENTITY LISTINGS				elgg's default entity listings
-	USER SETTINGS & ADMIN AREA	styles for user settings and default admin area
+	USER SETTINGS				styles for user settings
 	GENERAL FORM ELEMENTS		default styles for all elgg input/form elements
 	FRIENDS PICKER
 	LIKES
-	ADMIN AREA
 
 
 */
@@ -69,7 +68,9 @@ img {
 	-moz-outline-style: none;
 }
 ol, ul {
-	list-style:none outside none;
+	/* list-style:none outside none; */
+	margin: 0 0 10px 0;
+	padding-left: 20px;
 }
 em, i {
 	font-style:italic;
@@ -79,6 +80,9 @@ ins {
 }
 del {
 	text-decoration:line-through;
+}
+strong {
+	font-weight:bold;
 }
 table {
 	border-collapse: collapse;
@@ -629,8 +633,8 @@ li.navigation_more ul li {
 	max-width: 500px;
 	cursor: pointer;
 	opacity:0.9;
-	-webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45); /* safari v3+ */
-	-moz-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45); /* FF v3.5+ */
+	-webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45);
+	-moz-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45);
 }
 #elgg_system_message.error {
 	background-color:red;
@@ -668,6 +672,11 @@ li.navigation_more ul li {
 .submenu {
 	margin:0;
 	padding:0;
+	list-style: none;
+}
+.submenu ul {
+	margin-bottom:0;
+	padding-left:0;
 	list-style: none;
 }
 .submenu li.selected a,
@@ -942,6 +951,9 @@ li.navigation_more ul li {
 .generic_comment_body {
 	margin:3px 0 5px 0;
 }
+.generic_comment_body p {
+	margin-bottom: 10px;
+}
 /* latest comments in sidebar */
 #elgg_sidebar .generic_comment.latest {
 	padding:2px 0;
@@ -1156,8 +1168,8 @@ a.longtext_control {
 	padding: 2px 4px;
 	margin:0 10px 10px 0;
 	cursor: pointer;
-	-webkit-box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.40); /* safari v3+ */
-	-moz-box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.40); /* FF v3.5+ */
+	-webkit-box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.40);
+	-moz-box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.40);
 }
 .submit_button:hover {
 	color: white;
@@ -1192,8 +1204,8 @@ input[type="submit"] {
 	cursor: pointer;
 	-moz-outline-style: none;
 	outline: none;
-	-webkit-box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.40); /* safari v3+ */
-	-moz-box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.40); /* FF v3.5+ */
+	-webkit-box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.40);
+	-moz-box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.40);
 }
 input[type="submit"]:hover {
 	border-color: #0054a7;
@@ -1236,7 +1248,6 @@ a.action_button {
 	background-position: 0 0;
 	border:1px solid #999999;
 	color:#333333;
-	/*display:block;*/
 	padding:2px 15px 2px 15px;
 	text-align:center;
 	font-weight:bold;

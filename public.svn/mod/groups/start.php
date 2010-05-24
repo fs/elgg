@@ -72,6 +72,9 @@
 
 		// Now override icons
 		register_plugin_hook('entity:icon:url', 'group', 'groups_groupicon_hook');
+		
+		// Register profile menu hook
+		register_plugin_hook('profile_menu', 'profile', 'forum_profile_menu');
 	}
 
 	/**
@@ -221,11 +224,6 @@
 						}
 					}
 				}
-
-				if($page_owner->forum_enable != "no"){
-					//add_submenu_item(elgg_echo('groups:forum'),$CONFIG->wwwroot . "pg/groups/forum/{$page_owner->getGUID()}/", '1groupslinks');
-				}
-
 			}
 
 		// Add submenu options
@@ -591,6 +589,21 @@
 		$access_array = array(0 => 'private',1 => 'logged in users',2 => 'public',$group->group_acl => 'Group: ' . $group->name );
 		return $access_array;
 	}
+
+	function forum_profile_menu($hook, $entity_type, $return_value, $params) {
+		global $CONFIG;
+		
+		$group_owner = page_owner_entity();
+		
+		if ($group_owner instanceof ElggGroup && get_context() == 'groups' && $group_owner->forum_enable != "no") {
+			$return_value[] = array(
+				'text' => elgg_echo('groups:forum'),
+				'href' => "{$CONFIG->url}pg/groups/forum/{$group_owner->getGUID()}"
+			);
+		}
+		return $return_value;
+	}
+
 
 	register_extender_url_handler('group_topicpost_url','annotation', 'group_topic_post');
 

@@ -95,6 +95,8 @@ img.medium {
 }
 #elgg_sidebar #owner_block {
 	background-color: white;
+	-webkit-border-radius: 8px; 
+	-moz-border-radius: 8px;
 	padding:5px;
 	margin-bottom:10px;
 }
@@ -142,6 +144,22 @@ img.medium {
 	display: table;
 }
 /* ownerblock links to owners tools */
+#owner_block .owners_content_links {
+	border-top:1px dotted #cccccc;
+	margin-top:4px;
+	padding-top:2px;
+}
+#owner_block .owners_content_links ul {
+	margin:0;
+	padding:0;
+}
+#owner_block .owners_content_links ul li {
+	display:block;
+	float:left;
+	width:95px;
+	font-size: 90%;
+}
+/* profile pages - ownerblock links to owners tools */
 .owner_block_links {
 	margin-top:5px;
 }
@@ -182,9 +200,12 @@ img.medium {
 	cursor:pointer;
 }
 .owner_block_links ul.admin_menu li a {
-	background-color: red;
-	color:white;
+	background-color: white;
+	color:red;
 	margin-bottom:0;
+}
+.owner_block_links ul.admin_menu li a:hover {
+	color:black;
 }
 .owner_block_links ul.admin_menu li ul.admin_menu_options li a {
 	color:red;

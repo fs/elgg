@@ -45,6 +45,9 @@ function bookmarks_init() {
 
 	// Extend Groups profile page
 	elgg_extend_view('groups/tool_latest','bookmarks/group_bookmarks');
+	
+	// Register profile menu hook
+	register_plugin_hook('profile_menu', 'profile', 'bookmarks_profile_menu');
 }
 
 /**
@@ -60,7 +63,7 @@ function bookmarks_pagesetup() {
 	if (isloggedin()) {
 		if ($page_owner instanceof ElggGroup && get_context() == 'groups') {
 			if ($page_owner->bookmarks_enable != "no") {
-				add_submenu_item(sprintf(elgg_echo("bookmarks:group"),$page_owner->name), $CONFIG->wwwroot . "pg/bookmarks/" . $page_owner->username . '/items');
+				//add_submenu_item(sprintf(elgg_echo("bookmarks:group"),$page_owner->name), $CONFIG->wwwroot . "pg/bookmarks/" . $page_owner->username . '/items');
 			}
 		}
 	}
@@ -205,6 +208,10 @@ function bookmarks_page_handler($page) {
 	if ($owner != $logged_in_user || $context == 'action') {
 		$header = elgg_view('navigation/breadcrumbs');
 	}
+	//if no user is set
+	if(!$owner_name){
+		$owner_name = get_loggedin_user()->username;
+	}
 
 	$header .= elgg_view("page_elements/content_header", array(
 		'context' => $context,
@@ -288,6 +295,17 @@ function create_wire_url_code(){
 	}
 	$code = "{{L:" . $code . "}}";
 	return $code;
+}
+
+function bookmarks_profile_menu($hook, $entity_type, $return_value, $params) {
+	global $CONFIG;
+	
+	$return_value[] = array(
+		'text' => elgg_echo('bookmarks'),
+		'href' => "{$CONFIG->url}pg/bookmarks/{$params['owner']->username}",
+	);
+	
+	return $return_value;
 }
 
 // Make sure the initialisation function is called on initialisation

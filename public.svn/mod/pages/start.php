@@ -103,8 +103,6 @@
 				    add_submenu_item(sprintf(elgg_echo("pages:group"),$page_owner->name), $CONFIG->wwwroot . "pg/pages/owned/" . $page_owner->username);
 			    }
 			}
-			
-			
     }
 	
 	/**

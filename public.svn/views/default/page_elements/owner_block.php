@@ -30,23 +30,46 @@ END;
 if(is_plugin_enabled('profile')) {
 	// Is there a page owner?
 	$owner = page_owner_entity();
-	$location = elgg_view("output/tags",array('value' => $owner->location));
-	if ($owner instanceof ElggEntity) {
-		$icon = elgg_view("profile/icon",array('entity' => $owner, 'size' => 'tiny'));
-		if ($owner instanceof ElggUser || $owner instanceof ElggGroup) {
-			$info = '<h3><a href="' . $owner->getURL() . '">' . $owner->name . '</a></h3>';
-		}
-		$display = "<div class='owner_block_icon'>" . $icon . "</div>";
-		$display .= "<div class='owner_block_contents clearfloat'>" . $info;
+	if ($owner instanceof ElggGroup ||
+		($owner instanceof ElggUser && $owner->getGUID() != get_loggedin_userid())
+	) {
+		$icon = elgg_view('profile/icon', array('entity' => $owner, 'size' => 'tiny'));
+		$owner_url = $owner->getURL();
+		$display = "<div class=\"owner_block_icon\">$icon</div>";
+		$display .= '<div class="owner_block_contents clearfloat">';
+		$display .= "<h3><a href=\"$owner_url\">{$owner->name}</a></h3>";
 
 		if ($owner->briefdescription) {
-			$desc = $owner->briefdescription;
-			$display .= "<p class='profile_info briefdescription'>" . $desc . "</p>";
+			$display .= "<p class=\"profile_info briefdescription\">{$owner->briefdescription}</p>";
 		}
-		$display .= "<p class='profile_info location'>{$location}</p>";
-		$display .= "</div>"; // close owner_block_contents
+		
+		$location = elgg_view('output/tags', array('value' => $owner->location));
+		$display .= "<p class=\"profile_info location\">$location</p>";
+		
+		// Trigger owner block menu
+		$params = array('owner' => $owner);
+		$links = trigger_plugin_hook('profile_menu', 'profile', $params, array());
+		if (is_array($links) && !empty($links)) {
+			// sort the links by name
+			usort($links, create_function(
+				'$a, $b',
+				'return strnatcasecmp($a[\'text\'], $b[\'text\']);'
+			));
+			
+			$display .= '<div><ul>';
+			foreach ($links as $link) {
+				$display .= "<li><a href=\"{$link['href']}\">{$link['text']}</a></li>";
+			}
+			$display .= '</ul></div>';
+		}
+		
+		// Allow plugins to extend the owner block contents
+		$display .= elgg_view('owner_block/profile_extend');
+		
+		// close owner_block_content
+		$display .= '</div>';
 
-		$contents .= "<div id='owner_block' class='radius8'>".$display."</div>";
+		$contents .= "<div id=\"owner_block\" class=\"radius8\">$display</div>";
 	}
 }
 

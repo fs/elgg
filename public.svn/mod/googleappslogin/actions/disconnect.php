@@ -10,7 +10,6 @@ require_once (dirname(dirname(__FILE__)) . "/models/Google_OpenID.php");
 require_once (dirname(dirname(__FILE__)) . "/models/secret.php");
 require_once (dirname(dirname(__FILE__)) . "/models/OAuth.php");
 require_once (dirname(dirname(__FILE__)) . "/models/client.inc");
-//require_once ("ex.php");
 
 global $CONFIG;
 
@@ -34,8 +33,6 @@ if ($user->google) {
 	$user->subtype = '';
 	$user->connect = 0;
 	$user->googleapps_controlled_profile = 'no';
-	$user->googleapps_sync_email = 'no';
-	$user->googleapps_sync_sites = 'no';
 	$user->google = 0;
 	$user->access_token = '';
 	$user->token_secret = '';
@@ -49,7 +46,7 @@ if ($user->google) {
 	system_message('Your profile has been successfully disconnected from googleapps.');
 }
 
-forward('pg/settings');
+forward('mod/googleappslogin');
 
 exit;
-?>
+

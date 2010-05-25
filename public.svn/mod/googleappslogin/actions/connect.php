@@ -8,7 +8,6 @@ ini_set('pcre.backtrack_limit', 10000000);
 require_once (dirname(dirname(__FILE__)) . "/models/Http.php");
 require_once (dirname(dirname(__FILE__)) . "/models/Google_OpenID.php");
 require_once (dirname(dirname(__FILE__)) . "/models/secret.php");
-//require_once ("ex.php");
 
 global $CONFIG;
 
@@ -24,8 +23,6 @@ $subtype = $user->getSubtype();
 if (!$user->google) {
 	$user->sync = '1';
 	$user->googleapps_controlled_profile = 'no';
-	$user->googleapps_sync_email = 'yes';
-	$user->googleapps_sync_sites = 'yes';
 	
 	$user->save();
 	
@@ -49,7 +46,7 @@ if (!$user->google) {
 		forward();
 	}
 } else {
-	forward('pg/settings');
+	forward('mod/googleappslogin');
 }
 
 exit;

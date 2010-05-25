@@ -68,7 +68,7 @@ class Google_OpenID
         $params = array(
             'openid.ns' => 'http://specs.openid.net/auth/2.0',
             'openid.ns.pape' => 'http://specs.openid.net/extensions/pape/1.0',
-            'openid.pape.max_auth_age' => 300,
+            /* 'openid.pape.max_auth_age' => 300, */
             'openid.claimed_id' => 'http://specs.openid.net/auth/2.0/identifier_select',
             'openid.identity' => 'http://specs.openid.net/auth/2.0/identifier_select',
             'openid.return_to' => self::normalize_url($this->_return_url),
@@ -78,8 +78,8 @@ class Google_OpenID
 //            'openid.ns.ui' => 'http://specs.openid.net/extensions/ui/1.0',
 //            'openid.ui.mode' => 'popup',
 //            'openid.ui.icon' => 'true',
-            'openid.ns.ax' => 'http://openid.net/srv/ax/1.0',
-            'openid.ax.mode' => 'fetch_request',
+			'openid.ns.ax' => 'http://openid.net/srv/ax/1.0',
+			'openid.ax.mode' => 'fetch_request',
             'openid.ax.required' => 'email,language,country,firstname,lastname',
             'openid.ax.type.email' => 'http://axschema.org/contact/email',
             'openid.ax.type.language' => 'http://axschema.org/pref/language',
@@ -88,14 +88,14 @@ class Google_OpenID
             'openid.ax.type.lastname' => 'http://axschema.org/namePerson/last'
         );
 		
-		/*
+		
 		if ($this->_use_oauth) {
-			$params['openid.ns.oauth'] = 'http://specs.openid.net/extensions/oauth/1.0';
+			 $params['openid.ns.oauth'] = 'http://specs.openid.net/extensions/oauth/1.0';
 			$params['openid.oauth.consumer'] = get_plugin_setting('googleapps_domain', 'googleappslogin');
-			$params['openid.oauth.scope'] = 'https://mail.google.com/mail/feed/atom https://sites.google.com/feeds';
-			//echo '<pre>';print_r($params);exit;
+			$params['openid.oauth.scope'] = 'https://mail.google.com/mail/feed/atom https://sites.google.com/feeds http://docs.google.com/feeds/ http://spreadsheets.google.com/feeds/';
+			///echo '<pre>';print_r($params);exit;
 		}
-*/
+
 		
         $_params = array();
         foreach ($params as $key => $value) {
@@ -114,7 +114,6 @@ class Google_OpenID
         }
         echo "<br>";
         */
-
         return $url;
     }
 

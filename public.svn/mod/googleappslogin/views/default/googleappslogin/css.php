@@ -2,20 +2,20 @@
 	padding: 10px 10px 10px 10px;
 }
 
-.hidden {
-	display: none;
-}
 .toolbarimages .user_mini_avatar {
 	width:16px;
 	height:16px;
 }
-
+.hidden {
+	display: none;
+}
 #custom-messages {
 	margin:0 auto;
 }
 #custom-messages .messages, #custom-messages .errors {
 	color:white;
 	font-weight: bold;
+	display:block;
 	padding:3px 10px;
 	z-index: 9600;
 	position:fixed;
@@ -33,4 +33,74 @@
 #custom-messages p {
 	margin:0;
 }
+#unreadmessagescountlink{
+	margin-left:4px !important;
+}
 
+.view-all {
+    text-align:right;
+    font-size:90%;
+}
+.document-icon {
+    background: url("/mod/googleappslogin/views/default/widgets/google_docs/images/mimetypes.gif") no-repeat 0 0;
+    width:10px;
+    height:10px;
+    display:block;
+    float:left;
+    margin:4px 5px; 
+}
+
+.doc{
+    background-position:0 -60px;
+}
+.spread {
+    background-position:0 -140px;
+}
+.pres {
+    background-position:0 -20px;
+}
+.form {
+    background-position:0 -130px;
+}
+
+
+
+.pdf{
+    background-position:0 -180px;
+}
+
+.audio {
+    background-position:0 0;
+}
+
+.drawing {
+    background-position:0 -90px;
+}
+
+.excel {
+    background-position:0 -30px;
+}
+
+.photo {
+    background-position:0 -160px;
+}
+
+.powerpoint {
+    background-position:0 -110px;
+}
+
+.video {
+    background-position:0 -40px;
+}
+
+.word {
+    background-position:0 -80px;
+}
+
+.star {
+    background-position:0 -10px;
+}
+
+.folder{
+    background-position:0 -190px;
+}

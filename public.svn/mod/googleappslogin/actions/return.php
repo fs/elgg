@@ -16,6 +16,9 @@ $user = $_SESSION['user'];
 $CONSUMER_KEY = get_plugin_setting('googleapps_domain', 'googleappslogin');
 $CONSUMER_SECRET = get_plugin_setting('login_secret', 'googleappslogin');
 
+$oauth_sync_email = get_plugin_setting('oauth_sync_email', 'googleappslogin');
+$oauth_sync_sites = get_plugin_setting('oauth_sync_sites', 'googleappslogin');
+
 $oauth_verifier = $CONFIG->input['oauth_verifier'];
 
 $client = new OAuth_Client($CONSUMER_KEY, $CONSUMER_SECRET, SIG_METHOD_HMAC);
@@ -23,7 +26,7 @@ $client = new OAuth_Client($CONSUMER_KEY, $CONSUMER_SECRET, SIG_METHOD_HMAC);
 //print_r($_SESSION);
 
 //exit;
-if (!$client->authorized() && !empty($user) && ($user->googleapps_sync_email != 'no' || $user->googleapps_sync_sites != 'no')) {
+if (!$client->authorized() && !empty($user) && ($oauth_sync_email != 'no' || $oauth_sync_sites != 'no')) {
 	
 	if (empty($oauth_verifier)) {
 		
@@ -60,7 +63,7 @@ if (!$client->authorized() && !empty($user) && ($user->googleapps_sync_email != 
 
 if (!empty($_SESSION['oauth_connect'])) {
 	unset($_SESSION['oauth_connect']);
-	forward('pg/settings/user/');
+	forward('mod/googleappslogin');
 }
 
 $google = Google_OpenID::create_from_response($CONFIG->input);
@@ -101,19 +104,23 @@ if (!$google->is_authorized()) {
     if (!$entities) {
 		
 		$username = $email;
-		
-		if(get_user_by_username($username)) {
-			// oops, try adding a "_googleapps" to the end
-			//$username .= '_googleapps';
+
+
+
+    $username = preg_replace("/\@[a-zA-Z\.0-9\-]+$/", "", $username);
+    
+    if(get_user_by_username($username)) {
+        $username = preg_replace("/\@([a-zA-Z\.0-9\-]+)/", ".$1", $email);
+    }
+
+
 			
 			if(get_user_by_username($username)) {
 				$duplicate_account = true;
 				register_error(sprintf(elgg_echo("googleappslogin:account_duplicate"), $username));
 			}
-		}
 		
 		if (!$duplicate_account) {
-			
 			$firstname = $google->get_firstname();
 			$lastname = $google->get_lastname();
 			
@@ -127,8 +134,6 @@ if (!$google->is_authorized()) {
 			$user->google = 1;
 			$user->sync = 1;
 			$user->googleapps_controlled_profile = 'yes';
-			$user->googleapps_sync_email = 'yes';
-			$user->googleapps_sync_sites = 'yes';
 			
 			if ($user->save()) {
 				$new_account = true;
@@ -167,13 +172,8 @@ if (!$google->is_authorized()) {
     }
 	
 	if ($do_login) {
-		$rememberme = get_input('remember',0) ? true : false;
-		/*
-		echo '<pre>IS GOOGLE: ';print_r($user->google);echo '</pre>';
-		echo '<pre>SUBTYPE: ';print_r($subtype);echo '</pre>';
-		echo '<pre>IS CONTROLLED: ';print_r($user->googleapps_controlled_profile);echo '</pre>';
-		exit;
-		*/
+		$rememberme = true;
+
 		if (($user->google || $subtype == 'googleapps') && ($user->googleapps_controlled_profile != 'no')) {
 			// update from GoogleApps
 			$user->email = $email;
@@ -186,20 +186,13 @@ if (!$google->is_authorized()) {
 			*/
 			$user->save();
 		}
-		
+
 		login($user, $rememberme);
-		
-		/*if ($user->googleapps_controlled_profile != 'no') {
-			die('This is ' . $user->googleapps_controlled_profile);
-		}*/
-		
-		
-		
-		/*
-		if ($new_account) {
-			thewire_save_post($twitterInfo->status['text'], ACCESS_PUBLIC, 0, 'twitter');
+		if (isset($_SESSION['last_forward_from']) && $_SESSION['last_forward_from']) {
+			$forward_url = $_SESSION['last_forward_from'];
+			unset($_SESSION['last_forward_from']);
+			forward($forward_url);
 		}
-		*/
 	}
 }
 

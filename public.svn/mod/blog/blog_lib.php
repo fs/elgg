@@ -58,7 +58,7 @@ function blog_get_page_content_read($owner_guid = NULL, $guid = NULL) {
 		if (!(isadminloggedin() || (isloggedin() && $owner_guid == $loggedin_userid))) {
 			$options['metadata_name_value_pairs'] = array(
 				array('name' => 'status', 'value' => 'published'),
-				array('name' => 'publish_date', 'operand' => '<', 'value' => time())
+				//array('name' => 'publish_date', 'operand' => '<', 'value' => time())
 			);
 		}
 
@@ -244,32 +244,6 @@ function blog_get_page_content_friends($user_guid) {
 }
 
 /**
- * Returns an appropriate excerpt for a blog.
- * Will return up to 250 chars stopping at the nearest space.
- * If no spaces are found (like in Japanese) will crop off at the
- * 250 char mark.
- *
- * @param string $text
- * @param int $words
- * @return string
- */
-function blog_make_excerpt($text, $chars = 250) {
-	$text = trim(strip_tags($text));
-
-	// handle cases
-	$excerpt = elgg_substr($text, 0, $chars);
-	$space = elgg_strrpos($excerpt, ' ', 0);
-
-	// don't crop if can't find a space.
-	if ($space === FALSE) {
-		$space = $chars;
-	}
-	$excerpt = trim(elgg_substr($excerpt, 0, $space));
-
-	return $excerpt ;
-}
-
-/**
  * Returns a list of years and months for all blogs optionally for a user.
  * Very similar to get_entity_dates() except uses a metadata field.
  *
@@ -320,7 +294,17 @@ class ElggBlog extends ElggObject {
 	public function save() {
 		if (parent::save()) {
 			global $CONFIG;
-			$published = $this->publish_date;
+
+			// try to grab the publish date, but default to now.
+			foreach (array('publish_date', 'time_created') as $field) {
+				if (isset($this->$field) && $this->field) {
+					$published = $this->field;
+					break;
+				}
+			}
+			if (!$published) {
+				$published = time();
+			}
 			$sql = "UPDATE {$CONFIG->dbprefix}entities SET time_created = '$published', time_updated = '$published' WHERE guid = '{$this->getGUID()}'";
 			return update_data($sql);
 		}

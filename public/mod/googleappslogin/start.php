@@ -60,13 +60,7 @@ function googleappslogin_init() {
 		add_menu(elgg_echo('googleappslogin:sites'), $CONFIG->wwwroot . 'pg/wikis/' . $_SESSION['user']->username);
 		//elgg_extend_view('profile/menu/links','googleappslogin/menu');
 		register_page_handler('wikis','googleappslogin_page_handler');
-	} else {
-            echo "<br>not added wiki pages</br>";
-            echo "<pre>";
-           echo "user="; print_r($user);
-           echo "sync site="; print_r($oauth_sync_sites);
-            echo "</pre>";
-        }
+	}
 
 	// Register widgets
 	add_widget_type('google_docs', elgg_echo('googleappslogin:google_docs'),

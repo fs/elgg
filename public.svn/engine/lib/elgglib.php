@@ -176,7 +176,7 @@ function elgg_does_viewtype_fallback($viewtype) {
 	if (isset($CONFIG->viewtype) && isset($CONFIG->viewtype->fallback)) {
 		return in_array($viewtype, $CONFIG->viewtype->fallback);
 	}
-	
+
 	return FALSE;
 }
 
@@ -1352,9 +1352,9 @@ function set_template_handler($function_name) {
 /**
  * Extends a view.
  *
- * The addititional views are displayed before or after the primary view. 
- * Priorities less than 500 are displayed before the primary view and 
- * greater than 500 after. The default priority is 501. 
+ * The addititional views are displayed before or after the primary view.
+ * Priorities less than 500 are displayed before the primary view and
+ * greater than 500 after. The default priority is 501.
  *
  * @param string $view The view to extend.
  * @param string $view_extension This view is added to $view
@@ -1413,7 +1413,7 @@ function elgg_unextend_view($view, $view_extension) {
 	}
 
 	unset($CONFIG->views->extensions[$view][$priority]);
-	
+
 	return TRUE;
 }
 
@@ -1970,7 +1970,7 @@ function trigger_elgg_event($event, $object_type, $object = null) {
 }
 
 /**
- * Register a function to a plugin hook for a particular entity type, with a given priority.
+ * Register a function to a plugin hook for a particular hook name and type, with a given priority.
  *
  * eg if you want the function "export_user" to be called when the hook "export" for "user" entities
  * is run, use:
@@ -1987,32 +1987,32 @@ function trigger_elgg_event($event, $object_type, $object = null) {
  * $params is an array containing a set of parameters (or nothing).
  *
  * @param string $hook The name of the hook
- * @param string $entity_type The name of the type of entity (eg "user", "object" etc)
+ * @param string $type The type of the hook (NB Can be an ElggEntity type [user, object, group, site] or custom-defined 'get_sections')
  * @param string $function The name of a valid function to be run
  * @param string $priority The priority - 0 is first, 1000 last, default is 500
  * @return true|false Depending on success
  */
-function register_plugin_hook($hook, $entity_type, $function, $priority = 500) {
+function register_plugin_hook($hook, $type, $function, $priority = 500) {
 	global $CONFIG;
 
 	if (!isset($CONFIG->hooks)) {
 		$CONFIG->hooks = array();
 	} else if (!isset($CONFIG->hooks[$hook]) && !empty($hook)) {
 		$CONFIG->hooks[$hook] = array();
-	} else if (!isset($CONFIG->hooks[$hook][$entity_type]) && !empty($entity_type)) {
-		$CONFIG->hooks[$hook][$entity_type] = array();
+	} else if (!isset($CONFIG->hooks[$hook][$type]) && !empty($type)) {
+		$CONFIG->hooks[$hook][$type] = array();
 	}
 
-	if (!empty($hook) && !empty($entity_type) && is_callable($function)) {
+	if (!empty($hook) && !empty($type) && is_callable($function)) {
 		$priority = (int) $priority;
 		if ($priority < 0) {
 			$priority = 0;
 		}
-		while (isset($CONFIG->hooks[$hook][$entity_type][$priority])) {
+		while (isset($CONFIG->hooks[$hook][$type][$priority])) {
 			$priority++;
 		}
-		$CONFIG->hooks[$hook][$entity_type][$priority] = $function;
-		ksort($CONFIG->hooks[$hook][$entity_type]);
+		$CONFIG->hooks[$hook][$type][$priority] = $function;
+		ksort($CONFIG->hooks[$hook][$type]);
 		return true;
 	} else {
 		return false;
@@ -2037,61 +2037,49 @@ function unregister_plugin_hook($hook, $entity_type, $function) {
 
 /**
  * Triggers a plugin hook, with various parameters as an array. For example, to provide
- * a 'foo' hook that concerns an entity of type 'bar', with a parameter called 'param1'
+ * a 'foo' hook that concerns the type 'bar', with a parameter called 'param1'
  * with value 'value1', that by default returns true, you'd call:
  *
  * trigger_plugin_hook('foo', 'bar', array('param1' => 'value1'), true);
  *
  * @see register_plugin_hook
- * @param string $hook The name of the hook to trigger
- * @param string $entity_type The name of the entity type to trigger it for (or "all", or "none")
+ * @param string $hook The name of the hook to trigger (NB: "all" will trigger for all $types regardless of $hook value)
+ * @param string $type The type of the hook to trigger (NB: "all" will trigger for all $hooks regardless of $type value)
  * @param array $params Any parameters. It's good practice to name the keys, i.e. by using array('name' => 'value', 'name2' => 'value2')
  * @param mixed $returnvalue An initial return value
  * @return mixed|null The cumulative return value for the plugin hook functions
  */
-function trigger_plugin_hook($hook, $entity_type, $params = null, $returnvalue = null) {
+function trigger_plugin_hook($hook, $type, $params = null, $returnvalue = null) {
 	global $CONFIG;
 
-	//if (!isset($CONFIG->hooks) || !isset($CONFIG->hooks[$hook]) || !isset($CONFIG->hooks[$hook][$entity_type]))
-	//	return $returnvalue;
-
-	if (!empty($CONFIG->hooks[$hook][$entity_type]) && is_array($CONFIG->hooks[$hook][$entity_type])) {
-		foreach($CONFIG->hooks[$hook][$entity_type] as $hookfunction) {
-			$temp_return_value = $hookfunction($hook, $entity_type, $returnvalue, $params);
+	if (!empty($CONFIG->hooks[$hook][$type]) && is_array($CONFIG->hooks[$hook][$type])) {
+		foreach($CONFIG->hooks[$hook][$type] as $hookfunction) {
+			$temp_return_value = $hookfunction($hook, $type, $returnvalue, $params);
 			if (!is_null($temp_return_value)) {
 				$returnvalue = $temp_return_value;
 			}
 		}
 	}
-	//else
-	//if (!isset($CONFIG->hooks['all'][$entity_type]))
-	//	return $returnvalue;
 
-	if (!empty($CONFIG->hooks['all'][$entity_type]) && is_array($CONFIG->hooks['all'][$entity_type])) {
-		foreach($CONFIG->hooks['all'][$entity_type] as $hookfunction) {
-			$temp_return_value = $hookfunction($hook, $entity_type, $returnvalue, $params);
+	if (!empty($CONFIG->hooks['all'][$type]) && is_array($CONFIG->hooks['all'][$type])) {
+		foreach($CONFIG->hooks['all'][$type] as $hookfunction) {
+			$temp_return_value = $hookfunction($hook, $type, $returnvalue, $params);
 			if (!is_null($temp_return_value)) $returnvalue = $temp_return_value;
 		}
 	}
-	//else
-	//if (!isset($CONFIG->hooks[$hook]['all']))
-	//	return $returnvalue;
 
 	if (!empty($CONFIG->hooks[$hook]['all']) && is_array($CONFIG->hooks[$hook]['all'])) {
 		foreach($CONFIG->hooks[$hook]['all'] as $hookfunction) {
-			$temp_return_value = $hookfunction($hook, $entity_type, $returnvalue, $params);
+			$temp_return_value = $hookfunction($hook, $type, $returnvalue, $params);
 			if (!is_null($temp_return_value)) {
 				$returnvalue = $temp_return_value;
 			}
 		}
 	}
-	//else
-	//if (!isset($CONFIG->hooks['all']['all']))
-	//	return $returnvalue;
 
 	if (!empty($CONFIG->hooks['all']['all']) && is_array($CONFIG->hooks['all']['all'])) {
 		foreach($CONFIG->hooks['all']['all'] as $hookfunction) {
-			$temp_return_value = $hookfunction($hook, $entity_type, $returnvalue, $params);
+			$temp_return_value = $hookfunction($hook, $type, $returnvalue, $params);
 			if (!is_null($temp_return_value)) {
 				$returnvalue = $temp_return_value;
 			}
@@ -3171,13 +3159,12 @@ function elgg_init() {
 }
 
 function elgg_walled_garden_index() {
-	global $CONFIG;
+	$login = elgg_view('account/forms/login_walled_garden');
+	echo elgg_view('page_shells/walled_garden', array(
+		'body' => $login,
+		'sysmessages' => system_messages(NULL, ''),
+	));
 
-	$login = elgg_view('account/forms/login');
-	$layout = elgg_view_layout('one_column', $login);
-
-	echo page_draw('', $layout);
-	
 	// @hack Index must exit to keep plugins from continuing to extend
 	exit;
 	return TRUE;

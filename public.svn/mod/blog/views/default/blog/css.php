@@ -28,12 +28,17 @@
 	padding-bottom:12px;
 }
 
-input.blog_publish_day,
-input.blog_publish_hour,
-input.blog_publish_minute {
-	width: 25px;
+/* blogs list view */
+.entity_listing.blog .entity_metadata {
+	min-width:400px;
+	text-align: right;
 }
 
-input.blog_publish_year {
-	width: 50px;
+/* blogs edit/create form */
+form#blog_post_edit .submit_button {
+	margin-right:15px;
+}
+/* force tinymce input height for a more useful editing / blog creation area */
+form#blog_post_edit #description_parent #description_ifr {
+	height:400px !important;
 }

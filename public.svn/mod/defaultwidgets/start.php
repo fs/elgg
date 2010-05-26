@@ -30,10 +30,6 @@ global $CONFIG;
  * @param unknown_type $object
  */
 function defaultwidgets_init() {
-	
-	// Load system configuration
-	register_page_handler ( 'defaultwidgets', 'defaultwidgets_page_handler' );
-	
 	// register create user event hook
 	register_elgg_event_handler ( 'create', 'user', 'defaultwidgets_newusers' );
 	
@@ -42,8 +38,9 @@ function defaultwidgets_init() {
 		register_elgg_event_handler('validate', 'user', 'defaultwidgets_reset_access');
 	}
 	
-	// Override metadata permissions
-	//register_plugin_hook ( 'permissions_check:metadata', 'object', 'defaultwidgets_can_edit_metadata' );
+	// @todo These submenu pages should be DRYed up
+	elgg_add_admin_submenu_item('default_profile_widgets', elgg_echo('defaultwidgets:menu:profile'), 'appearance');
+	elgg_add_admin_submenu_item('default_dashboard_widgets', elgg_echo('defaultwidgets:menu:dashboard'), 'appearance');
 }
 
 /**
@@ -207,47 +204,8 @@ function defaultwidgets_reset_access($event, $object_type, $object) {
 	return true;
 }
 
-/**
- * Default widgets page handler; allows the use of fancy URLs
- *
- * @param array $page From the page_handler function
- * @return true|false Depending on success
- */
-function defaultwidgets_page_handler($page) {
-	global $CONFIG;
-	
-	if (isset ( $page [0] )) {
-		
-		switch ($page [0]) {
-			case "profile" :
-				include (dirname ( __FILE__ ) . "/profile.php");
-				break;
-			case "dashboard" :
-				include (dirname ( __FILE__ ) . "/dashboard.php");
-				break;
-		}
-	} else {
-		register_error ( elgg_echo ( "defaultwidgets:admin:notfound" ) );
-		forward ( $CONFIG->wwwroot );
-	}
-	return true;
-}
-
-/**
- * Page setup. Adds admin controls to the admin panel.
- *
- */
-function defaultwidgets_pagesetup() {
-	if (get_context () == 'admin' && isadminloggedin ()) {
-		global $CONFIG;
-		add_submenu_item ( elgg_echo ( 'defaultwidgets:menu:profile' ), $CONFIG->wwwroot . 'pg/defaultwidgets/profile' );
-		add_submenu_item ( elgg_echo ( 'defaultwidgets:menu:dashboard' ), $CONFIG->wwwroot . 'pg/defaultwidgets/dashboard' );
-	}
-}
-
 // Make sure the status initialisation function is called on initialisation
 register_elgg_event_handler ( 'init', 'system', 'defaultwidgets_init' );
-register_elgg_event_handler ( 'pagesetup', 'system', 'defaultwidgets_pagesetup' );
 
 register_plugin_hook ( 'permissions_check', 'user', 'defaultwidgets_can_edit' );
 register_plugin_hook ( 'permissions_check', 'object', 'defaultwidgets_can_edit' );

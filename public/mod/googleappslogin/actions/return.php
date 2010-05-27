@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 
 require_once (dirname(dirname(__FILE__)) . '/models/Http.php');
@@ -7,10 +8,11 @@ require_once (dirname(dirname(__FILE__)) . '/models/OAuth.php');
 require_once (dirname(dirname(__FILE__)) . '/models/client.inc');
 
 global $CONFIG;
+
 if (empty($CONFIG->input['openid_ns'])){
-	$CONFIG->input = array_merge($CONFIG->input, $_POST);
+	$CONFIG->input = array_merge($CONFIG->input, $_REQUEST);
 }
-//print_r($GLOBALS);
+
 $user = $_SESSION['user'];
 
 $CONSUMER_KEY = get_plugin_setting('googleapps_domain', 'googleappslogin');
@@ -23,10 +25,7 @@ $oauth_verifier = $CONFIG->input['oauth_verifier'];
 
 $client = new OAuth_Client($CONSUMER_KEY, $CONSUMER_SECRET, SIG_METHOD_HMAC);
 
-//print_r($_SESSION);
-
-//exit;
-if (!$client->authorized() && !empty($user) && ($oauth_sync_email != 'no' || $oauth_sync_sites != 'no')) {
+if (!$client->authorized() && !empty($user) && ($oauth_sync_email != 'no' || $oauth_sync_sites != 'no')) {    
 	
 	if (empty($oauth_verifier)) {
 		
@@ -50,21 +49,14 @@ if (!$client->authorized() && !empty($user) && ($oauth_sync_email != 'no' || $oa
 	}
 	
 } else {
-	/*
-	if ($user) {
-		echo '<pre>';
-		print_r($user);
-		echo '</pre>';
-		exit;
-	}
-	*/
-	
+//	die("Error with authorization");
 }
 
 if (!empty($_SESSION['oauth_connect'])) {
 	unset($_SESSION['oauth_connect']);
 	forward('mod/googleappslogin');
 }
+
 
 $google = Google_OpenID::create_from_response($CONFIG->input);
 
@@ -75,6 +67,7 @@ if (!empty($response)) {
 	$request_token = !empty($response['openid_ext2_request_token']) ? $response['openid_ext2_request_token'] : '';
 } else {
 	//register_error(sprintf(elgg_echo('googleappslogin:googleappserror'), 'Bad response'));
+        die("Bad response");
 	forward();
 }
 

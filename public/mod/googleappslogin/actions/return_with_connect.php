@@ -5,8 +5,6 @@
 #ini_set('error_reporting', E_ALL);
 #ini_set('pcre.backtrack_limit', 10000000);
 
-die("return with connect");
-
 require_once (dirname(dirname(__FILE__)) . "/models/Http.php");
 require_once (dirname(dirname(__FILE__)) . "/models/OAuth.php");
 require_once (dirname(dirname(__FILE__)) . "/models/Google_OpenID.php");

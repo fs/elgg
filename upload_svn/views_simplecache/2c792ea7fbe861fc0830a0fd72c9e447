@@ -2371,6 +2371,142 @@ div.usericon a.icon img {
     background-position:0 -190px;
 }
 
+.treeview, .treeview ul { 
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+
+.treeview ul {
+	background-color: white;
+	margin-top: 4px;
+}
+
+.treeview .hitarea {
+	background: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/treeview-default.gif) -64px -25px no-repeat;
+	height: 16px;
+	width: 16px;
+	margin-left: -16px;
+	float: left;
+	cursor: pointer;
+}
+/* fix for IE6 */
+* html .hitarea {
+	display: inline;
+	float:none;
+}
+
+.treeview li { 
+	margin: 0;
+	padding: 3px 0pt 3px 16px;
+}
+
+.treeview a.selected {
+	background-color: #eee;
+}
+
+#treecontrol { margin: 1em 0; display: none; }
+
+.treeview .hover { color: red; cursor: pointer; }
+
+.treeview li { background: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/treeview-default-line.gif) 0 0 no-repeat; }
+.treeview li.collapsable, .treeview li.expandable { background-position: 0 -176px; }
+
+.treeview .expandable-hitarea { background-position: -80px -3px; }
+
+.treeview li.last { background-position: 0 -1766px }
+.treeview li.lastCollapsable, .treeview li.lastExpandable { background-image: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/treeview-default.gif); }  
+.treeview li.lastCollapsable { background-position: 0 -111px }
+.treeview li.lastExpandable { background-position: -32px -67px }
+
+.treeview div.lastCollapsable-hitarea, .treeview div.lastExpandable-hitarea { background-position: 0; }
+
+.treeview-red li { background-image: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/treeview-red-line.gif); }
+.treeview-red .hitarea, .treeview-red li.lastCollapsable, .treeview-red li.lastExpandable { background-image: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/treeview-red.gif); } 
+
+.treeview-black li { background-image: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/treeview-black-line.gif); }
+.treeview-black .hitarea, .treeview-black li.lastCollapsable, .treeview-black li.lastExpandable { background-image: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/treeview-black.gif); }  
+
+.treeview-gray li { background-image: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/treeview-gray-line.gif); }
+.treeview-gray .hitarea, .treeview-gray li.lastCollapsable, .treeview-gray li.lastExpandable { background-image: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/treeview-gray.gif); } 
+
+.treeview-famfamfam li { background-image: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/treeview-famfamfam-line.gif); }
+.treeview-famfamfam .hitarea, .treeview-famfamfam li.lastCollapsable, .treeview-famfamfam li.lastExpandable { background-image: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/treeview-famfamfam.gif); } 
+
+
+.filetree li { padding: 3px 0 2px 16px; }
+.filetree span.folder, .filetree span.file { padding: 1px 0 1px 16px; display: block; }
+.filetree span.folder { background: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/folder.gif) 0 0 no-repeat; }
+.filetree li.expandable span.folder { background: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/folder-closed.gif) 0 0 no-repeat; }
+.filetree span.file { background: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/file.gif) 0 0 no-repeat; }
+
+.pagesTreeContainer {
+		margin:0;
+		min-height: 200px;
+}
+
+#pages_page .strapline {
+    text-align:right;
+    border-top:1px solid #efefef;
+    margin:10px 0 10px 0;
+    color:#666666;
+}
+#pages_page .categories {
+    border:none !important;
+    padding:0 !important;
+}
+
+#pages_page .tags {
+    padding:0 0 0 16px;
+    margin:10px 0 4px 0;
+	background:transparent url(http://elgg.leonid2.tsweb.toa/_graphics/icon_tag.gif) no-repeat scroll left 2px;
+}
+
+#pages_page img[align="left"] {
+	margin: 10px 20px 10px 0;
+	float:left;
+}
+#pages_page img[align="right"] {
+	margin: 10px 0 10px 10px;
+	float:right;
+}
+
+.pageswelcome p {
+	margin:0 0 5px 0;
+}
+
+#sidebar_page_tree {
+	background:white;
+	-webkit-border-radius: 8px; 
+	-moz-border-radius: 8px;
+    padding:10px;
+    margin:0 10px 10px 10px;
+}
+#sidebar_page_tree h3 {
+	background: none;
+	border-top: none;
+	border-bottom: 1px solid #cccccc;
+	font-size:1.25em;
+	line-height:1.2em;
+	margin:0 0 5px 0;
+	padding:0 0 5px 5px;
+	color:#0054A7;
+}
+
+/* IE6 */
+* html #pages_welcome_tbl { width:676px !important;}
+
+.pages_widget_singleitem_more {
+	margin:0 10px 0 10px;
+	padding:5px;
+	display:block;
+	background:white;
+   	-webkit-border-radius: 8px; 
+	-moz-border-radius: 8px;	
+}
+
+
+
 /* messages/new messages icon & counter in elgg_topbar */
 a.privatemessages {
 	background:transparent url(http://elgg.leonid2.tsweb.toa/mod/messages/graphics/toolbar_messages_icon.gif) no-repeat left 2px;
@@ -2603,7 +2739,58 @@ p.message_item_timestamp {
 	background-position: 0 -16px;
 }
 
-#logbrowser_search_area {
+
+.categories .input-checkboxes {
+	padding:0;
+	margin:2px 5px 0 0;
+}
+.categories label {
+	font-size: 100%;
+	line-height:1.2em;
+}
+
+#two_column_left_sidebar_maincontent .contentWrapper h2.categoriestitle {
+	padding: 0 0 3px 0;
+	margin:0;
+	font-size:120%;
+	color:#333333;
+}
+#two_column_left_sidebar_maincontent .contentWrapper .categories {
+	border:1px solid #CCCCCC;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	padding:5px;
+	margin:0 0 15px 0;
+}
+#two_column_left_sidebar_maincontent .contentWrapper .categories p {
+	margin:0;
+}
+#two_column_left_sidebar_maincontent .contentWrapper .blog_post .categories {
+	border:none;
+	margin:0;
+	padding:0;
+}
+
+#two_column_left_sidebar .blog_categories {
+	background:white;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	padding:10px;
+	margin:0 10px 10px 10px;
+}
+#two_column_left_sidebar .blog_categories h2 {
+	background:none;
+	border-top:none;
+	margin:0;
+	padding:0 0 5px 0;
+	font-size:1.25em;
+	line-height:1.2em;
+	color:#0054A7;
+}
+#two_column_left_sidebar .blog_categories ul {
+	color:#0054A7;
+	margin:5px 0 0 0;
+}#logbrowser_search_area {
 	margin-top:10px;
 	margin-bottom:10px;
 }
@@ -2642,6 +2829,91 @@ p.message_item_timestamp {
 }
 .log_entry_action {
 	width: 75px;
+}
+.bookmark_note {
+	margin:0 0 0 5px;
+}
+.note {
+	margin-top:5px;
+}
+
+
+/* BOOKMARKS WIDGET 
+.collapsable_box_content .ContentWrapper.bookmarks {
+	margin-bottom:5px;
+	line-height:1.2em;
+}
+.collapsable_box_content .ContentWrapper.bookmarks .share_desc {
+	display:none;
+	line-height: 1.2em;
+}
+.collapsable_box_content .ContentWrapper.bookmarks .share_desc p {
+	margin:0 0 5px 0;
+}
+.collapsable_box_content .ContentWrapper.bookmarks .river_object_bookmarks_create p {
+	min-height:17px;
+	padding:0 0 0 17px;
+}
+.collapsable_box_content .ContentWrapper.bookmarks .shares_timestamp {
+	color:#666666;
+	margin:0;
+	padding:0 0 0 17px;
+}
+.collapsable_box_content .ContentWrapper.bookmarks .shares_title {
+	margin:0;
+	line-height: 1.1em;
+}
+.collapsable_box_content .ContentWrapper.bookmarks.more {
+	margin:0 10px;
+	padding:5px 10px;
+}
+*/
+
+#twitter_widget {
+    margin:0 10px 0 10px;
+}
+#twitter_widget ul {
+	margin:0;
+	padding:0;
+}
+#twitter_widget li {
+	background: url(http://elgg.leonid2.tsweb.toa/mod/twitter/graphics/thewire_speech_bubble.gif) no-repeat right bottom;
+	list-style-image:none;
+	list-style-position:outside;
+	list-style-type:none;
+	margin:0 0 5px 0;
+	padding:0;
+	overflow-x: hidden;
+}
+#twitter_widget li span {
+	color:#666666;
+	background:white;
+	-webkit-border-radius: 8px; 
+	-moz-border-radius: 8px;
+	padding:5px;
+	display:block;
+}
+p.visit_twitter a {
+    background:url(http://elgg.leonid2.tsweb.toa/mod/twitter/graphics/twitter16px.png) left no-repeat;
+    padding:0 0 0 20px;
+    margin:0;
+}
+p.twitter_username .input_text {
+	width:200px;
+}
+.visit_twitter {
+	background:white;
+	-webkit-border-radius: 8px; 
+	-moz-border-radius: 8px;
+	padding:2px;
+	margin:0 0 5px 0;
+}
+#twitter_widget li a {
+	display:block;
+	margin:0 0 0 4px;
+}
+#twitter_widget li span a {
+	display:inline !important;
 }/* link in footer */
 #report_this {
 	text-align: left;
@@ -2682,6 +2954,112 @@ p.message_item_timestamp {
 .admin_settings.reported_content .details_link {
 	cursor: pointer;
 }
+
+.files .entity_listing .entity_listing_info {
+	width:453px;
+}
+.files .entity_listing:hover {
+	background-color: white;
+}
+
+/* files - single entity view */
+.filerepo_title_owner_wrapper .filerepo_title,
+.filerepo_title_owner_wrapper .filerepo_owner,
+.filerepo_file .filerepo_maincontent {
+	margin-left: 70px !important;
+}
+.filerepo_owner_details {
+	margin:0;
+	padding:0;
+	line-height: 1.2em;
+}
+.filerepo_owner_details small {
+	color:#666666;
+}
+.filerepo_owner .usericon {
+	margin: 3px 5px 5px 0;
+	float: left;
+}
+.filerepo_file .filerepo_icon {
+	width: 70px;
+	position: absolute;
+	margin:5px 0 10px 0;
+}
+.filerepo_file .filerepo_title {
+	margin:0;
+	padding:7px 4px 10px 0;
+	line-height: 1.2em;
+}
+.filerepo_file .filerepo_description {
+	margin:10px 0 0 0;
+}
+.filerepo_file .filerepo_description p {
+	padding:0 0 5px 0;
+	margin:0;
+}
+.filerepo_file .filerepo_specialcontent img {
+	padding:10px;
+	margin-bottom:10px;
+	-webkit-border-radius: 6px; 
+	-moz-border-radius: 6px;
+	background: #333333; 
+}
+
+
+/* files - gallery view */
+.entity_gallery_item .filerepo_gallery_item {
+	margin:10px 10px 0 0;
+	padding:5px;
+	text-align:center;
+	background-color: #eeeeee;
+	-webkit-border-radius: 6px; 
+	-moz-border-radius: 6px;
+	width:165px;
+}
+.entity_gallery_item .filerepo_gallery_item:hover {
+	background-color: #999999;
+}
+.filerepo_download,
+.filerepo_controls {
+	padding:0 0 1px 0;
+	margin:0 0 10px 0;
+}
+.entity_gallery .filerepo_title {
+	font-weight: bold;
+	line-height: 1.1em;
+	margin:0 0 10px 0;
+}
+.filerepo_gallery_item p {
+	margin:0;
+	padding:0;
+}
+.filerepo_gallery_item .filerepo_controls {
+	margin-top:10px;
+}
+.filerepo_gallery_item .filerepo_controls a {
+	padding-right:10px;
+	padding-left:10px;
+}
+.entity_gallery .filerepo_comments {
+	font-size:90%;
+}
+.filerepo_user_gallery_link {
+	float:right;
+	margin:5px 5px 5px 50px;
+}
+.filerepo_user_gallery_link a {
+	padding:2px 25px 5px 0;
+	background: transparent url(http://elgg.leonid2.tsweb.toa/mod/file/graphics/icon_gallery.gif) no-repeat right top;
+	display:block;
+}
+.filerepo_user_gallery_link a:hover {
+	background-position: right -40px;
+}
+
+
+
+
+
 
 .blogpost {
 	border-bottom:1px dotted #CCCCCC;
@@ -2875,6 +3253,99 @@ form#blog_post_edit #description_parent #description_ifr {
 
 
 
+/* new wire post form */
+.new_wire_post {
+	margin:10px 0 15px 0;
+	padding-bottom:15px;
+	border-bottom: 1px solid #dedede;
+}
+.new_wire_post input[type="submit"] {
+	margin:3px 0 0 0;
+	float:right;
+}
+.new_wire_post textarea {
+	width: 719px;
+	height: 52px;
+	padding: 2px 5px 5px 5px;
+	font-size: 120%;
+	color:#333333;
+}
+.character_count {
+	width: 642px;
+	color:#666666;
+}
+.character_count input { 
+	color:#666666;
+	border:none;
+	font-size: 100%;
+	font-weight: bold;
+	padding:0 2px 0 0;
+	margin:0;
+	text-align: right;
+	background: white;
+}
+.character_count input:focus {
+	border:none;
+	background:white;
+}
+
+
+/* wire posts listings */
+.wire_post {
+	padding-bottom:10px;
+	margin-bottom:5px;
+	background-image: url(http://elgg.leonid2.tsweb.toa/mod/thewire/graphics/thewire_speech_bubble.gif);
+	background-repeat: no-repeat;
+	background-position: right bottom; 
+}
+.members_list .wire_post { /* when displayed in lists of friends */
+	margin-top:4px;
+}
+.wire_post_contents {
+	background-color: #eeeeee;
+	margin:0;
+	padding:5px;
+	line-height: 1.2em;
+	min-height: 34px;
+	position: relative;
+}
+.wire_post_icon {
+    float:left;
+    margin-right:8px;
+}
+.wire_post_info {
+	margin-top:-3px;
+	float:left;
+	width:620px;
+	overflow: hidden;
+}
+.wire_post_options {
+	float:right;
+	width:65px;
+}
+.wire_post_options .action_button.reply.small {
+	float:right;
+}
+.wire_post_options .delete_button {
+	position: absolute;
+	bottom:5px;
+	right:5px;
+}
+
+
+/* latest wire post on profile page */
+.wire_post .action_button.update.small {
+	float:right;
+	padding:4px;
+	position: absolute;
+	bottom:5px;
+	right:5px;
+}
+
+/* river wire entry */
+.river_item .reply_link {
+	display:block;
+}
 /* group listings */
 .group_count {
 	float:right;
@@ -3017,6 +3488,7 @@ form#blog_post_edit #description_parent #description_ifr {
 	width: 694px !important;
 }
 
+
 .members .group_count {
 	font-weight: bold;
 	color: #666666;
@@ -3033,7 +3505,87 @@ form#blog_post_edit #description_parent #description_ifr {
 }
 #memberssearchform .search_input {
 	width:196px;
-}#elgg_page_contents .mceButton {
+}
+#notificationstable td.namefield {
+	width:250px;
+	text-align: left;
+	vertical-align: middle;
+}
+#notificationstable td.namefield p {
+	margin:0;
+	vertical-align: middle;
+	line-height: 1.1em;
+	padding:5px 0 5px 0;
+}
+#notificationstable td.namefield p.namefieldlink {
+	margin:5px 0 0 0;
+}
+#notificationstable td.namefield a img {
+	float:left;
+	width:25px;
+	height:25px; 
+	margin:5px 10px 5px 5px;
+}
+#notificationstable td.emailtogglefield,
+#notificationstable td.smstogglefield {
+	width:50px;
+	text-align: center;
+	vertical-align: middle;
+}
+#notificationstable td.spacercolumn {
+	width:30px;
+}
+#notificationstable td {
+	border-bottom: 1px solid silver;
+}
+#notificationstable td.emailtogglefield input {
+	margin-right:36px;
+	margin-top:5px;
+}
+#notificationstable td.emailtogglefield a {
+	width:46px;
+	height:24px;
+	cursor: pointer;
+	display: block;
+	outline: none;
+}
+#notificationstable td.sitetogglefield {
+	width:50px;
+	text-align: center;
+	vertical-align: middle;
+}
+#notificationstable td.sitetogglefield input {
+	margin-right:36px;
+	margin-top:5px;
+}
+#notificationstable td.sitetogglefield a {
+	width:46px;
+	height:24px;
+	cursor: pointer;
+	display: block;
+	outline: none;
+}
+#notificationstable td.emailtogglefield a.emailtoggleOff {
+	background: url(http://elgg.leonid2.tsweb.toa/mod/notifications/graphics/icon_notifications_email.gif) no-repeat right 2px;
+}
+#notificationstable td.emailtogglefield a.emailtoggleOn {
+	background: url(http://elgg.leonid2.tsweb.toa/mod/notifications/graphics/icon_notifications_email.gif) no-repeat right -36px;
+}
+#notificationstable td.sitetogglefield a.sitetoggleOff {
+	background: url(http://elgg.leonid2.tsweb.toa/mod/notifications/graphics/icon_notifications_site.gif) no-repeat right 2px;
+}
+#notificationstable td.sitetogglefield a.sitetoggleOn {
+	background: url(http://elgg.leonid2.tsweb.toa/mod/notifications/graphics/icon_notifications_site.gif) no-repeat right -37px;
+}
+.notification_friends,
+.notification_personal,
+.notifications_per_user {
+	margin-bottom: 25px;
+}
+
+
+
+#elgg_page_contents .mceButton {
 background-color: #e9e8e8;
 	border-color: #B2B2B2;
 	margin:4px;

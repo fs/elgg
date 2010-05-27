@@ -122,8 +122,8 @@ class OAuth_Client {
 	}
 
 	public function authorized() {
-
-		if (!empty($_SESSION['access_token']) && !empty($_SESSION['access_secret'])) {
+        
+		if (!empty($_SESSION['access_token']) && !empty($_SESSION['access_secret'])) {                    
 //empty($this->access_token) && empty($this->access_secret)) {
 			$this->access_token = $_SESSION['access_token'];
 			$this->access_secret = $_SESSION['access_secret'];

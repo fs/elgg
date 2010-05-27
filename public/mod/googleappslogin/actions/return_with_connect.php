@@ -5,6 +5,8 @@
 #ini_set('error_reporting', E_ALL);
 #ini_set('pcre.backtrack_limit', 10000000);
 
+die("return with connect");
+
 require_once (dirname(dirname(__FILE__)) . "/models/Http.php");
 require_once (dirname(dirname(__FILE__)) . "/models/OAuth.php");
 require_once (dirname(dirname(__FILE__)) . "/models/Google_OpenID.php");
@@ -55,7 +57,7 @@ if (!$google->is_authorized()) {
 		$user->save();
 		
 		$_SESSION['oauth_connect'] = 1;
-		$googleappslogin_return = elgg_add_action_tokens_to_url('https://' . $_SERVER['HTTP_HOST'] . '/action/googleappslogin/return');
+		$googleappslogin_return = elgg_add_action_tokens_to_url('https://' . $_SERVER['HTTP_HOST'] . '/action/googleappslogin/return', FALSE);
 		forward($googleappslogin_return);
 		
 	} else {

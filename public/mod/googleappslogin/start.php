@@ -25,10 +25,10 @@ function googleappslogin_init() {
 
 	global $CONFIG;
 
-	$googleappslogin_url = elgg_add_action_tokens_to_url('https://' . $_SERVER['HTTP_HOST'] . '/action/googleappslogin/login', FALSE);
-	$googleappsconnect_url = elgg_add_action_tokens_to_url('https://' . $_SERVER['HTTP_HOST'] . '/action/googleappslogin/connect', FALSE);
-	$googleappsdisconnect_url = elgg_add_action_tokens_to_url('http://' . $_SERVER['HTTP_HOST'] . '/action/googleappslogin/disconnect', FALSE);
-	$oauth_update_url = elgg_add_action_tokens_to_url('https://' . $_SERVER['HTTP_HOST'] . '/action/googleappslogin/oauth_update', FALSE);
+	$googleappslogin_url = elgg_validate_action_url('https://' . $_SERVER['HTTP_HOST'] . '/action/googleappslogin/login');
+	$googleappsconnect_url = elgg_validate_action_url('https://' . $_SERVER['HTTP_HOST'] . '/action/googleappslogin/connect');
+	$googleappsdisconnect_url = elgg_validate_action_url('http://' . $_SERVER['HTTP_HOST'] . '/action/googleappslogin/disconnect');
+	$oauth_update_url = elgg_validate_action_url('https://' . $_SERVER['HTTP_HOST'] . '/action/googleappslogin/oauth_update');
 
 	$GLOBALS['googleappslogin_url'] = $googleappslogin_url;
 	$GLOBALS['googleappsconnect_url'] = $googleappsconnect_url;
@@ -267,7 +267,7 @@ function googleappslogin_user_settings_save() {
 				
 				if ($synchronize) {
 					$_SESSION['oauth_connect'] = 1;
-					$googleappslogin_return = elgg_add_action_tokens_to_url('https://' . $_SERVER['HTTP_HOST'] . '/action/googleappslogin/return');
+					$googleappslogin_return = elgg_validate_action_url('https://' . $_SERVER['HTTP_HOST'] . '/action/googleappslogin/return');
 					forward($googleappslogin_return);
 				}
 			*/

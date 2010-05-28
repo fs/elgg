@@ -19,6 +19,8 @@ if ($vars['entity']) {
 
 <script type="text/javascript">
 
+
+
 var $form = null;
 var map = null;
 var p = null;
@@ -26,6 +28,34 @@ var marker = null;
 var center = null;
 var lt = null;
 var lg = null;
+
+//function showResponse(response, reverse) {
+//
+//		if (! response) {
+//			alert("Geocoder request failed");
+//		} else {
+//			if (!response.Placemark || !response.Placemark[0]) {
+//				return;
+//			}
+//
+//			box = response.Placemark[0].ExtendedData.LatLonBox;
+//			latlng = new GLatLng(response.Placemark[0].Point.coordinates[1],
+//			response.Placemark[0].Point.coordinates[0]);
+//
+//			set_location(latlng, true);
+//		}
+//	}
+
+function showResponse(response, reverse) {
+	if (! response) {
+		alert("Geocoder request failed");
+	} else {
+		latlng = new GLatLng(response.Placemark[0].Point.coordinates[1],
+							 response.Placemark[0].Point.coordinates[0]);
+		set_location(latlng, true);
+	}
+}
+
 
 $(function () {
 	$form = $('input.submit_button').parents().map(function () {

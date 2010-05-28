@@ -1,5 +1,6 @@
 <script type="text/javascript">
 var where_i_am_marker=null;
+var search_position_marker=null;
 
 function markerClick(url, latlng) {
 	return function() {
@@ -48,8 +49,20 @@ function set_location(new_latlng, dragg){
             store_point_location(new_latlng);
             add_Listener_To_Where_I_Am_Marker();
         }
-
 }
+
+function set_position(latlng) {
+     // Remove old position marker
+    if (search_position_marker!= null) {
+        map.removeOverlay(search_position_marker);
+    }
+    search_position_marker=new GMarker(latlng);
+
+    map.addOverlay(search_position_marker);
+    map.setCenter(latlng, 12);
+}
+
+
 
 function set_current_location(){
 	var lat = geoip_latitude();
@@ -84,6 +97,7 @@ function initGeocoder(query) {
 }
 
 function forwardGeocode(address) {
+        
 	var geocoder = initGeocoder(address);
 	geocoder.getLocations(address, function(response) {
 		showResponse(response, false);
@@ -115,7 +129,7 @@ function showResponse(response, reverse) {
 	} else {
 		latlng = new GLatLng(response.Placemark[0].Point.coordinates[1],
 							 response.Placemark[0].Point.coordinates[0]);
-		//set_location(latlng);
+		set_position(latlng);
 	}
 }
 

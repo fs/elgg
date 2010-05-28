@@ -104,34 +104,36 @@
 				break;
 			}
 			
-			if (!empty($doc['type'])) {
-				switch ($doc['type']) {
-					
-					case 'folder':
-						$doc['type'] = 'folder';
-						// folder links should link to parent folder
-						$doc['href'] = preg_replace('/(.*)folder\.0\.(.*)/', '$1folder.0.' . substr($google_folder->id, 9), $doc['href']);
-						break;
-						
-					case 'spreadsheet':
-						$doc['type'] = 'spread';
-						break;
-						
-					case 'presentation':
-						$doc['type'] = 'pres';
-						break;
-						
-					case 'document':
-						$doc['type'] = 'doc';
-						break;
-						
-					default:
-						$doc['type'] = 'doc';
-						break;
-				}
-			} else {
-				$doc['type'] = 'doc';
-			}
+//    			if (!empty($doc['type'])) {
+//				switch ($doc['type']) {
+//
+//					case 'folder':
+//						$doc['type'] = 'folder';
+//						// folder links should link to parent folder
+//						$doc['href'] = preg_replace('/(.*)folder\.0\.(.*)/', '$1folder.0.' . substr($google_folder->id, 9), $doc['href']);
+//						break;
+//
+//					case 'spreadsheet':
+//						$doc['type'] = 'spread';
+//						break;
+//
+//					case 'presentation':
+//						$doc['type'] = 'pres';
+//						break;
+//
+//					case 'document':
+//						$doc['type'] = 'doc';
+//						break;
+//
+//					default:
+//						$doc['type'] = 'doc';
+//						break;
+//				}
+//			} else {
+//				$doc['type'] = 'doc';
+//			}
+
+
 			?>
 			<div class="river_item">
 				<span class="document-icon <?= $doc['type'] ?>"></span>

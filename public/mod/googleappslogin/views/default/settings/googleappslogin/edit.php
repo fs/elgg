@@ -11,8 +11,10 @@ $login_key = get_plugin_setting('login_key', 'googleappslogin');
 $login_secret = get_plugin_setting('login_secret', 'googleappslogin');
 $private_key = get_plugin_setting('private_key', 'googleappslogin');
 $oauth_update_interval = get_plugin_setting('oauth_update_interval', 'googleappslogin');
+
 $oauth_sync_email = get_plugin_setting('oauth_sync_email', 'googleappslogin');
 $oauth_sync_sites = get_plugin_setting('oauth_sync_sites', 'googleappslogin');
+$oauth_sync_docs = get_plugin_setting('oauth_sync_docs', 'googleappslogin');
 
 $body .= "<p><b>" . elgg_echo('googleappslogin:title') . "</b></p>";
 $body .= '<br />';
@@ -38,11 +40,18 @@ $body .= elgg_view('input/text', array('internalname' => 'params[oauth_update_in
 	if (!$oauth_sync_sites) {
 		$oauth_sync_sites = 'yes';
 	}
+	if (!$oauth_sync_docs) {
+		$oauth_sync_docs = 'yes';
+	}
+
 	$body .= elgg_echo('googleappslogin:googleapps_user_settings_sync_email') . "<br />";
 	$body .= elgg_view('input/radio', array('internalname' => 'params[oauth_sync_email]', 'options' => $options, 'value' => $oauth_sync_email));
 	
 	$body .= elgg_echo('googleappslogin:googleapps_user_settings_sync_sites') . "<br />";
 	$body .= elgg_view('input/radio', array('internalname' => 'params[oauth_sync_sites]', 'options' => $options, 'value' => $oauth_sync_sites));
+
+	$body .= elgg_echo('googleappslogin:googleapps_user_settings_sync_docs') . "<br />";
+	$body .= elgg_view('input/radio', array('internalname' => 'params[oauth_sync_docs]', 'options' => $options, 'value' => $oauth_sync_docs));
 	
 //}
 

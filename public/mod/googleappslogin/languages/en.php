@@ -25,12 +25,14 @@ $english = array(
 		'googleappslogin:googleapps_user_settings_title' => "googleapps profile",
 		'googleappslogin:googleapps_user_settings_sync_email' => "Synchronize with google mail.",
 		'googleappslogin:googleapps_user_settings_sync_sites' => "Synchronize with google sites.",
+                'googleappslogin:googleapps_user_settings_sync_docs' => "Synchronize with google docs.",
+
 		'googleappslogin:googleapps_user_settings:save:ok' => "Your googleapps profile preference has been saved.",
 		'googleappslogin:googleapps_login_settings:save:ok' => "Your googleapps screen name has been saved.",
 		'googleappslogin:googleapps_login_title' => "googleapps login",
 		'googleappslogin:googleapps_login_description' => "If you want to login to Elgg using googleapps, enter your googleapps screen name here.",
 
-		'googleappslogin:google_docs' => "Google docs",
+		'googleappslogin:google_docs' => "Share Google docs",
 		'googleappslogin:google_docs:description' => "",
 
 		'googleappslogin:google_sites_settings' => "Google sites access settings",

@@ -50,13 +50,13 @@
     margin:4px 5px; 
 }
 
-.doc{
+.document{
     background-position:0 -60px;
 }
-.spread {
+.spreadsheet {
     background-position:0 -140px;
 }
-.pres {
+.presentation{
     background-position:0 -20px;
 }
 .form {
@@ -103,4 +103,12 @@
 
 .folder{
     background-position:0 -190px;
+}
+
+.docs_table {
+    width: 100%;
+}
+
+.docs_comment {
+    width: 90%;
 }

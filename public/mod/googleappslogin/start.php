@@ -38,6 +38,7 @@ function googleappslogin_init() {
 
 	$oauth_sync_email = get_plugin_setting('oauth_sync_email', 'googleappslogin');
 	$oauth_sync_sites = get_plugin_setting('oauth_sync_sites', 'googleappslogin');
+        $oauth_sync_docs = get_plugin_setting('oauth_sync_docs', 'googleappslogin');
 
 	$domain = get_plugin_setting('googleapps_domain', 'googleappslogin');
 	$GLOBALS['link_to_add_site'] = 'https://sites.google.com/a/' . $domain . '/sites/system/app/pages/meta/dashboard/create-new-site" target="_blank';
@@ -53,13 +54,18 @@ function googleappslogin_init() {
 	//register_plugin_hook('usersettings:save','user','googleappslogin_user_settings_save');
 	register_entity_type('object','site_activity', 'Site activity');
 	$user = $_SESSION['user'];
-	if (!empty($user) &&
-			$user->google &&
-			$oauth_sync_sites != 'no') {
-		// Set up pages
-		add_menu(elgg_echo('googleappslogin:sites'), $CONFIG->wwwroot . 'pg/wikis/' . $_SESSION['user']->username);
-		//elgg_extend_view('profile/menu/links','googleappslogin/menu');
-		register_page_handler('wikis','googleappslogin_page_handler');
+
+        
+	if (!empty($user) && $user->google &&$oauth_sync_sites != 'no') {
+                if  ($oauth_sync_sites != 'no') {
+                    add_menu(elgg_echo('googleappslogin:sites'), $CONFIG->wwwroot . 'pg/wikis/' . $_SESSION['user']->username);;
+                    register_page_handler('wikis','googleappslogin_page_handler');
+                }
+
+                if ($oauth_sync_docs!= 'no') {
+                    register_page_handler('docs','googleappslogin_docs_page_handler');
+                    add_menu(elgg_echo('googleappslogin:google_docs'), $CONFIG->wwwroot . 'pg/docs/' . $_SESSION['user']->username);
+                }
 	}
 
 	// Register widgets
@@ -82,6 +88,18 @@ function googleappslogin_pagesetup() {
 	}
 
 	//extend_elgg_settings_page('googleappslogin/settings/usersettings', 'usersettings/user');
+}
+
+
+/**
+ * googleappslogin page handler; allows the use of fancy URLs
+ *
+ * @param array $page From the page_handler function
+ * @return true|false Depending on success
+ */
+function googleappslogin_docs_page_handler($page) {
+        include(dirname(__FILE__) . '/docs.php');
+        return true;
 }
 
 /**
@@ -110,7 +128,6 @@ function googleappslogin_page_handler($page) {
 				return true;
 
 				break;
-
 		}
 	} else {
 		include(dirname(__FILE__) . '/wikis.php');
@@ -131,13 +148,14 @@ function googleappslogin_login() {
 
 	$oauth_sync_email = get_plugin_setting('oauth_sync_email', 'googleappslogin');
 	$oauth_sync_sites = get_plugin_setting('oauth_sync_sites', 'googleappslogin');
+        $oauth_sync_docs = get_plugin_setting('oauth_sync_docs', 'googleappslogin');
 
 	$user = $_SESSION['user'];
 	if (!empty($user) &&
 			$user->google &&
 			($oauth_sync_email != 'no' || $oauth_sync_sites != 'no' || $oauth_sync_docs != 'no')) {
-		googleappslogin_get_oauth_data();
-	}
+                                googleappslogin_get_oauth_data();
+                        }
 }
 
 function googleappslogin_can_edit($hook_name, $entity_type, $return_value, $parameters) {

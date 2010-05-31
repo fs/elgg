@@ -3,7 +3,16 @@
 a.set-location {position:absolute;right:0;top:3px;font-weight:bold;}
 #map > div { width:630px; }
 #map >div#logocontrol {width:auto;}
-.map-container { background:#fff; margin:-35px 0 20px 10px; padding:10px 20px 20px; width:698px; -moz-border-radius:8px; float:left; padding:0 0 5px; -webkit-border-radius: 8px; }
+.map-container {
+background:#fff;
+margin:-35px 0 20px 10px;
+padding:10px 20px 20px;
+width:698px;
+-moz-border-radius:8px;
+float:left;
+padding:0 0 5px;
+-webkit-border-radius: 8px;
+}
 .map-container > label{ margin-left:10px; }
 .map {
   background:#E5E3DF !important;
@@ -54,4 +63,5 @@ a.set-location {position:absolute;right:0;top:3px;font-weight:bold;}
 #facebox .body {width:auto;}
 p.user_menu_item {margin-bottom:0;}
 
-#my_location_button {position:relative;top:290px;left:26px; background-image:url('/mod/geolocation/graphics/my_location_button.png');  width: 20px; height: 20px; overflow: visible !important; z-index: 1;cursor:pointer;}
+#my_location_button {position:absolute;top:270px;left:27px; background-image:url('/mod/geolocation/graphics/my_location_button.png');  width: 20px; height: 20px; overflow: visible !important; z-index: 1;cursor:pointer;}
+#layout_map #my_location_button {top:310px;left:36px;}

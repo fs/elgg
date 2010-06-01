@@ -65,6 +65,8 @@ function geolocation_init() {
 
 	register_elgg_event_handler('login', 'user', 'geolocation_update_current_location_by_ip');
 
+	// Extend hover-over menu
+	elgg_extend_view('profile/menu/links','geolocation/profile_menu');
 }
 
 function geolocation_update_current_location_by_ip() {
@@ -526,9 +528,9 @@ function geolocation_tagger($event, $object_type, $object) {
 function geolocation_pagesetup() {
 	global $CONFIG;
 
-	if( get_context() == 'profile') {
-		add_submenu_item(elgg_echo('geolocation:home_location'), $CONFIG->wwwroot . 'pg/edit_location/home', 100);
-		add_submenu_item(elgg_echo('geolocation:current_location'), $CONFIG->wwwroot . 'pg/edit_location/current', 100);
+	if( get_context() == 'profile') {            
+            add_submenu_item(elgg_echo('geolocation:edit_home_location'), $CONFIG->wwwroot . 'pg/edit_location/home', 100);
+            add_submenu_item(elgg_echo('geolocation:edit_current_location'), $CONFIG->wwwroot . 'pg/edit_location/current', 100);
 	}
 }
 
@@ -541,8 +543,8 @@ function geolocation_edit_handler($page) {
 	add_submenu_item(elgg_echo('profile:editdetails'), $CONFIG->wwwroot . "pg/profile/{$page_owner->username}/edit/");
 	add_submenu_item(elgg_echo('profile:editicon'), $CONFIG->wwwroot . "pg/profile/{$page_owner->username}/editicon/");
 
-	add_submenu_item(elgg_echo('geolocation:home_location'), $CONFIG->wwwroot . 'pg/edit_location/home', 100);
-	add_submenu_item(elgg_echo('geolocation:current_location'), $CONFIG->wwwroot . 'pg/edit_location/current', 100);
+	add_submenu_item(elgg_echo('geolocation:edit_home_location'), $CONFIG->wwwroot . 'pg/edit_location/home', 100);
+	add_submenu_item(elgg_echo('geolocation:edit_current_location'), $CONFIG->wwwroot . 'pg/edit_location/current', 100);
 
 	include($CONFIG->pluginspath . "geolocation/edit_location.php");
 

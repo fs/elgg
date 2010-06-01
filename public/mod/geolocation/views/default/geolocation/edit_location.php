@@ -63,7 +63,7 @@ function get_user_profile_values($vars) {
 	<input type="hidden" value="<?php echo $lng; ?>" name="<?php echo $vars['page']; ?>_longitude" id="<?php echo $vars['page']; ?>_geolocation_longitude" />
 	<?php if ($vars['page'] == 'current'): ?>
 	<input type="hidden" value="1" name="set_geolocation_auto_current_location" />	
-	<input type="checkbox" value="yes" name="geolocation_auto_current_location" <?php if($user->geolocation_auto_current_location == 'yes') echo ' checked=checked' ;?>/> Set auto current location by ip after login<br />
+	<input type="checkbox" value="yes" name="geolocation_auto_current_location" <?php if($user->geolocation_auto_current_location == 'yes') echo ' checked=checked' ;?>/> <?php echo elgg_echo('geolocation:auto_location_by_ip');  ?><br />
 	<?php endif; ?>
 	<input type="submit" id="save_location" name="save" value="Save" />
 </form>

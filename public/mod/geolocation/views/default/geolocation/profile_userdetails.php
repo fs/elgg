@@ -12,7 +12,7 @@
 </script>
 <?php if($vars['entity']->current_latitude && $vars['entity']->current_longitude): ?>
 <div class="map_current">
-	<h4>Current location</h4>
+	<h4>Current location 123</h4>
 	<div id="map_current"></div>
 </div>
 <script type="text/javascript">
@@ -21,7 +21,7 @@
 <?php endif; ?>
 <?php if($vars['entity']->home_latitude && $vars['entity']->home_longitude): ?>
 <div class="map_home">
-	<h4>Home location</h4>
+	<h4>Home location 123</h4>
 	<div id="map_home"></div>
 </div>
 <script type="text/javascript">

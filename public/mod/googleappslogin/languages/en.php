@@ -46,7 +46,11 @@ $english = array(
 		'googleappslogin:sites:all' => "All Wikis",
 		'googleappslogin:site:user' => "%s's wiki",
 		'googleappslogin:site:add' => "Create new Wiki",
-		'item:object:site_activity' => "Site activity"
+		'item:object:site_activity' => "Site activity",
+                'item:object:doc_activity' => "Doc activity",
+                 "googleappslogin:doc:share:ok" => "Document shared",
+                "googleappslogin:doc:share:no_doc_id" => "You should select a document",
+                "googleappslogin:doc:share:no_comment" => "You should add comment",
 );
 
 add_translation("en",$english);

@@ -29,11 +29,13 @@ function googleappslogin_init() {
 	$googleappsconnect_url = elgg_validate_action_url('https://' . $_SERVER['HTTP_HOST'] . '/action/googleappslogin/connect');
 	$googleappsdisconnect_url = elgg_validate_action_url('http://' . $_SERVER['HTTP_HOST'] . '/action/googleappslogin/disconnect');
 	$oauth_update_url = elgg_validate_action_url('https://' . $_SERVER['HTTP_HOST'] . '/action/googleappslogin/oauth_update');
+        $share_doc_url = elgg_validate_action_url('https://' . $_SERVER['HTTP_HOST'] . '/action/googleappslogin/share_doc');
 
 	$GLOBALS['googleappslogin_url'] = $googleappslogin_url;
 	$GLOBALS['googleappsconnect_url'] = $googleappsconnect_url;
 	$GLOBALS['googleappsdisconnect_url'] = $googleappsdisconnect_url;
 	$GLOBALS['oauth_update_url'] = $oauth_update_url;
+        $GLOBALS['share_doc_url'] = $share_doc_url;
 	$GLOBALS['oauth_update_interval'] = get_plugin_setting('oauth_update_interval', 'googleappslogin');
 
 	$oauth_sync_email = get_plugin_setting('oauth_sync_email', 'googleappslogin');
@@ -53,18 +55,19 @@ function googleappslogin_init() {
 	elgg_extend_view('elgg_topbar/extend','googleappslogin/new_mail');
 	//register_plugin_hook('usersettings:save','user','googleappslogin_user_settings_save');
 	register_entity_type('object','site_activity', 'Site activity');
+        register_entity_type('object','doc_activity', 'Doc activity');
 	$user = $_SESSION['user'];
 
         
 	if (!empty($user) && $user->google &&$oauth_sync_sites != 'no') {
                 if  ($oauth_sync_sites != 'no') {
-                    add_menu(elgg_echo('googleappslogin:sites'), $CONFIG->wwwroot . 'pg/wikis/' . $_SESSION['user']->username);;
+                    add_menu(elgg_echo('googleappslogin:sites'), $CONFIG->wwwroot . 'pg/wikis/' . $_SESSION['user']->username);
                     register_page_handler('wikis','googleappslogin_page_handler');
                 }
 
                 if ($oauth_sync_docs!= 'no') {
                     register_page_handler('docs','googleappslogin_docs_page_handler');
-                    add_menu(elgg_echo('googleappslogin:google_docs'), $CONFIG->wwwroot . 'pg/docs/' . $_SESSION['user']->username);
+                    add_menu(elgg_echo('googleappslogin:google_docs'), $CONFIG->wwwroot . 'pg/docs/my');
                 }
 	}
 
@@ -98,7 +101,15 @@ function googleappslogin_pagesetup() {
  * @return true|false Depending on success
  */
 function googleappslogin_docs_page_handler($page) {
-        include(dirname(__FILE__) . '/docs.php');
+    	if (isset($page[0])) {
+		switch ($page[0]) {
+
+                    case 'my':
+                        include(dirname(__FILE__) . '/docs.php');
+                        return true;
+
+                }
+        }
         return true;
 }
 
@@ -324,6 +335,8 @@ register_action('googleappslogin/disconnect', true, $CONFIG->pluginspath . 'goog
 register_action('googleappslogin/return', true, $CONFIG->pluginspath . 'googleappslogin/actions/return.php');
 register_action('googleappslogin/return_with_connect', true, $CONFIG->pluginspath . 'googleappslogin/actions/return_with_connect.php');
 register_action('googleappslogin/save', false, $CONFIG->pluginspath . 'googleappslogin/actions/save.php');
+
+register_action('googleappslogin/share_doc', false, $CONFIG->pluginspath . 'googleappslogin/actions/share_doc.php');
 
 register_plugin_hook('cron', 'fiveminute', 'googleapps_cron_fetch_data');
 

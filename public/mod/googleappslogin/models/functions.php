@@ -486,6 +486,35 @@
 
 	}
 
+        	/**
+     * Get google docs for authorised client and folder
+     *
+	 * @param object $client
+	 * @param string $folder
+     * @return object
+     */
+	function googleapps_google_docs_get_collaborators($client, $doc_id) {
+		$feed = 'http://docs.google.com/feeds/acl/private/full/' . $doc_id ;
+
+		$result = $client->execute($feed, '2.0');
+		$rss = simplexml_load_string($result);
+
+                $shared_with_users=array();
+
+                // Parse for each permission entity
+		foreach ($rss->entry as $item) {
+                    $user = str_replace('Document Permission - ', '', $item->title);
+                    $shared_with_users[]=$user;
+		}
+
+                if  (in_array('everyone', $shared_with_users)) {
+                    return 'everyone'; // Shared with domain
+                }                
+
+                return (count($shared_with_users) -1 ); // Count collaborators minus owner
+	}
+
+
 	/**
      * Get google docs for authorised client and folder
      *
@@ -513,7 +542,16 @@
 			if (count($documents) >= $max_entry) {
 				//break;
 			}
+
+
+//                        echo "<pre>";
+//                        print_r($item);
+//                        echo "</pre>";
+
+                        $id = preg_replace('/http\:\/\/docs\.google\.com\/feeds\/id\/(.*)/', '$1', $item->id);
 			$title = $item['title'];
+
+                        
 
 			$links = $item->link;
 			$src = '';
@@ -544,6 +582,7 @@
 			}
 
 			if (!empty($src)) {
+                                $doc['id']=$id;
 				$doc['title'] = preg_replace('/\<title\>(.*)\<\/title\>/', '$1', $item->title->asXML());
 				$doc['trunc_title'] = trunc_name($doc['title']);
 				$doc['href'] = preg_replace('/href=\"(.*)\"/', '$1', $src->asXML());

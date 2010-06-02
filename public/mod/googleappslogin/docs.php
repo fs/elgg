@@ -14,11 +14,13 @@
 	global $CONFIG;
 	require_once($CONFIG->path . "engine/start.php");
 	$user = $_SESSION['user'];
-	
-	
+
+//        echo "VARS:<pre>";
+//            print_r($CONFIG);
+//        echo "</pre>";
 
         $client = authorized_client(true);
-	googleapps_fetch_oauth_data($client, false, 'folders docs');
+	googleapps_fetch_oauth_data($client, false, 'docs');
 
 //	// Get google docs folders
 //	$folders = unserialize($_SESSION['oauth_google_folders']);
@@ -27,13 +29,14 @@
 
 	$google_docs = unserialize($_SESSION['oauth_google_docs']);
 
-
 	$area2 = elgg_view_title(elgg_echo('googleappslogin:google_docs'));
 
 	// Get a list of google sites
 	$area2 .= '<div id="googleappslogin">';
 	$area2 .= '<div class="contentWrapper singleview">';
 
+
+        $area2 .='<form action="'.$GLOBALS['share_doc_url'].'" method="post">';
         $area2 .='<label>Comment to add</label><br /><textarea name="comment" class="docs_comment"></textarea><br /><br />';
 
         $area2.='<table class="docs_table">
@@ -41,19 +44,45 @@
                                         <td></td><td>Name</td><td>Folder/Sharing</td><td>Modified</td>
                                 </tr>';
 
-	foreach ($google_docs as $id => $doc) {            
+	foreach ($google_docs as $id => $doc) {
+            
+            $collaborators = googleapps_google_docs_get_collaborators($client, $doc['id']);
+
+            $permission_str='';
+            if ( $collaborators  !== 'everyone' )  {
+                if ($collaborators >0) {
+                    $permission_str=$collaborators.' collaborators';
+                } else {
+                    $permission_str='me';
+                }
+            } else {
+                $permission_str='everyone';
+            }
+
 		$area2 .= '			
                 <tr>
-                    <td><input type="radio" name="doc" value="'.$id.'"></td>
+                    <td><input type="radio" name="doc_id" value="'.$id.'"></td>
                     <td><span class="document-icon '.$doc["type"].'"></span>
                              <a href="' . $doc["href"] . '">' . $doc["title"] . '</a></td>
-                    <td></td>
+                    <td>'.$permission_str.'</td>
                     <td>'.friendly_time( $doc["updated"] ).'</td>
                 </tr>
 		';
 	}
-	//$area2 .= elgg_list_entities(array('type' => 'object', 'subtype' => 'site', 'limit' => 4, 'full_view' => FALSE));
-	$area2 .= '</table></div><div class="clearfloat"></div></div>';
+	
+	$area2 .= '</table>';
+
+
+        $area2.='<br />View access level: <select name="access">';
+        $area2.='<option value="public">Public</option>';
+        $area2.='<option value="logged_in">logged in users</option>';
+        $area2.='</select>';
+
+
+        $area2.='&nbsp;&nbsp;&nbsp;<input type="submit" value="Share doc"></form>';
+
+
+        $area2.='</div><div class="clearfloat"></div></div>';
 
 	$body = elgg_view_layout("two_column_left_sidebar", '', $area1 . $area2, $area3);
 

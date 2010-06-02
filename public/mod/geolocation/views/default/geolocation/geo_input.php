@@ -105,8 +105,13 @@ $(function () {
 
 function positionSuccess(position) {
 	// Centre the map on the new location
-	var coords = position.coords;
-	var new_latLng = new GLatLng(coords.latitude, coords.longitude);
+
+        if (position instanceof GLatLng) { // it is google wifi geolocation or ip geolocation?
+            var new_latLng = position;
+        } else {
+            var coords = position.coords;
+            var new_latLng = new GLatLng(coords.latitude, coords.longitude);
+        }
 
         set_location(new_latLng, true);
 }

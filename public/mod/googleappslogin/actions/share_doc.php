@@ -35,7 +35,7 @@ if (! check_document_permission($doc_access, $activity_access) ) {
     system_message(elgg_echo("googleappslogin:doc:share:wrong_permissions"));
     forward($url_for_permission_redirect);
  } else {
-     share_document($doc, $user, $comment, $url_to_redirect); // Share and public document activity
+     share_document($doc, $user, $activity_access); // Share and public document activity
      forward($url_to_redirect); // forward
  }
 

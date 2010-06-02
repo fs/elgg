@@ -45,9 +45,6 @@ $doc_activity->res_id=  $doc['id'];
 
 $doc_activity->updated = $doc['updated'];
 
-print_r($doc_activity);
-
-
 // Now save the object
 if (!$doc_activity->save()) {
         register_error('Doc activity has not saves.');

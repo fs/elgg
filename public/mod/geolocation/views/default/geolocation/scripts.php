@@ -64,11 +64,11 @@ function set_position(latlng) {
 
 
 
-function set_current_location(){
+function get_current_location_by_ip(){
 	var lat = geoip_latitude();
 	var lng = geoip_longitude();
 	var latlng = new GLatLng(lat, lng);
-	set_location(latlng, true);
+	return latlng;
 }
 
 function geocode() {
@@ -134,11 +134,11 @@ function showResponse(response, reverse) {
 }
 
 function doGeolocation() {
-		//console.log(navigator);
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(positionSuccess, positionError);
 		} else {
-			alert("Location detection not supported in your browser");
+                        latlng =get_current_location_by_ip();
+                        positionSuccess(latlng);
 		}
 	}
 
@@ -149,8 +149,13 @@ function positionError(err) {
 
 function positionSuccess(position) {
 	// Centre the map on the new location
-	var coords = position.coords;
-	var new_latLng = new GLatLng(coords.latitude, coords.longitude);
+        
+        if (position instanceof GLatLng) { // it is google wifi geolocation or ip geolocation?
+            var new_latLng = position;
+        } else {
+            var coords = position.coords;
+            var new_latLng = new GLatLng(coords.latitude, coords.longitude);
+        }
 	
         set_location(new_latLng, false);
 }
@@ -161,5 +166,20 @@ $(document).ready(function () {
 		return false;
 	});
 });
+
+function getObjectClass(obj) {
+    if (obj && obj.constructor && obj.constructor.toString) {
+        var arr = obj.constructor.toString().match(
+            /function\s*(\w+)/);
+
+        if (arr && arr.length == 2) {
+            return arr[1];
+        }
+    }
+
+    return undefined;
+}
+
+
 
 </script>

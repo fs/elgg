@@ -67,9 +67,6 @@ function get_user_profile_values($vars) {
 	<?php endif; ?>
 	<input type="submit" id="save_location" name="save" value="Save" />
 </form>
-<?php if ($vars['page'] == 'current'): ?>
-<a href="javascript:set_current_location()">Set current location by my current ip-address</a>
-<?php endif; ?>
 
 <script type="text/javascript">
 	var form = $('#location_form');
@@ -120,11 +117,20 @@ function get_user_profile_values($vars) {
 
 function positionSuccess(position) {
 	// Centre the map on the new location
-	var coords = position.coords;
-	var new_latLng = new GLatLng(coords.latitude, coords.longitude);
+
+        if (position instanceof GLatLng) { // it is google wifi geolocation or ip geolocation?
+            var new_latLng = position;
+        } else {
+            var coords = position.coords;
+            var new_latLng = new GLatLng(coords.latitude, coords.longitude);
+        }
 
         set_location(new_latLng, true);
 }
+
+
+
+
 
 
 </script>

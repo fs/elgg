@@ -1,15 +1,20 @@
 <?php
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-$doc_id = get_input('doc_id', '-1');
-$comment = get_input('comment', '');
-$access = get_input('access', '');
 
+$doc_id = get_input('doc_id');
+$comment = get_input('comment', '');
+$activity_access = get_input('access', '');
 $url_to_redirect=$CONFIG->wwwroot . 'pg/docs/my';
 
-if($doc_id==-1) {
+$url_for_permission_redirect=$CONFIG->wwwroot . 'pg/docs/permissions';
+
+
+$to_share=array();
+$to_share['doc_id']=$doc_id;
+$to_share['comment']=$comment;
+$to_share['access']=$activity_access;
+$_SESSION['google_docs_to_share_data']=serialize( $to_share ); // remember data
+
+if ( is_null($doc_id) ) {
     system_message(elgg_echo("googleappslogin:doc:share:no_doc_id"));
     forward($url_to_redirect);
 }
@@ -20,45 +25,18 @@ if( empty($comment)) {
 }
 
 $google_docs = unserialize($_SESSION['oauth_google_docs']);
+$google_docs_collaborators = unserialize($_SESSION['google_docs_collaboratos']);
+
 $user = $_SESSION['user'];
-
 $doc = $google_docs[$doc_id];
+$doc_access = $google_docs_collaborators[$doc_id];
 
-	function access_translate($access) {
-            switch ($access) {
-                case 'logged_in': return 1; break;
-                case 'public': return 2; break;
-                default: return -1;  // wrong access
-            }
-	}
-
-$doc_activity = new ElggObject();
-$doc_activity->subtype = "doc_activity";
-$doc_activity->owner_guid = $user->guid;
-$doc_activity->container_guid = $user->guid;
-
-$doc_activity->access_id = access_translate($access);
-
-$doc_activity->title = $doc['title'];
-$doc_activity->text = $comment.' <a href="' . $doc["href"] . '">Open document</a> ';
-$doc_activity->res_id=  $doc['id'];
-
-$doc_activity->updated = $doc['updated'];
-
-// Now save the object
-if (!$doc_activity->save()) {
-        register_error('Doc activity has not saves.');
-        exit;
-}
-
-// if doc is public add to river
-if ($doc_activity->access_id!=0) {
-    add_to_river('river/object/doc_activity/create', 'create doc', $user->guid, $doc_activity->guid, "", strtotime($date));
-}
-
-system_message(elgg_echo("googleappslogin:doc:share:ok"));
-
-// Forward to the docs
-forward($url_to_redirect);
+if (! check_document_permission($doc_access, $activity_access) ) {
+    system_message(elgg_echo("googleappslogin:doc:share:wrong_permissions"));
+    forward($url_for_permission_redirect);
+ } else {
+     share_document($doc, $user, $comment, $url_to_redirect); // Share and public document activity
+     forward($url_to_redirect); // forward
+ }
 
 ?>

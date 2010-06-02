@@ -30,12 +30,14 @@ function googleappslogin_init() {
 	$googleappsdisconnect_url = elgg_validate_action_url('http://' . $_SERVER['HTTP_HOST'] . '/action/googleappslogin/disconnect');
 	$oauth_update_url = elgg_validate_action_url('https://' . $_SERVER['HTTP_HOST'] . '/action/googleappslogin/oauth_update');
         $share_doc_url = elgg_validate_action_url('https://' . $_SERVER['HTTP_HOST'] . '/action/googleappslogin/share_doc');
+        $change_doc_permissions_url = elgg_validate_action_url('https://' . $_SERVER['HTTP_HOST'] . '/action/googleappslogin/change_doc_permissions');
 
 	$GLOBALS['googleappslogin_url'] = $googleappslogin_url;
 	$GLOBALS['googleappsconnect_url'] = $googleappsconnect_url;
 	$GLOBALS['googleappsdisconnect_url'] = $googleappsdisconnect_url;
 	$GLOBALS['oauth_update_url'] = $oauth_update_url;
         $GLOBALS['share_doc_url'] = $share_doc_url;
+        $GLOBALS['change_doc_permissions_url'] = $change_doc_permissions_url;
 	$GLOBALS['oauth_update_interval'] = get_plugin_setting('oauth_update_interval', 'googleappslogin');
 
 	$oauth_sync_email = get_plugin_setting('oauth_sync_email', 'googleappslogin');
@@ -108,6 +110,10 @@ function googleappslogin_docs_page_handler($page) {
                         include(dirname(__FILE__) . '/docs.php');
                         return true;
 
+                    case 'permissions':
+                        include(dirname(__FILE__) . '/docs_permissions.php');
+                        return true;
+                        
                 }
         }
         return true;
@@ -337,6 +343,7 @@ register_action('googleappslogin/return_with_connect', true, $CONFIG->pluginspat
 register_action('googleappslogin/save', false, $CONFIG->pluginspath . 'googleappslogin/actions/save.php');
 
 register_action('googleappslogin/share_doc', false, $CONFIG->pluginspath . 'googleappslogin/actions/share_doc.php');
+register_action('googleappslogin/change_doc_permissions', false, $CONFIG->pluginspath . 'googleappslogin/actions/change_doc_permissions.php');
 
 register_plugin_hook('cron', 'fiveminute', 'googleapps_cron_fetch_data');
 

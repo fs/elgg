@@ -56,9 +56,7 @@ if (!$doc_activity->save()) {
 
 // if doc is public add to river
 if ($doc_activity->access_id!=0) {
-    if (add_to_river('river/object/doc_activity/create', 'create doc', $user->guid, $doc_activity->guid, "", strtotime($date))) {
-        echo "Added to river";
-    } else { echo "Not added to river"; }
+    add_to_river('river/object/doc_activity/create', 'create doc', $user->guid, $doc_activity->guid, "", strtotime($date));
 }
 
 system_message(elgg_echo("googleappslogin:doc:share:ok"));

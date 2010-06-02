@@ -13,19 +13,10 @@
 	// Load Elgg engine
 	global $CONFIG;
 	require_once($CONFIG->path . "engine/start.php");
+        
 	$user = $_SESSION['user'];
-
-//        echo "VARS:<pre>";
-//            print_r($CONFIG);
-//        echo "</pre>";
-
         $client = authorized_client(true);
 	googleapps_fetch_oauth_data($client, false, 'docs');
-
-//	// Get google docs folders
-//	$folders = unserialize($_SESSION['oauth_google_folders']);
-//	$google_folder = $folders[$google_folder];
-//	$main_folders = child_folders('', $folders);
 
 	$google_docs = unserialize($_SESSION['oauth_google_docs']);
 
@@ -41,36 +32,31 @@
 
         $area2.='<table class="docs_table">
                                 <tr>
-                                        <td></td><td>Name</td><td>Folder/Sharing</td><td>Modified</td>
+                                        <td></td><td><b>Name</b></td><td><b>Sharing</b></td><td><b>Modified</b></td>
                                 </tr>';
 
+        $documents_collaborators=array();
 	foreach ($google_docs as $id => $doc) {
             
-            $collaborators = googleapps_google_docs_get_collaborators($client, $doc['id']);
+            $collaborators = googleapps_google_docs_get_collaborators($client, $doc['id']);           
+            $google_docs_collaborators[]=$collaborators;
 
-            $permission_str='';
-            if ( $collaborators  !== 'everyone' )  {
-                if ($collaborators >0) {
-                    $permission_str=$collaborators.' collaborators';
-                } else {
-                    $permission_str='me';
-                }
-            } else {
-                $permission_str='everyone';
-            }
+            $permission_str=get_permission_str($collaborators);
 
-		$area2 .= '			
-                <tr>
-                    <td><input type="radio" name="doc_id" value="'.$id.'"></td>
-                    <td><span class="document-icon '.$doc["type"].'"></span>
-                             <a href="' . $doc["href"] . '">' . $doc["title"] . '</a></td>
-                    <td>'.$permission_str.'</td>
-                    <td>'.friendly_time( $doc["updated"] ).'</td>
-                </tr>
-		';
+            $area2 .= '
+            <tr>
+                <td><input type="radio" name="doc_id" value="'.$id.'"></td>
+                <td><span class="document-icon '.$doc["type"].'"></span>
+                         <a href="' . $doc["href"] . '">' . $doc["title"] . '</a></td>
+                <td>'.$permission_str.'</td>
+                <td>'.friendly_time( $doc["updated"] ).'</td>
+            </tr>
+            ';
 	}
-	
-	$area2 .= '</table>';
+        $area2 .= '</table>';
+
+
+        $_SESSION['google_docs_collaboratos']=serialize($google_docs_collaborators);    
 
 
         $area2.='<br />View access level: <select name="access">';
@@ -91,4 +77,5 @@
 
 	// Display page
 	page_draw( elgg_echo('googleappslogin:google_docs'), $body);
+
 ?>

@@ -507,12 +507,44 @@
                     $shared_with_users[]=$user;
 		}
 
-                if  (in_array('everyone', $shared_with_users)) {
-                    return 'everyone'; // Shared with domain
-                }                
+                if  (in_array('default', $shared_with_users)) {
+                    return 'public'; // Public document
+                }
 
-                return (count($shared_with_users) -1 ); // Count collaborators minus owner
+                if  (in_array('everyone', $shared_with_users)) {
+                    return 'everyone_in_domain'; // Shared with domain
+                }                        
+
+                return count($shared_with_users);
 	}
+
+
+
+        function googleapps_change_doc_sharing($client, $doc_id, $access) {
+            
+            switch ($access) {
+                case 'public': $access_type='default'; break;
+                case 'logged_in': $access_type='domain'; break;
+            }
+
+            $feed = 'http://docs.google.com/feeds/default/private/full/'. $doc_id.'/acl';
+
+            $data = "<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:gAcl='http://schemas.google.com/acl/2007'>
+  <category scheme='http://schemas.google.com/g/2005#kind'
+    term='http://schemas.google.com/acl/2007#accessRule'/>
+                                  <gAcl:role value='reader'/> ";            
+
+           if ($access_type=="domain") {
+               $domain = get_plugin_setting('googleapps_domain', 'googleappslogin');
+               $data.="<gAcl:scope type=\"domain\" value=\"".$domain."\" />";
+           } else {
+               $data.="<gAcl:scope type=\"default\"/>";
+           }
+
+            $data.="</entry>";            
+
+            $result = $client->execute_post($feed, '3.0', null, 'POST', $data);
+        }
 
 
 	/**
@@ -776,5 +808,82 @@
 
 		return $string;
 	}
+
+
+        
+        function get_permission_str($collaborators) {
+            $str='';
+            switch ($collaborators) {
+                case 'everyone_in_domain' :
+                                $str='Everyone in domain';
+                                break;
+
+                case 'public':
+                                $str='Public';
+                                break;
+
+                default:
+                                if($collaborators > 1) $str=($collaborators-1).' collaborators'; // minus owner
+                                else $str='me';
+                                break;
+            }
+
+            return $str;
+        }
+
+
+        function access_translate($access) {
+                switch ($access) {
+                    case 'logged_in': return 1; break; // logged_in
+                    case 'public': return 2; break; // public
+                    default: return -1;  // wrong access
+                }
+        }
+
+        
+    function share_document($doc, $user, $message) {            
+            $doc_activity = new ElggObject();
+            $doc_activity->subtype = "doc_activity";
+            $doc_activity->owner_guid = $user->guid;
+            $doc_activity->container_guid = $user->guid;
+
+            $doc_activity->access_id = access_translate($access);
+
+            $doc_activity->title = $doc['title'];
+            $doc_activity->text = $message.' <a href="' . $doc["href"] . '">Open document</a> ';
+            $doc_activity->res_id=  $doc['id'];
+
+            $doc_activity->updated = $doc['updated'];
+
+            // Now save the object
+            if (!$doc_activity->save()) {
+                    register_error('Doc activity has not saves.');
+                    die("not saved");
+                    exit;
+            }
+
+            // if doc is public add to river
+            if ($doc_activity->access_id!=0) {
+                add_to_river('river/object/doc_activity/create', 'create doc', $user->guid, $doc_activity->guid, "", strtotime($date));
+            }
+
+            system_message(elgg_echo("googleappslogin:doc:share:ok"));
+     }
+
+
+        // Document permissions:
+            // everyone_in_domain
+            // public
+            // number of collaborators
+        // Acces level
+            // public
+            // logged_in
+            // private
+
+        function check_document_permission($document, $access) {
+            if ( $document==='public')  return true;
+            if ( $document==='everyone_in_domain' and $access==='logged_in')  return true;
+            return false;
+        }
 
 ?>

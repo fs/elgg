@@ -20,10 +20,10 @@ switch ($answer) {
     
     case 'grant_view':
         googleapps_change_doc_sharing($client, $doc[id], $access) ;
-        share_document($doc, $user, $comment, $url_to_redirect);
+        share_document($doc, $user, $comment, $access);
         break;
     case 'ignore': 
-        share_document($doc, $user, $comment, $url_to_redirect);
+        share_document($doc, $user, $comment, $access);
         break;
 
     case 'cancel':        

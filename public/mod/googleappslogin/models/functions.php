@@ -841,7 +841,7 @@
         }
 
         
-    function share_document($doc, $user, $message) {            
+    function share_document($doc, $user, $message, $access) {
             $doc_activity = new ElggObject();
             $doc_activity->subtype = "doc_activity";
             $doc_activity->owner_guid = $user->guid;

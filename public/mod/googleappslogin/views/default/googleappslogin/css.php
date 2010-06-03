@@ -107,6 +107,8 @@
 
 .docs_table {
     width: 100%;
+    height: 100px;
+    overflow: auto; !important;
 }
 
 .docs_comment {

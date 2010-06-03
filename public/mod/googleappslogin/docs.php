@@ -30,10 +30,14 @@
         $area2 .='<form action="'.$GLOBALS['share_doc_url'].'" method="post">';
         $area2 .='<label>Comment to add</label><br /><textarea name="comment" class="docs_comment"></textarea><br /><br />';
 
-        $area2.='<table class="docs_table">
+        $area2.='<table width="100%">
                                 <tr>
-                                        <td></td><td><b>Name</b></td><td><b>Sharing</b></td><td><b>Modified</b></td>
-                                </tr>';
+                                        <td width="70"></td><td  width="200"><b>Name</b></td><td><b>Sharing</b></td><td><b>Modified</b></td>
+                                </tr>
+                             </table>';
+        
+        $area2.='<div class="docs_table">            
+                                <table width="100%">';
 
         $documents_collaborators=array();
 	foreach ($google_docs as $id => $doc) {
@@ -47,13 +51,13 @@
             <tr>
                 <td><input type="radio" name="doc_id" value="'.$id.'"></td>
                 <td><span class="document-icon '.$doc["type"].'"></span>
-                         <a href="' . $doc["href"] . '">' . $doc["title"] . '</a></td>
+                         <a href="' . $doc["href"] . '">' . $doc["trunc_title"] . '</a></td>
                 <td>'.$permission_str.'</td>
                 <td>'.friendly_time( $doc["updated"] ).'</td>
             </tr>
             ';
 	}
-        $area2 .= '</table>';
+        $area2 .= '</table></div>';
 
 
         $_SESSION['google_docs_collaboratos']=serialize($google_docs_collaborators);    

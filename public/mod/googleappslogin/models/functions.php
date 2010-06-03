@@ -174,7 +174,10 @@
                                                     if ($site_activity->access_id!=0) {
                                                         if (add_to_river('river/object/site_activity/create', 'create', $user->guid, $site_activity->guid, "", strtotime($date))) {
                                                                 $is_new_activity = true;
+                                                                echo "<br /><b>published activity for this site</b>";
                                                         }
+                                                    } else {
+                                                        echo "<br /><b>not published activity. site is private.</b>";
                                                     }
                                         } // public activity
                                 } // rss in site
@@ -185,15 +188,9 @@
                                     $site_entity->modified = $last_time_site_updated;
                                     $site_entity->save();
 
-                                    echo "<b>updated site.</b>";
-                                    echo "<br />New time =".$last_time_site_updated;
+                                    echo "<b>updated time site.</b>";
 
-                                } else {
-
-                                    echo "site ok.";
-                                    echo "<br />last time =".$last_time_site_updated;
-
-                                }
+                                };
 
 
                         } // all sites

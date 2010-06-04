@@ -29,7 +29,8 @@
 		$sites = elgg_get_entities(array('type' => 'object', 'subtype' => 'site'));
 	} else {
 		// get list of logged in user
-		$sites = $user->getObjects('site');
+                $res=googleapps_sync_sites(true, $user);
+		$sites = $res['site_entities'];
 	}
 
 	$area2 = elgg_view_title(elgg_echo('googleappslogin:sites:' . $postfix));
@@ -40,7 +41,7 @@
 	
 	$site_list = array();
 	
-	foreach ($sites as $number => $site) {           
+	foreach ($sites as $number => $site) {
 
 		if (isset($site_list[$site->site_id])) {
 			$actual_site = $site_list[$site->site_id];

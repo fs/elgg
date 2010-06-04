@@ -45,7 +45,9 @@
 			
 			<p><?php echo elgg_echo('googleappslogin:google_sites_settings_description'); ?></p>
 			<?php
-			foreach ($site_list as $title => $access) {
+			foreach ($site_list as $site) {
+                            $tite=$site['title'];
+                            $access=$site['access'];
 				if (!empty($title)){
 					if (is_null($access) || $access != 0 && $access != 22) {
 						$access = 1; 

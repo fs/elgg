@@ -55,3 +55,14 @@ a.set-location {position:absolute;right:0;top:3px;font-weight:bold;}
 p.user_menu_item {margin-bottom:0;}
 
 #my_location_button {position:relative;top:290px;left:26px; background-image:url('/mod/geolocation/graphics/my_location_button.png');  width: 20px; height: 20px; overflow: visible !important; z-index: 1;cursor:pointer;}
+
+.user_on_map {
+    display: inline;
+    float: none;
+}
+
+
+.user_on_map img {
+     float: left;
+     padding-right: 5px;
+}

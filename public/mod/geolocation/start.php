@@ -73,6 +73,7 @@ function geolocation_update_current_location_by_ip() {
 	$user = $_SESSION['user'];
 
 	if (!empty($user)) {
+                if ($user->geolocation_auto_current_location != 'yes') return;
 		$user_ip = $_SERVER['REMOTE_ADDR'];
 
 		include 'geoip/geoipcity.inc';
@@ -80,7 +81,7 @@ function geolocation_update_current_location_by_ip() {
 
 		$gi = geoip_open($_SERVER['DOCUMENT_ROOT'] . "/mod/geolocation/geoip/GeoLiteCity.dat",GEOIP_STANDARD);
 
-		$record = geoip_record_by_addr($gi,'78.138.140.122');
+		$record = geoip_record_by_addr($gi, $user_ip);
 		//var_dump($record);
 		geoip_close($gi);
 
@@ -89,10 +90,6 @@ function geolocation_update_current_location_by_ip() {
 			$user->current_longitude = $record->longitude;
 			$user->save();
 		}
-
-//		$user->geolocation_auto_current_location = 'yes';
-//		$user->save();
-
 	}
 }
 
@@ -271,14 +268,19 @@ function geolocation_page_handler($page) {
 			foreach($result as $item) {
 				if($item->type == 'user' && $item->current_latitude != null && $item->current_longitude != null  && $item->current_latitude != '0.004806518549043713' && $item->current_longitude != '0.35430908203125') {
                                         /* User */
-
-                                        $icon="<a href=\"".$item->getURL()."\">" . elgg_view("profile/icon",array('entity' => $item, 'size' => 'small', 'override' => 'true')) . "</a> &nbsp; ";
+                                        
 					$data['marker'][]['latitude'] = $item->current_latitude;
 					$key = count($data['marker'])-1;
 					$data['marker'][$key]['longitude'] = $item->current_longitude;
-					$data['marker'][$key]['desc'] = $icon.'<a href="' . $item->getURL() . '">' . $item->name . '</a> ';
-					$data['marker'][$key]['desc'] .= $item->briefdescription.'';
-					if( in_array($item->type, $icons) ) $data['marker'][$key]['icon'] = $item->type;
+                                        
+                                        $icon="<a href=\"".$item->getURL()."\">" . elgg_view("profile/icon",array('entity' => $item, 'size' => 'small', 'override' => 'true')) . "</a>";
+
+                                        $data['marker'][$key]['desc'] = '<div class="user_on_map">';
+					$data['marker'][$key]['desc'] .= $icon.'<a href="' . $item->getURL() . '">' . $item->name . '</a> <br />';
+					$data['marker'][$key]['desc'] .= $item->briefdescription;
+                                        $data['marker'][$key]['desc'] .= '</div><div class="clearfloat"></div>';
+					if( in_array($item->type, $icons) ) $data['marker'][$key]['icon'] = $item->type;                                                                             
+
 				} elseif($item->getLatitude() != null && $item->getLatitude() != '0.004806518549043713' && $item->getLongitude() != '0.35430908203125') {
 					$data['marker'][]['latitude'] = $item->getLatitude();
 					$key = count($data['marker'])-1;
@@ -297,7 +299,6 @@ function geolocation_page_handler($page) {
 
 			if(get_input('types') == 'all') echo 'var data = ';
 			echo json_encode($data);
-
 
 			break;
 

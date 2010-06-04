@@ -23,7 +23,10 @@ if ($user->connect == 1) {
 	$user->google = 1;
 }
 
-googleapps_sync_sites();
+$response=googleapps_sync_sites();
+$user_site_entities=$response['site_entities'];
+
+$_SESSION['user_site_entities']=serialize($user_site_entities);
 
 ?>
 <div class="contentWrapper">
@@ -42,13 +45,17 @@ googleapps_sync_sites();
 		<p><?php echo elgg_echo('googleappslogin:google_sites_settings_description'); ?></p>
 				<?php
 				$body = '';
-				foreach ($site_list as $title => $access) {
+				foreach ($site_list as $site_id => $site_obj) {
+
+                                    $title=$site_obj['title'];
+                                     $access=$site_obj['access'];
+
 					if (!empty($title)) {
 						if (is_null($access) || $access != 0 && $access != 22) {
 							$access = 1;
 						}
 
-						$body .= '<p><b>'. $title . '</b><br />' . elgg_view('input/radio',array('internalname' => "googleapps_sites_settings[" . $title . "]", 'options' => $access_types, 'value' => $access)) . '</p>';
+						$body .= '<p><b>'. $title . '</b><br />' . elgg_view('input/radio',array('internalname' => "googleapps_sites_settings[" . $site_id . "]", 'options' => $access_types, 'value' => $access)) . '</p>';
 					}
 				}
 

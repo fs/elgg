@@ -13,7 +13,20 @@ function update_acitivities_access($site_name, $access) {
 	}
 }
 
-$googleapps_controlled_profile = strip_tags(get_input('googleapps_controlled_profile'));		
+
+function update_site_entity_acces($entity_id, $access) {
+    $user_site_entities=unserialize($_SESSION['user_site_entities']);
+
+    foreach ($user_site_entities as $entity) {
+        if ( $entity->guid == $entity_id ) {
+            $entity->access_id = $access;
+            $entity->save();
+        }
+    }
+
+}
+
+$googleapps_controlled_profile = strip_tags(get_input('googleapps_controlled_profile'));
 $googleapps_sites_settings = $_POST['googleapps_sites_settings'];
 
 $user_id = get_input('guid');
@@ -49,9 +62,11 @@ if ($user->google == 1) {
 
 		if (!empty($googleapps_sites_settings)) {
 			$site_list = unserialize($user->site_list);
-			foreach ($googleapps_sites_settings as $title => $access) {
-				$site_list[$title] = $access;
+			foreach ($googleapps_sites_settings as $site_id=> $access) {
+				$site_list[$site_id]['access'] = $access;
+                                $entity_id=$site_list[$site_id]['entity_id'];
 				update_acitivities_access($title, $access);
+                                update_site_entity_acces($entity_id, $access);
 			}
 			$user->site_list = serialize($site_list);
 			$user->save();

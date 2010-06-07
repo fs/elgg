@@ -107,7 +107,7 @@
 
 .docs_table {
     width: 100%;
-    height: 600px;
+    height: 250px;
     overflow: auto; !important;
 }
 

@@ -41,10 +41,8 @@
 
         $documents_collaborators=array();
 	foreach ($google_docs as $id => $doc) {
-            
-            $collaborators = googleapps_google_docs_get_collaborators($client, $doc['id']);           
-            $google_docs_collaborators[]=$collaborators;
 
+            $collaborators =$doc['collaborators'];
             $permission_str=get_permission_str($collaborators);
 
             $area2 .= '
@@ -59,19 +57,14 @@
 	}
         $area2 .= '</table></div>';
 
-
-        $_SESSION['google_docs_collaboratos']=serialize($google_docs_collaborators);    
-
-
         $area2.='<br />View access level: <select name="access">';
         $area2.='<option value="public">Public</option>';
-        $area2.='<option value="logged_in">logged in users</option>';
+        $area2.='<option value="logged_in">Logged in users</option>';
+        $area2.='<option value="group">Group or Shared Access</option>';
         $area2.='</select>';
 
 
         $area2.='&nbsp;&nbsp;&nbsp;<input type="submit" value="Share doc"></form>';
-
-
         $area2.='</div><div class="clearfloat"></div></div>';
 
 	$body = elgg_view_layout("two_column_left_sidebar", '', $area1 . $area2, $area3);

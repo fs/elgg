@@ -25,17 +25,16 @@ if( empty($comment)) {
 }
 
 $google_docs = unserialize($_SESSION['oauth_google_docs']);
-$google_docs_collaborators = unserialize($_SESSION['google_docs_collaboratos']);
 
 $user = $_SESSION['user'];
 $doc = $google_docs[$doc_id];
-$doc_access = $google_docs_collaborators[$doc_id];
+$doc_access = $doc['collaborators'];
 
 if (! check_document_permission($doc_access, $activity_access) ) {
     system_message(elgg_echo("googleappslogin:doc:share:wrong_permissions"));
     forward($url_for_permission_redirect);
  } else {
-     share_document($doc, $user, $comment, $activity_access); // Share and public document activity
+     share_document($doc, $user, $comment, $activity_access, $doc_access); // Share and public document activity
      forward($url_to_redirect); // forward
  }
 

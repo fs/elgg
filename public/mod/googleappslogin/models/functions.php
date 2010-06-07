@@ -498,7 +498,7 @@
                     return 'everyone_in_domain'; // Shared with domain
                 }                        
 
-                return count($shared_with_users);
+                return $shared_with_users;
 	}
 
 
@@ -558,14 +558,10 @@
 				//break;
 			}
 
-
-//                        echo "<pre>";
-//                        print_r($item);
-//                        echo "</pre>";
-
                         $id = preg_replace('/http\:\/\/docs\.google\.com\/feeds\/id\/(.*)/', '$1', $item->id);
 			$title = $item['title'];
 
+                        $collaborators = googleapps_google_docs_get_collaborators($client, $id); // get collaborators for this document
                         
 
 			$links = $item->link;
@@ -603,6 +599,7 @@
 				$doc['href'] = preg_replace('/href=\"(.*)\"/', '$1', $src->asXML());
 				$doc['type'] = $type;
 				$doc['updated'] = strtotime($item->updated);
+                                $doc['collaborators'] = $collaborators;
 				$documents[] = $doc;
 			}
 		}
@@ -795,6 +792,7 @@
 
         
         function get_permission_str($collaborators) {
+            if(is_array($collaborators)) $collaborators=count($collaborators);
             $str='';
             switch ($collaborators) {
                 case 'everyone_in_domain' :
@@ -824,13 +822,19 @@
         }
 
         
-    function share_document($doc, $user, $message, $access) {
+    function share_document($doc, $user, $message, $access, $collaborators = null) {
             $doc_activity = new ElggObject();
             $doc_activity->subtype = "doc_activity";
             $doc_activity->owner_guid = $user->guid;
             $doc_activity->container_guid = $user->guid;
 
-            $doc_activity->access_id = access_translate($access);
+            if ($access == 'group') { /* Group or Shared Access permission */
+                $doc_activity->access_id = ACCESS_LOGGED_IN;
+                $doc_activity->shared_acces = true;
+                $doc_activity->show_only_for = serialize($collaborators);
+            } else {
+                $doc_activity->access_id = access_translate($access);
+            }
 
             $doc_activity->title = $doc['title'];
             $doc_activity->text = $message.' <a href="' . $doc["href"] . '">Open document</a> ';
@@ -864,6 +868,7 @@
             // private
 
         function check_document_permission($document, $access) {
+            if ( $access==='group')  return true; /* There does not need to be any permission logic for this one. We'll leave that to the user. */
             if ( $document==='public')  return true;
             if ( $document==='everyone_in_domain' and $access==='logged_in')  return true;
             return false;

@@ -23,11 +23,13 @@
 
         $area2 .='<form action="'.$GLOBALS['change_doc_permissions_url'].'" method="post">';
         $area2 .='<h3>'.elgg_echo('googleappslogin:doc:share:wrong_permissions').'</h3>';
-        $area2 .='<input type="radio" name="answer" value="grant_view" checked>Grant view permisson<br />';
-        $area2 .='<input type="radio" name="answer" value="ignore">Ignore and continue<br />';
-        $area2 .='<input type="radio" name="answer" value="cancel">Cancel<br />';
+//        $area2 .='<input type="radio" name="answer" value="grant_view" checked>Grant view permisson<br />';
+//        $area2 .='<input type="radio" name="answer" value="ignore">Ignore and continue<br />';
+//        $area2 .='<input type="radio" name="answer" value="cancel">Cancel<br />';
 
-         $area2.='&nbsp;&nbsp;&nbsp;<input type="submit" value="Share doc"></form>';
+        $area2 .='<input type="submit" value="Grant view permisson" name="answer">&nbsp;';
+        $area2 .='<input type="submit" value="Ignore and continue" name="answer">&nbsp;';
+        $area2 .='<input type="submit" value="Cancel" name="answer">&nbsp;';
 
 
         $area2.='</div><div class="clearfloat"></div></div>';

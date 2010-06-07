@@ -18,17 +18,16 @@ $client = authorized_client(true);
 
 switch ($answer) {
     
-    case 'grant_view':
+    case 'Grant view permisson':
         googleapps_change_doc_sharing($client, $doc[id], $access) ;
         share_document($doc, $user, $comment, $access);
         break;
-    case 'ignore': 
+    case 'Ignore and continue':
         share_document($doc, $user, $comment, $access);
         break;
 
-    case 'cancel':        
-        break;
-        
+    case 'Cancel':
+        break;        
 }
 
 forward($url_to_redirect);

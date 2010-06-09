@@ -706,7 +706,7 @@ ClusterMarker_.prototype.initialize = function (map) {
 		one_location++;
 	    }
 	    var num = parseInt(i) +1
-	    title ="<li><p>"+ title + num + ". " + markers_desc[i].desc + "</p></li>";
+	    title +="<li>"+ markers_desc[i].desc + "</li>";
 	}
 
         title += "</ol>";

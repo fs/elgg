@@ -276,7 +276,7 @@ function geolocation_page_handler($page) {
                                         $icon="<a href=\"".$item->getURL()."\">" . elgg_view("profile/icon",array('entity' => $item, 'size' => 'small', 'override' => 'true')) . "</a>";
 
                                         $data['marker'][$key]['desc'] = '<div class="user_on_map">';
-					$data['marker'][$key]['desc'] .= $icon.'<a href="' . $item->getURL() . '">' . $item->name . '</a>';
+					$data['marker'][$key]['desc'] .= $icon.'<a href="' . $item->getURL() . '">' . $item->name . '</a><br />';
 					$data['marker'][$key]['desc'] .= $item->briefdescription;
                                         $data['marker'][$key]['desc'] .= '</div><div class="clearfloat"></div>';
 					if( in_array($item->type, $icons) ) $data['marker'][$key]['icon'] = $item->type;                                                                             

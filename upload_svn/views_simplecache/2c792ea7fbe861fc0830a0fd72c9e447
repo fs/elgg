@@ -1,0 +1,3654 @@
+/**
+ * ELGG DEFAULT CSS
+ * @uses $vars['wwwroot'] The site URL
+*/
+
+/* Table of Contents:
+
+	RESET CSS 					reduce browser inconsistencies in line height, margins, font size...
+	CSS BASICS					<body> <p> <a> <h1>
+	PAGE LAYOUT					main page content blocks: header, sidebar, footer...
+	GENERIC SELECTORS			reusable generic classes
+	ELGG TOPBAR					elgg topbar
+	HEADER CONTENTS
+	ELGG SITE NAVIGATION		Primary site navigation in header
+	FOOTER CONTENTS
+	SYSTEM MESSAGES				system messages overlay
+	BREADCRUMBS
+	SUBMENU						current page/tool submenu in sidebar
+	PAGINATION					re-usable default page navigation
+	ELGG TABBED NAVIGATION 		re-usable tabbed navigation
+	LOGIN / REGISTER			login box, register, and lost password page styles
+	CONTENT HEADER
+	DEFAULT COMMENTS
+	ENTITY LISTINGS				elgg's default entity listings
+	USER SETTINGS				styles for user settings
+	GENERAL FORM ELEMENTS		default styles for all elgg input/form elements
+	FRIENDS PICKER
+	LIKES
+
+
+*/
+/* Colors:
+
+	#4690D6 - elgg light blue
+	#0054A7 - elgg dark blue
+	#e4ecf5 - elgg v light blue
+*/
+
+
+
+/* ***************************************
+	RESET CSS
+*************************************** */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-weight: inherit;
+	font-style: inherit;
+	font-size: 100%;
+	font-family: inherit;
+	vertical-align: baseline;
+}
+img {
+	border-width:0;
+	border-color:transparent;
+}
+:focus {
+	outline:0 none;
+	-moz-outline-style: none;
+}
+ol, ul {
+	/* list-style:none outside none; */
+	margin: 0 0 10px 0;
+	padding-left: 20px;
+}
+em, i {
+	font-style:italic;
+}
+ins {
+	text-decoration:none;
+}
+del {
+	text-decoration:line-through;
+}
+strong {
+	font-weight:bold;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+caption, th, td {
+	text-align: left;
+	font-weight: normal;
+	vertical-align: top;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: "";
+}
+blockquote, q {
+	quotes: "" "";
+}
+
+
+
+
+/* ***************************************
+	BASICS
+*************************************** */
+body {
+	text-align:left;
+	margin:0 auto;
+	padding:0;
+	background-color: white;
+	font-size: 80%;
+	line-height: 1.4em;
+	font-family: "Lucida Grande",Arial,Tahoma,Verdana,sans-serif;
+}
+a {
+	color: #4690D6;
+	text-decoration: none;
+	-moz-outline-style: none;
+	outline: none;
+}
+a:hover,
+a.selected {
+	color: #555555;
+	text-decoration: underline;
+}
+p {
+	margin-bottom:15px;
+}
+p:last-child {
+	margin-bottom:0;
+}
+small {
+	font-size: 90%;
+}
+h1, h2, h3, h4, h5, h6 {
+	font-weight: bold;
+	line-height: auto;
+	color:#0054A7;
+}
+h1 { font-size: 1.8em; }
+h2 { font-size: 1.5em; line-height: 1.1em; }
+h3 { font-size: 1.2em; }
+h4 { font-size: 1.0em; }
+h5 { font-size: 0.9em; }
+h6 { font-size: 0.8em; }
+dt {
+	font-weight: bold;
+}
+dd {
+	margin: 0 0 1em 1em;
+}
+pre, code {
+	font-family:Monaco,"Courier New",Courier,monospace;
+	font-size:12px;
+	background:#EBF5FF;
+	overflow:auto;
+
+	overflow-x: auto; /* Use horizontal scroller if needed; for Firefox 2, not needed in Firefox 3 */
+	white-space: pre-wrap; /* css-3 */
+	white-space: -moz-pre-wrap !important; /* Mozilla, since 1999 */
+	white-space: -pre-wrap; /* Opera 4-6 */
+	white-space: -o-pre-wrap; /* Opera 7 */
+	word-wrap: break-word; /* Internet Explorer 5.5+ */
+}
+code {
+	padding:2px 3px;
+}
+pre {
+	padding:3px 15px;
+	margin:0px 0 15px 0;
+	line-height:1.3em;
+}
+blockquote {
+	padding:3px 15px;
+	margin:0px 0 15px 0;
+	line-height:1.3em;
+	background:#EBF5FF;
+	border:none;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+}
+
+
+/* ***************************************
+	GENERIC SELECTORS
+*************************************** */
+h2 {
+	border-bottom:1px solid #CCCCCC;
+	padding-bottom:5px;
+}
+.clearfloat:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+.link {
+	cursor:pointer;
+}
+.small {
+	font-size: 90%;
+}
+.divider {
+	border-top:1px solid #cccccc;
+}
+.hidden {
+	display:none;
+}
+.radius8 {
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+}
+.margin_none {
+	margin:0;
+}
+.margin_top {
+	margin-top:10px;
+}
+.rss_link {
+	margin-top:-10px;
+	margin-bottom:10px;
+}
+.rss_link a {
+	display:block;
+	width:14px;
+	height:14px;
+	float:right;
+	background-image:url(http://elgg.leonid2.tsweb.toa/_graphics/elgg_sprites.png);
+	background-repeat: no-repeat;
+	background-position: -250px top;
+	text-indent: -1000em;
+}
+.tags {
+	background-image:url(http://elgg.leonid2.tsweb.toa/_graphics/elgg_sprites.png);
+	background-repeat: no-repeat;
+	background-position: left -196px;
+	padding:1px 0 0 14px;
+	font-size: 85%;
+}
+.tagcloud {
+	text-align:justify;
+}
+.ajax_loader {
+	background-color: white;
+	background-image: url(http://elgg.leonid2.tsweb.toa/_graphics/ajax_loader_bw.gif);
+	background-repeat: no-repeat;
+	background-position: center center;
+	min-height:33px;
+	min-width:33px;
+}
+.ajax_loader.left {
+	background-position: left center;
+}
+#elgg_sidebar h3 {
+	border-bottom:1px solid #CCCCCC;
+	margin-bottom:5px;
+	margin-top:20px;
+	padding-bottom:5px;
+}
+
+/* ***************************************
+	PAGE LAYOUT - MAIN BLOCKS POSITIONING
+*************************************** */
+#elgg_topbar {
+	background:#333333 url(http://elgg.leonid2.tsweb.toa/_graphics/toptoolbar_background.gif) repeat-x top left;
+	color:#eeeeee;
+	border-bottom:1px solid #000000;
+	min-width:998px;
+	position:relative;
+	width:100%;
+	height:24px;
+	z-index: 9000;
+}
+#elgg_header {
+	x-overflow: hidden;
+	position: relative;
+	width: 100%;
+	height:90px;
+	background-color: #4690D6;
+	background-image: url(http://elgg.leonid2.tsweb.toa/_graphics/header_shadow.png);
+	background-repeat: repeat-x;
+	background-position: bottom left;
+}
+#elgg_header_contents {
+	width:990px;
+	position: relative;
+	margin:0 auto;
+	height:90px;
+}
+#elgg_search {
+	bottom:5px;
+	height:23px;
+	position:absolute;
+	right:0;
+}
+#elgg_main_nav {
+	z-index: 7000;
+	position: absolute;
+	height:23px;
+	bottom:0;
+	left:0;
+	width:auto;
+}
+#elgg_content { /* wraps sidebar and page contents */
+	width:990px;
+	position: relative;
+	margin:0 auto;
+	min-height:400px;
+}
+#elgg_content.sidebar { /* class on #elgg_content div to give a full-height sidebar background */
+	background-image:url(http://elgg.leonid2.tsweb.toa/_graphics/sidebar_background.gif);
+	background-repeat:repeat-y;
+	background-position: right top;
+}
+#elgg_page_contents { /* main page contents */
+	float:left;
+	width:730px;
+	position: relative;
+	min-height: 360px;
+	margin:10px 20px 20px 10px;
+}
+#elgg_page_contents.one_column { /* class on #elgg_page_contents when no sidebar */
+	width:970px;
+	margin-right:10px;
+}
+#elgg_sidebar { /* elgg sidebar */
+	float:right;
+	width:210px;
+	margin:20px 10px;
+	position: relative;
+	min-height:360px;
+}
+#elgg_footer {
+	position: relative;
+	z-index: 999;
+}
+#elgg_footer_contents {
+	border-top:1px solid #DEDEDE;
+	margin:0 auto;
+	width:990px;
+	padding:3px 0 10px 0;
+	text-align: right;
+}
+
+
+/* ***************************************
+	ELGG TOPBAR
+*************************************** */
+#elgg_topbar_contents {
+	float:left;
+	height:24px;
+	left:0px;
+	top:0px;
+	position:absolute;
+	text-align:left;
+	width:100%;
+}
+#elgg_topbar_contents a {
+	margin-right:30px;
+	padding-top:2px;
+	display:inline;
+	float:left;
+	text-align: left;
+	color:#eeeeee;
+}
+#elgg_topbar_contents a:hover {
+	color:#71cbff;
+	text-decoration: none;
+}
+#elgg_topbar_contents a img.user_mini_avatar {
+	border:1px solid #eeeeee;
+	margin:1px 0 0 10px;
+	display: block;
+}
+#elgg_topbar_contents a img.site_logo {
+	display: block;
+	margin-left:5px;
+	margin-top: -1px;
+}
+#elgg_topbar_contents .log_out {
+	float:right;
+}
+#elgg_topbar_contents .log_out a {
+	display: inline;
+	text-align: right;
+	margin-right:10px;
+	color:#999999;
+}
+#elgg_topbar_contents .log_out a:hover {
+	color:#71cbff;
+}
+#elgg_topbar_contents a.myfriends {
+	background:transparent url(http://elgg.leonid2.tsweb.toa/_graphics/elgg_sprites.png) no-repeat left -297px;
+	margin-right:30px;
+	text-indent: -900em;
+	width:36px;
+}
+#elgg_topbar_contents a.myfriends:hover {
+	background-position: left -337px;
+}
+#elgg_topbar_contents a.settings {
+	background:transparent url(http://elgg.leonid2.tsweb.toa/_graphics/elgg_sprites.png) no-repeat -300px -41px;
+	padding-left:20px !important;
+	float:right;
+	margin-right:30px;
+}
+#elgg_topbar_contents a.admin {
+	background:transparent url(http://elgg.leonid2.tsweb.toa/_graphics/elgg_sprites.png) no-repeat -300px -41px;
+	padding-left:20px !important;
+	float:right;
+	margin-right:30px;
+}
+#elgg_topbar_contents a.help {
+	background:transparent url(http://elgg.leonid2.tsweb.toa/_graphics/elgg_sprites.png) no-repeat -300px -133px;
+	padding-left:18px !important;
+	float:right;
+	margin-right:30px;
+}
+
+
+/* ***************************************
+	HEADER CONTENTS
+*************************************** */
+#elgg_header_contents h1 a span.network_title {
+	font-size: 2em;
+	line-height:1.4em;
+	color: white;
+	font-style: italic;
+	font-family: Georgia, times, serif;
+	display: block;
+	text-decoration: none;
+	text-shadow:1px 2px 4px #333333;
+}
+#elgg_header_contents #elgg_search input.search_input {
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	background-color:transparent;
+	border:1px solid #71b9f7;
+	color:white;
+	font-size:12px;
+	font-weight:bold;
+	margin:0;
+	padding:2px 4px 2px 26px;
+	width:198px;
+	background-image: url(http://elgg.leonid2.tsweb.toa/_graphics/elgg_sprites.png);
+	background-position: 2px -220px;
+	background-repeat: no-repeat;
+}
+#elgg_header_contents #elgg_search input.search_input:focus {
+	background-color:white;
+	color:#0054A7;
+	border:1px solid white;
+	background-position: 2px -257px;
+}
+#elgg_header_contents #elgg_search input.search_input:active {
+	background-color:white;
+	color:#0054A7;
+	border:1px solid white;
+	background-position: 2px -257px;
+}
+#elgg_header_contents #elgg_search input.search_submit_button {
+	display:none;
+}
+
+
+/* ***************************************
+	ELGG SITE NAVIGATION in header
+*************************************** */
+.navigation,
+.navigation ul {
+	margin:0;
+	padding:0;
+	display:inline;
+	float:left;
+	list-style-type: none;
+	z-index: 7000;
+	position: relative;
+}
+.navigation li {
+	list-style: none;
+	font-weight: bold;
+	position: relative;
+	display:block;
+	height:23px;
+	float:left;
+	margin:0;
+	padding:0;
+}
+.navigation a {
+	color:white;
+	margin:0 1px 0 0px;
+	text-decoration:none;
+	font-weight: bold;
+	font-size: 1em;
+	padding:3px 13px 0px 13px;
+	height:20px;
+	cursor: pointer;
+	display:block;
+}
+.navigation li a:hover {
+	background:white;
+	color:#555555;
+	-moz-border-radius-topleft:4px;
+	-moz-border-radius-topright:4px;
+	-webkit-border-top-left-radius:4px;
+	-webkit-border-top-right-radius:4px;
+	-webkit-box-shadow: 2px -1px 1px rgba(0, 0, 0, 0.25);
+	-moz-box-shadow: 2px -1px 1px rgba(0, 0, 0, 0.25);
+}
+.navigation li.selected a {
+	background:white;
+	color:#555555;
+	-moz-border-radius-topleft:4px;
+	-moz-border-radius-topright:4px;
+	-webkit-border-top-left-radius:4px;
+	-webkit-border-top-right-radius:4px;
+	margin-top:1px;
+	-webkit-box-shadow: 2px -1px 1px rgba(0, 0, 0, 0.25);
+	-moz-box-shadow: 2px -1px 1px rgba(0, 0, 0, 0.25);
+}
+li.navigation_more {
+	overflow:hidden;
+}
+li.navigation_more:hover {
+	overflow:visible;
+}
+li.navigation_more:hover a {
+	background:white;
+	color:#555555;
+	-moz-border-radius-topleft:4px;
+	-moz-border-radius-topright:4px;
+	-webkit-border-top-left-radius:4px;
+	-webkit-border-top-right-radius:4px;
+	-webkit-box-shadow: 2px -1px 1px rgba(0, 0, 0, 0.25);
+	-moz-box-shadow: 2px -1px 1px rgba(0, 0, 0, 0.25);
+}
+li.navigation_more a.subnav span {
+	background-image: url(http://elgg.leonid2.tsweb.toa/_graphics/elgg_sprites.png);
+	background-repeat: no-repeat;
+	background-position: -150px -56px;
+	padding-left: 12px;
+}
+li.navigation_more:hover a.subnav span,
+li.navigation_more a.subnav:hover span {
+	background-position: -150px -76px;
+}
+li.navigation_more ul {
+	z-index: 7000;
+	min-width: 150px;
+	margin-left:-1px;
+	background-color:white;
+	border-left:1px solid #999999;
+	border-right:1px solid #999999;
+	border-bottom:1px solid #999999;
+	-moz-border-radius-bottomleft:4px;
+	-moz-border-radius-bottomright:4px;
+	-webkit-border-bottom-left-radius:4px;
+	-webkit-border-bottom-right-radius:4px;
+	-webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.25);
+	-moz-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.25);
+}
+li.navigation_more ul li {
+	float:none;
+}
+.navigation li.navigation_more ul li a {
+	background:white;
+	color:#555555;
+	margin:0;
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+}
+.navigation li.navigation_more ul li:last-child a,
+.navigation li.navigation_more ul li:last-child a:hover {
+	-moz-border-radius-bottomleft:4px;
+	-moz-border-radius-bottomright:4px;
+	-webkit-border-bottom-left-radius:4px;
+	-webkit-border-bottom-right-radius:4px;
+}
+.navigation li.navigation_more ul li a:hover {
+	background:#4690D6;
+	color:white;
+	margin:0;
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+}
+.navigation li.navigation_more ul li.selected a {
+	background:#4690D6;
+	color:white;
+}
+
+/* ***************************************
+	FOOTER CONTENTS
+*************************************** */
+#elgg_footer_contents,
+#elgg_footer_contents a,
+#elgg_footer_contents p {
+	color:#999999;
+}
+#elgg_footer_contents a:hover {
+	color:#666666;
+}
+.#elgg_footer_contents p {
+	margin:0;
+}
+.powered_by_elgg_badge {
+	float:right;
+}
+
+
+/* ***************************************
+	SYSTEM MESSAGES
+*************************************** */
+#elgg_system_message {
+	background-color:black;
+	color:white;
+	font-weight: bold;
+	display:block;
+	padding:3px 10px;
+	z-index: 9600;
+	position:fixed;
+	right:20px;
+	margin-top:10px;
+	width:auto;
+	max-width: 500px;
+	cursor: pointer;
+	opacity:0.9;
+	-webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45);
+	-moz-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45);
+}
+#elgg_system_message.error {
+	background-color:red;
+}
+#elgg_system_message p {
+	margin:0;
+}
+
+
+/* ***************************************
+	BREADCRUMBS
+*************************************** */
+#breadcrumbs {
+	font-size: 80%;
+	line-height:1.2em;
+	color:#bababa;
+	position: relative;
+	top:-6px;
+	left:0;
+}
+#breadcrumbs a {
+	color:#999999;
+	font-weight:bold;
+	text-decoration: none;
+}
+#breadcrumbs a:hover {
+	color: #0054a7;
+	text-decoration: underline;
+}
+
+
+/* ***************************************
+	SUBMENU
+*************************************** */
+.submenu {
+	margin:0;
+	padding:0;
+	list-style: none;
+}
+.submenu ul {
+	margin-bottom:0;
+	padding-left:0;
+	list-style: none;
+}
+.submenu li.selected a,
+.submenu li.selected li.selected a,
+.submenu li.selected li.selected li.selected a {
+	background: #4690D6;
+	color:white;
+}
+.submenu li a {
+	display:block;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	background-color:white;
+	margin:0 0 3px 0;
+	padding:2px 4px 2px 8px;
+}
+.submenu li a:hover {
+	background:#0054A7;
+	color:white;
+	text-decoration:none;
+}
+.submenu .child li a {
+	margin-left:15px;
+	background-color:white;
+	color:#4690D6;
+}
+.submenu .child li a:hover {
+	background:#0054A7;
+	color:white;
+	text-decoration:none;
+}
+
+
+
+/* ***************************************
+	PAGINATION
+*************************************** */
+.pagination {
+	margin:5px 0 5px 0;
+	padding:5px 0;
+}
+.pagination .pagination_number {
+	display:block;
+	float:left;
+	background:#ffffff;
+	border:1px solid #4690d6;
+	text-align: center;
+	color:#4690d6;
+	font-size: 12px;
+	font-weight: normal;
+	margin:0 6px 0 0;
+	padding:0px 4px;
+	cursor: pointer;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+}
+.pagination .pagination_number:hover {
+	background:#4690d6;
+	color:white;
+	text-decoration: none;
+}
+.pagination .pagination_more {
+	display:block;
+	float:left;
+	background:#ffffff;
+	border:1px solid #ffffff;
+	text-align: center;
+	color:#4690d6;
+	font-size: 12px;
+	font-weight: normal;
+	margin:0 6px 0 0;
+	padding:0px 4px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+}
+.pagination .pagination_previous,
+.pagination .pagination_next {
+	display:block;
+	float:left;
+	border:1px solid #cccccc;
+	color:#4690d6;
+	text-align: center;
+	font-size: 12px;
+	font-weight: normal;
+	margin:0 6px 0 0;
+	padding:0px 4px;
+	cursor: pointer;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+}
+.pagination .pagination_previous:hover,
+.pagination .pagination_next:hover {
+	background:#4690d6;
+	border:1px solid #4690d6;
+	color:white;
+	text-decoration: none;
+}
+.pagination .pagination_currentpage {
+	display:block;
+	float:left;
+	background:#4690d6;
+	border:1px solid #4690d6;
+	text-align: center;
+	color:white;
+	font-size: 12px;
+	font-weight: bold;
+	margin:0 6px 0 0;
+	padding:0px 4px;
+	cursor: pointer;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+}
+
+
+/* ***************************************
+	ELGG TABBED PAGE NAVIGATION
+*************************************** */
+.elgg_horizontal_tabbed_nav {
+	margin-bottom:5px;
+	padding: 0;
+	border-bottom: 2px solid #cccccc;
+	display:table;
+	width:100%;
+}
+.elgg_horizontal_tabbed_nav ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.elgg_horizontal_tabbed_nav li {
+	float: left;
+	border: 2px solid #cccccc;
+	border-bottom-width: 0;
+	background: #eeeeee;
+	margin: 0 0 0 10px;
+	-moz-border-radius-topleft:5px;
+	-moz-border-radius-topright:5px;
+	-webkit-border-top-left-radius:5px;
+	-webkit-border-top-right-radius:5px;
+}
+.elgg_horizontal_tabbed_nav a {
+	text-decoration: none;
+	display: block;
+	padding:3px 10px 0 10px;
+	text-align: center;
+	height:21px;
+	color:#999999;
+}
+.elgg_horizontal_tabbed_nav a:hover {
+	background: #dedede;
+	color:#4690D6;
+}
+.elgg_horizontal_tabbed_nav .selected {
+	border-color: #cccccc;
+	background: white;
+}
+.elgg_horizontal_tabbed_nav .selected a {
+	position: relative;
+	top: 2px;
+	background: white;
+}
+
+
+/* ***************************************
+	LOGIN / REGISTER
+*************************************** */
+/* login in sidebar */
+#elgg_sidebar #login {
+	width:auto;
+}
+#elgg_sidebar #login form {
+	width:auto;
+}
+#elgg_sidebar #login .login_textarea {
+	width:196px;
+}
+/* default login and register forms */
+#login input[type="text"],
+#login input[type="password"],
+.register input[type="text"],
+.register input[type="password"] {
+	margin:0 0 10px 0;
+}
+.register input[type="text"],
+.register input[type="password"] {
+	width:380px;
+}
+#login .persistent_login {
+	float:right;
+	display:block;
+	margin-top:-34px;
+	margin-left:80px;
+}
+#login .persistent_login label {
+	font-size:1.0em;
+	font-weight: normal;
+	cursor: pointer;
+}
+
+
+/* ***************************************
+	CONTENT HEADER
+**************************************** */
+#content_header {
+	border-bottom:1px solid #CCCCCC;
+}
+#content_header:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+.content_header_title {
+	float:left;
+}
+.content_header_title {
+	margin-right:10px;
+	max-width: 530px;
+}
+.content_header_title h2 {
+	border:none;
+	margin-bottom:0;
+	padding-bottom:5px;
+}
+.content_header_options {
+	float:right;
+}
+.content_header_options .action_button {
+	float:right;
+	margin:0 0 5px 10px;
+}
+
+
+/* ***************************************
+	DEFAULT COMMENTS
+**************************************** */
+.generic_comment {
+	border-bottom:1px dotted #cccccc;
+	clear:both;
+	display:block;
+	margin:0;
+	padding:5px 0 7px;
+	position:relative;
+}
+.generic_comment:first-child {
+	border-top:1px dotted #cccccc;
+}
+.generic_comment_icon {
+	float:left;
+	margin-left:3px;
+	margin-top:3px;
+}
+.generic_comment_icon img {
+	width: auto;
+}
+.generic_comment_details {
+	float:left;
+	margin-left:7px;
+	min-height:28px;
+	width:693px;
+}
+.generic_comment_details p {
+	margin:0;
+}
+.generic_comment_owner {
+	line-height:1.2em;
+}
+.generic_comment_owner a {
+	color:#0054A7;
+}
+.generic_comment_body {
+	margin:3px 0 5px 0;
+}
+.generic_comment_body p {
+	margin-bottom: 10px;
+}
+/* latest comments in sidebar */
+#elgg_sidebar .generic_comment.latest {
+	padding:2px 0;
+}
+#elgg_sidebar .generic_comment.latest .generic_comment_icon  {
+	margin-left:1px;
+	margin-top:5px;
+}
+#elgg_sidebar .generic_comment.latest .generic_comment_details {
+	width:177px;
+	line-height:1.1em;
+}
+#elgg_sidebar .generic_comment.latest .entity_title {
+	font-size: inherit;
+	line-height: inherit;
+}
+
+
+/* ***************************************
+	DEFAULT ENTITY LISTINGS
+**************************************** */
+.entity_listing {
+	border-bottom:1px dotted #cccccc;
+	clear:both;
+	display:block;
+	margin:0;
+	padding:4px 0 4px;
+	position:relative;
+}
+.entity_listing:first-child {
+	border-top:1px dotted #cccccc;
+}
+.entity_listing:hover {
+	background-color: #eeeeee;
+}
+.entity_listing_icon {
+	float:left;
+	margin-left:3px;
+	margin-top:3px;
+}
+.entity_listing_icon img {
+	width: auto;
+}
+.entity_listing_info {
+	float:left;
+	margin-left:7px;
+	min-height:28px;
+	width:693px;
+}
+.entity_listing_info p {
+	margin:0;
+	/* line-height:1.2em; */
+}
+.entity_title {
+	font-weight: bold;
+	font-size: 1.1em;
+	line-height:1.2em;
+	color:#666666;
+	padding-bottom:4px;
+}
+.entity_title a {
+	color:#0054A7;
+}
+.entity_subtext {
+	color:#666666;
+	font-size: 85%;
+	font-style: italic;
+	line-height:1.2em;
+}
+/* entity metadata block */
+.entity_metadata {
+	float:right;
+	margin:0 3px 0 15px;
+	color:#aaaaaa;
+	font-size: 90%;
+}
+.entity_metadata span {
+	margin-left:14px;
+	text-align:right;
+}
+.entity_metadata .entity_edit a {
+	color:#aaaaaa;
+}
+.entity_metadata .entity_edit a:hover {
+	color:#555555;
+}
+.entity_metadata .delete_button {
+	margin-top:3px;
+}
+/* override hover for lists of site users/members */
+.members_list .entity_listing:hover {
+	background-color:white;
+}
+
+
+/* ***************************************
+	USER SETTINGS
+*************************************** */
+.user_settings {
+	margin-bottom:20px;
+}
+.user_settings h3 {
+	background:#e4e4e4;
+	color:#333333;
+	padding:5px;
+	margin-top:10px;
+	margin-bottom:10px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+}
+.user_settings label {
+	color:#333333;
+	font-size:100%;
+	font-weight:normal;
+}
+.user_settings table.styled {
+	width:100%;
+}
+.user_settings table.styled {
+	border-top:1px solid #cccccc;
+}
+.user_settings table.styled td {
+	padding:2px 4px 2px 4px;
+	border-bottom:1px solid #cccccc;
+}
+.user_settings table.styled td.column_one {
+	width:200px;
+}
+.user_settings table.styled tr:hover {
+	background: #E4E4E4;
+}
+.add_user form {
+	width:300px;
+}
+
+
+/* ***************************************
+	GENERAL FORM ELEMENTS
+*************************************** */
+/* default elgg core input field classes */
+.input_text,
+.input_tags,
+.input_url,
+.input_textarea {
+	width:98%;
+}
+.input_access {
+	margin:5px 0 0 0;
+}
+.input_password {
+	width:200px;
+}
+.input_textarea {
+	height: 200px;
+	width:718px;
+}
+input[type="checkbox"],
+input.input_radio {
+	margin:0 3px 0 0;
+	padding:0;
+	border:none;
+}
+label {
+	font-weight: bold;
+	color:#333333;
+	font-size: 110%;
+}
+input {
+	font: 120% Arial, Helvetica, sans-serif;
+	padding: 5px;
+	border: 1px solid #cccccc;
+	color:#666666;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+}
+textarea {
+	font: 120% Arial, Helvetica, sans-serif;
+	border: solid 1px #cccccc;
+	padding: 5px;
+	color:#666666;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+}
+textarea:focus,
+input[type="text"]:focus {
+	border: solid 1px #4690d6;
+	background: #e4ecf5;
+	color:#333333;
+}
+.input_textarea.monospace {
+	font-family:Monaco,"Courier New",Courier,monospace;
+	font-size:13px;
+}
+a.longtext_control {
+	float:right;
+	margin-left:14px;
+}
+.submit_button {
+	font-size: 14px;
+	font-weight: bold;
+	color: white;
+	text-shadow:1px 1px 0px black;
+	text-decoration:none;
+	border: 1px solid #4690d6;
+	background-color:#4690d6;
+	background-image: url(http://elgg.leonid2.tsweb.toa/_graphics/button_graduation.png);
+	background-repeat: repeat-x;
+	background-position: left 10px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	width: auto;
+	padding: 2px 4px;
+	margin:0 10px 10px 0;
+	cursor: pointer;
+	-webkit-box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.40);
+	-moz-box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.40);
+}
+.submit_button:hover {
+	color: white;
+	border-color: #0054a7;
+	text-decoration:none;
+	background-color:#0054a7;
+	background-image:  url(http://elgg.leonid2.tsweb.toa/_graphics/button_graduation.png);
+	background-repeat:  repeat-x;
+	background-position:  left 10px;
+}
+input[type="password"]:focus {
+	border: solid 1px #4690d6;
+	background-color: #e4ecf5;
+	color:#333333;
+}
+input[type="submit"] {
+	font-size: 14px;
+	font-weight: bold;
+	color: white;
+	text-shadow:1px 1px 0px black;
+	text-decoration:none;
+	border: 1px solid #4690d6;
+	background-color:#4690d6;
+	background-image:  url(http://elgg.leonid2.tsweb.toa/_graphics/button_graduation.png);
+	background-repeat:  repeat-x;
+	background-position:  left 10px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	width: auto;
+	padding: 2px 4px;
+	margin:10px 0 10px 0;
+	cursor: pointer;
+	-moz-outline-style: none;
+	outline: none;
+	-webkit-box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.40);
+	-moz-box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.40);
+}
+input[type="submit"]:hover {
+	border-color: #0054a7;
+	text-decoration:none;
+	background-color:#0054a7;
+	background-image:  url(http://elgg.leonid2.tsweb.toa/_graphics/button_graduation.png);
+	background-repeat:  repeat-x;
+	background-position:  left 10px;
+}
+.cancel_button {
+	font-size: 14px;
+	font-weight: bold;
+	text-decoration:none;
+	color: #333333;
+	background-color:#dddddd;
+	background-image:  url(http://elgg.leonid2.tsweb.toa/_graphics/button_graduation.png);
+	background-repeat:  repeat-x;
+	background-position:  left 10px;
+	border: 1px solid #999999;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	width: auto;
+	padding: 2px 4px;
+	margin:10px 0 10px 10px;
+	cursor: pointer;
+}
+.cancel_button:hover {
+	background-color: #999999;
+	background-position:  left 10px;
+	text-decoration:none;
+	color:white;
+}
+input.action_button,
+a.action_button {
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	background-color:#cccccc;
+	background-image:  url(http://elgg.leonid2.tsweb.toa/_graphics/button_background.gif);
+	background-repeat:  repeat-x;
+	background-position: 0 0;
+	border:1px solid #999999;
+	color:#333333;
+	padding:2px 15px 2px 15px;
+	text-align:center;
+	font-weight:bold;
+	text-decoration:none;
+	text-shadow:0 1px 0 white;
+	cursor:pointer;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+}
+input.action_button:hover,
+a.action_button:hover,
+input.action_button:focus,
+a.action_button:focus {
+	background-position:0 -15px;
+	background-image:  url(http://elgg.leonid2.tsweb.toa/_graphics/button_background.gif);
+	background-repeat:  repeat-x;
+	color:#111111;
+	text-decoration: none;
+	background-color:#cccccc;
+	border:1px solid #999999;
+}
+.action_button:active {
+	background-image:none;
+}
+.action_button.disabled {
+	color:#999999;
+	padding:2px 7px 2px 7px;
+}
+.action_button.disabled:hover {
+	background-position:0 -15px;
+	color:#111111;
+	border:1px solid #999999;
+}
+.action_button.disabled:active {
+	background-image:none;
+}
+.action_button.download {
+	color: white;
+	background-color:#4690d6;
+	background-image:  url(http://elgg.leonid2.tsweb.toa/_graphics/button_graduation.png);
+	background-repeat:  repeat-x;
+	background-position:  left 10px;
+	width:auto;
+	height:auto;
+	padding: 3px 6px 3px 6px;
+	margin:0 0 10px 0;
+}
+.action_button.download:hover {
+	background: #0054a7;
+	border-color: #0054a7;
+	color:white;
+}
+.action_button.small {
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	width: auto;
+	height:8px;
+	padding: 4px;
+	font-size: 0.9em;
+	line-height: 0.6em;
+}
+.action_button.small:hover {
+	background-color: #4690d6;
+	background-image: none;
+	border-color: #4690d6;
+	color:white;
+	text-shadow:0 -1px 0 #999999;
+}
+/* small round delete button */
+.delete_button {
+	width:14px;
+	height:14px;
+	margin:0;
+	float:right;
+}
+.delete_button a {
+	display:block;
+	cursor: pointer;
+	width:14px;
+	height:14px;
+	background: url("http://elgg.leonid2.tsweb.toa/_graphics/elgg_sprites.png") no-repeat -200px top;
+	text-indent: -9000px;
+	text-align: left;
+}
+.delete_button a:hover {
+	background-position: -200px -16px;
+}
+
+
+/* ***************************************
+	FRIENDS PICKER
+*************************************** */
+.friends_picker_container h3 {
+	font-size:4em !important;
+	text-align: left;
+	margin:10px 0 20px 0 !important;
+	color:#999999 !important;
+	background: none !important;
+	padding:0 !important;
+}
+.friends_picker .friends_picker_container .panel ul {
+	text-align: left;
+	margin: 0;
+	padding:0;
+}
+.friends_picker_wrapper {
+	margin: 0;
+	padding:0;
+	position: relative;
+	width: 100%;
+}
+.friends_picker {
+	position: relative;
+	overflow: hidden;
+	margin: 0;
+	padding:0;
+	width: 730px;
+	height: auto;
+}
+.friendspicker_savebuttons {
+	background: white;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	margin:0 10px 10px 10px;
+}
+.friends_picker .friends_picker_container { /* long container used to house end-to-end panels. Width is calculated in JS  */
+	position: relative;
+	left: 0;
+	top: 0;
+	width: 100%;
+	list-style-type: none;
+}
+.friends_picker .friends_picker_container .panel {
+	float:left;
+	height: 100%;
+	position: relative;
+	width: 730px;
+	margin: 0;
+	padding:0;
+}
+.friends_picker .friends_picker_container .panel .wrapper {
+	margin: 0;
+	padding:4px 10px 10px 10px;
+	min-height: 230px;
+}
+.friends_picker_navigation {
+	margin: 0 0 10px 0;
+	padding:0 0 10px 0;
+	border-bottom:1px solid #cccccc;
+}
+.friends_picker_navigation ul {
+	list-style: none;
+	padding-left: 0;
+}
+.friends_picker_navigation ul li {
+	float: left;
+	margin:0;
+	background:white;
+}
+.friends_picker_navigation a {
+	font-weight: bold;
+	text-align: center;
+	background: white;
+	color: #999999;
+	text-decoration: none;
+	display: block;
+	padding: 0;
+	width:20px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+}
+.tabHasContent {
+	background: white;
+	color:#333333 !important;
+}
+.friends_picker_navigation li a:hover {
+	background: #333333;
+	color:white !important;
+}
+.friends_picker_navigation li a.current {
+	background: #4690D6;
+	color:white !important;
+}
+.friends_picker_navigation_l, .friends_picker_navigation_r {
+	position: absolute;
+	top: 46px;
+	text-indent: -9000em;
+}
+.friends_picker_navigation_l a, .friends_picker_navigation_r a {
+	display: block;
+	height: 43px;
+	width: 43px;
+}
+.friends_picker_navigation_l {
+	right: 48px;
+	z-index:1;
+}
+.friends_picker_navigation_r {
+	right: 0;
+	z-index:1;
+}
+.friends_picker_navigation_l {
+	background: url("http://elgg.leonid2.tsweb.toa/_graphics/elgg_sprites.png") no-repeat left top;
+}
+.friends_picker_navigation_r {
+	background: url("http://elgg.leonid2.tsweb.toa/_graphics/elgg_sprites.png") no-repeat -60px top;
+}
+.friends_picker_navigation_l:hover {
+	background: url("http://elgg.leonid2.tsweb.toa/_graphics/elgg_sprites.png") no-repeat left -44px;
+}
+.friends_picker_navigation_r:hover {
+	background: url("http://elgg.leonid2.tsweb.toa/_graphics/elgg_sprites.png") no-repeat -60px -44px;
+}
+.friendspicker_savebuttons .submit_button,
+.friendspicker_savebuttons .cancel_button {
+	margin:5px 20px 5px 5px;
+}
+#collectionMembersTable {
+	background: #dedede;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	margin:10px 0 0 0;
+	padding:10px 10px 0 10px;
+}
+
+
+/* ***************************************
+	LIKES
+*************************************** */
+.likes_list_holder {
+	position: relative;
+	float:right;
+}
+.likes_list_holder a.user_like {
+	cursor:pointer;
+	background: url(http://elgg.leonid2.tsweb.toa/_graphics/elgg_sprites.png) no-repeat left -101px;
+	text-indent: -9000em;
+	text-align: left;
+	display:block;
+	width:20px;
+	height:20px;
+	margin:0;
+	float:left;
+}
+.likes_list_holder a.user_like:hover {
+	background-position: left -131px;
+}
+.likes_list_holder .likes_list_button.link {
+	float:left;
+	text-align: left;
+	background: url(http://elgg.leonid2.tsweb.toa/_graphics/elgg_sprites.png) no-repeat left -131px;
+	padding-left:21px;
+	height:20px;
+}
+.likes_list_holder .likes_list_button.link.not_liked {
+	background:none;
+	padding-left:0;
+}
+.likes_list_holder .likes_list {
+	background-color: white;
+	border:1px solid #cccccc;
+	width: 345px;
+	height: auto;
+	position: absolute;
+	text-align: left;
+	z-index: 9999;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	-webkit-box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.5);
+}
+.likes_list_holder .elgg_likes_user {
+	border-bottom:1px solid #cccccc;
+	padding:3px;
+}
+.likes_list_holder .elgg_likes_user .entity_listing_info {
+	width:305px;
+}
+.elgg_likes_user .entity_listing_icon {
+	margin:3px 0 4px 2px;
+}
+.elgg_likes_user .entity_metadata {
+	margin-top:3px;
+}
+p.elgg_likes_owner {
+	padding-top:4px;
+}
+
+
+/* ***************************************
+	WalledGarden
+*************************************** */
+#walledgarden_container {
+	margin:100px auto 0 auto;
+	position:relative;
+	padding:0;
+	width:563px;
+	background: url(http://elgg.leonid2.tsweb.toa/_graphics/walled_garden_background_extend.gif) repeat-y left top;
+	text-align: left;
+}
+#walledgarden {
+	position: relative;
+	padding:0;
+	width:563px;
+	min-height:230px;
+	background: url(http://elgg.leonid2.tsweb.toa/_graphics/walled_garden_background_top.gif) no-repeat left top;
+}
+#walledgarden_bottom {
+	margin:0 auto;
+	background: url(http://elgg.leonid2.tsweb.toa/_graphics/walled_garden_background_bottom.gif) no-repeat left bottom;
+	width:563px;
+	height:54px;
+	position: relative;
+}
+.walledgardenintro {
+	float:left;
+	min-height:200px;
+	width:223px;
+	padding:15px;
+	margin:19px 0 0 23px;
+}
+.walledgardenlogin {
+	float:left;
+	min-height:200px;
+	width:223px;
+	padding:15px 15px 0 15px;
+	margin:19px 0 0 11px;
+}
+.walledgardenintro h1 {
+	color:#666666;
+	margin-top:80px;
+	line-height: 1.1em;
+}
+.walledgardenlogin h2 {
+	color:#666666;
+	border-bottom:1px solid #CCCCCC;
+	margin-bottom:5px;
+	padding-bottom:5px;
+}
+.walledgardenlogin form input.login_textarea {
+	margin:0 0 10px 0;
+	width:210px;
+}
+.walledgardenlogin form label {
+	color:#666666;
+}
+.walledgardenlogin .remember_me label {
+	font-size:1em;
+	font-weight:normal;
+}
+.walledgardenlogin .remember_me {
+	display:block;
+	float:right;
+	margin-left:0;
+	margin-top:-34px;
+	text-align:right;
+	width:100%;
+}
+.walledgardenlogin .lost_password {
+	margin-bottom: 10px;
+}
+.walledgardenlogin a.forgotten_password_link {
+	color:#999999;
+}
+#walledgarden_sysmessages #elgg_system_message {
+	width: 523px;
+	right:0;
+	margin:10px auto 0 auto;
+	position: relative;
+}/* ***************************************
+	main layout blocks
+*************************************** */
+#profile_content {
+	float:right;
+	width:700px;
+	position: relative;
+}
+#profile_sidebar {
+	width:230px;
+	float:left;
+}
+.elgg_horizontal_tabbed_nav.profile {
+	margin-top:0px;
+	margin-bottom:25px;
+	position:relative;
+}
+.elgg_horizontal_tabbed_nav.profile .profile_name {
+	display:block;
+	width:265px;
+	position:absolute;
+}
+.elgg_horizontal_tabbed_nav.profile .profile_name h2 {
+	margin:0;
+	padding:0;
+	border:none;
+}
+.elgg_horizontal_tabbed_nav.profile ul {
+	margin-left:260px;
+}
+
+/* ***************************************
+	default avatar icons
+*************************************** */
+.usericon {
+	position:relative;
+}
+.usericon.tiny,
+img.tiny {
+	width:25px;
+	height:25px;
+	/* remove the border-radius if you don't want rounded avatars in supported browsers */
+	-webkit-border-radius: 3px; 
+	-moz-border-radius: 3px;
+	-moz-background-clip:  border;
+	
+	-o-background-size: 25px;
+	-webkit-background-size: 25px;
+	-khtml-background-size: 25px;
+	-moz-background-size: 25px;
+}
+.usericon.small,
+img.small {
+	width:40px;
+	height:40px;
+	/* remove the border-radius if you don't want rounded avatars in supported browsers */
+	-webkit-border-radius: 5px; 
+	-moz-border-radius: 5px;
+	-moz-background-clip:  border;
+	
+	-o-background-size: 40px;
+	-webkit-background-size: 40px;
+	-khtml-background-size: 40px;
+	-moz-background-size: 40px;
+}
+img.large {
+	width:200px;
+	height:200px;
+}
+img.medium {
+	width:100px;
+	height:100px;
+}
+
+/* ***************************************
+	ownerblock in sidebar
+*************************************** */
+#profile_sidebar #owner_block {
+	background-color: #eeeeee;
+	-webkit-border-radius: 8px; 
+	-moz-border-radius: 8px;
+	padding:15px;
+	min-height:270px;
+}
+#elgg_sidebar #owner_block {
+	background-color: white;
+	-webkit-border-radius: 8px; 
+	-moz-border-radius: 8px;
+	padding:5px;
+	margin-bottom:10px;
+}
+#owner_block .owner_block_icon {
+	float:left;
+	padding:0;
+	margin:0;
+}
+#owner_block .owner_block_icon.large {
+	width:200px;
+	height:200px;
+	overflow: hidden;
+	float:none;
+}
+#owner_block .owner_block_contents {
+	margin-left: 50px;
+}
+#elgg_sidebar #owner_block .owner_block_contents {
+	margin-left: 34px;
+}
+#owner_block .owner_block_contents h3 {
+	margin-top:-4px;
+	border-bottom:none;
+	margin-bottom:0;
+	padding-bottom:0;
+}
+#owner_block .owner_block_contents p.profile_info {
+	margin:0;
+	padding:0;
+	color: #666666;
+}
+#owner_block .owner_block_contents p.profile_info.briefdescription {
+	font-size: 90%;
+	line-height:1.2em;
+	font-style: italic;
+}
+#owner_block .owner_block_contents p.profile_info.location {
+	font-size: 90%;
+}
+#owner_block .profile_actions {
+	margin-top:10px;
+}
+#owner_block .profile_actions a.action_button {
+	margin-bottom:4px;
+	display: table;
+}
+/* ownerblock links to owners tools */
+#owner_block .owners_content_links {
+	border-top:1px dotted #cccccc;
+	margin-top:4px;
+	padding-top:2px;
+}
+#owner_block .owners_content_links ul {
+	margin:0;
+	padding:0;
+}
+#owner_block .owners_content_links ul li {
+	display:block;
+	float:left;
+	width:95px;
+	font-size: 90%;
+}
+/* profile pages - ownerblock links to owners tools */
+.owner_block_links {
+	margin-top:5px;
+}
+.owner_block_links ul {
+	margin:0;
+	padding:0;
+	list-style: none;
+}
+.owner_block_links ul li.selected a {
+	background: #4690D6;
+	color:white;
+}
+.owner_block_links ul li a {
+	display:block;
+	-webkit-border-radius: 8px; 
+	-moz-border-radius: 8px;
+	background-color:white;
+	margin:3px 0 5px 0;
+	padding:2px 4px 2px 8px;
+}
+.owner_block_links ul li a:hover {
+	background:#0054A7;
+	color:white;
+	text-decoration:none;
+}
+
+
+/* ***************************************
+	admin menu in sidebar
+*************************************** */
+.owner_block_links .admin_menu_options {
+	display: none;
+}
+.owner_block_links ul.admin_menu {
+	background-color:white;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	cursor:pointer;
+}
+.owner_block_links ul.admin_menu li a {
+	background-color: white;
+	color:red;
+	margin-bottom:0;
+}
+.owner_block_links ul.admin_menu li a:hover {
+	color:black;
+}
+.owner_block_links ul.admin_menu li ul.admin_menu_options li a {
+	color:red;
+	background-color:white;
+	display:block;
+	margin:0px;
+	padding:2px 4px 2px 13px;
+}
+.owner_block_links ul.admin_menu li ul.admin_menu_options li a:hover {
+	color:black;
+	background:none;
+	text-decoration: underline;
+}
+
+
+/* ***************************************
+	full profile info panel
+*************************************** */
+#profile_content .odd {
+	background-color:#f4f4f4;
+	-webkit-border-radius: 4px; 
+	-moz-border-radius: 4px;
+	margin:0 0 7px 0;
+	padding:2px 4px 2px 4px;
+}
+#profile_content .even {
+	background-color:#f4f4f4;
+	-webkit-border-radius: 4px; 
+	-moz-border-radius: 4px;
+	margin:0 0 7px 0;
+	padding:2px 4px 2px 4px;
+}
+#profile_content .aboutme_title {
+	background-color:#f4f4f4;
+	-webkit-border-radius: 4px; 
+	-moz-border-radius: 4px;
+	margin:0 0 0px 0;
+	padding:2px 4px 2px 4px;
+}
+#profile_content .aboutme_contents {
+	padding:2px 0 0 3px;
+}
+
+
+/* ***************************************
+	friends panel within profile
+*************************************** */
+#profile_content .entity_listing .entity_listing_info {
+	width:664px;
+}
+
+
+/* ***************************************
+	commentwall within profile
+*************************************** */
+#comment_wall_add textarea {
+	width:685px;
+}
+#comment_wall_add #postit {
+	float:right;
+}
+
+
+/* ***************************************
+	twitter panel within profile
+*************************************** */
+ul#twitter_update_list li {
+	background-image: url(http://elgg.leonid2.tsweb.toa/mod/profile/graphics/speech_bubble_tail.gif);
+	background-position:right bottom;
+	background-repeat: no-repeat;
+	list-style-image:none;
+	list-style-position:outside;
+	list-style-type:none;
+	margin:0 0 5px 0;
+	padding:0;
+	overflow-x: hidden;
+}
+ul#twitter_update_list li span {
+	color:#666666;
+	background:#ececec;
+	-webkit-border-radius: 4px; 
+	-moz-border-radius: 4px;
+	padding:3px 5px 4px 5px;
+	display:block;
+}
+ul#twitter_update_list li a {
+	display:block;
+	margin:-2px 0 0 4px;
+}
+ul#twitter_update_list li span a {
+	display:inline !important;
+}
+p.visit_twitter a {
+    background:url(http://elgg.leonid2.tsweb.toa/mod/profile/graphics/twitter16px.png) left no-repeat;
+    padding:0 0 0 20px;
+    margin:0;
+}
+.visit_twitter {
+	padding:5px 0;
+	margin:0 0 0 0;
+	border-top:1px solid #dedede;
+}
+
+
+/* ***************************************
+	user avatar upload & crop page
+*************************************** */
+#avatar_upload {
+	height:145px;
+}	
+#current_user_avatar {
+	float:left;
+	width:160px;
+	height:130px;
+	border-right:1px solid #cccccc;
+	margin:0 20px 0 0;
+}	
+#avatar_croppingtool {
+	border-top: 1px solid #cccccc;
+	margin:20px 0 0 0;
+	padding:10px 0 0 0;
+}	
+#user_avatar {
+	float: left;
+	margin-right: 20px;
+}	
+#user_avatar_preview {
+	float: left;
+	position: relative;
+	overflow: hidden;
+	width: 100px;
+	height: 100px;
+}
+
+
+/* ***************************************
+	banned user
+*************************************** */
+/* banned user full profile panel */
+#profile_content .banned_user {
+	border:2px solid red;
+	padding:4px 8px;
+	-webkit-border-radius: 6px; 
+	-moz-border-radius: 6px;
+}
+/* banned user in friends lists */
+.entity_listing_info p.entity_title.user.banned {
+	text-decoration: line-through;
+}
+.entity_listing_info p.entity_title.user.banned a {
+	color:red;
+}
+
+
+/* ***************************************
+	admin area - custom profile fields
+*************************************** */
+.default_profile_reset {
+	border-top: 1px solid #dedede;
+	margin-top:30px;
+}
+.default_profile_reset .action_button {
+	float:right;
+}
+/* field re-order */
+#sortable_profile_fields {
+	padding:0;
+	border-top:1px solid #cccccc;
+}
+#sortable_profile_fields li {
+	padding:5px 0 5px 0;
+	border-bottom:1px solid #cccccc;
+}
+#sortable_profile_fields li img.handle {
+	margin-right: 7px;
+	cursor: move;
+}
+#sortable_profile_fields .ui-sortable-helper {
+	background: #eeeeee;
+	color:#333333;
+	padding: 5px 0 5px 0;
+	margin: 0;
+	width:100%;
+}
+
+
+/* ***************************************
+	avatar drop-down menu
+*************************************** */
+.avatar_menu_button {
+	width:15px;
+	height:15px;
+	position:absolute;
+	cursor:pointer;
+	display:none;
+	right:0;
+	bottom:0;
+}
+.avatar_menu_arrow {
+	background: url(http://elgg.leonid2.tsweb.toa/_graphics/elgg_sprites.png) no-repeat -150px top;
+	width:15px;
+	height:15px;
+}
+.avatar_menu_arrow_on {
+	background: url(http://elgg.leonid2.tsweb.toa/_graphics/elgg_sprites.png) no-repeat -150px -16px;
+	width:15px;
+	height:15px;
+}
+.avatar_menu_arrow_hover {
+	background: url(http://elgg.leonid2.tsweb.toa/_graphics/elgg_sprites.png) no-repeat -150px -32px;
+	width:15px;
+	height:15px;
+}
+/* user avatar submenu options */
+.usericon .sub_menu { 
+	display:none; 
+	position:absolute; 
+	padding:0; 
+	margin:0; 
+	border-top:solid 1px #E5E5E5; 
+	border-left:solid 1px #E5E5E5; 
+	border-right:solid 1px #999999; 
+	border-bottom:solid 1px #999999;  
+	width:164px; 
+	background:#FFFFFF; 
+	text-align:left;
+	-webkit-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.50);
+	-moz-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.50);
+	font-size:14px;
+}
+div.usericon a.icon img {
+	z-index:10;
+}
+.usericon .sub_menu a:link, 
+.usericon .sub_menu a:visited, 
+.usericon .sub_menu a:hover { 
+	display:block;
+}	
+.usericon .sub_menu a:hover {
+	background:#cccccc;
+	text-decoration:none;
+}
+.usericon .sub_menu .displayname {
+	padding:0 !important;
+	margin:0 !important;
+	border-bottom:solid 1px #dddddd !important;
+	font-size:14px !important;
+}
+.usericon .sub_menu .displayname a {
+	padding:3px 3px 3px 8px;
+	font-size:14px;
+}
+.usericon .sub_menu .displayname a .username {
+	display:block;
+	font-weight: normal;
+	font-size:12px;
+	text-align: left;
+	margin:0;
+}
+.sub_menu ul.sub_menu_list {
+	list-style: none;
+	margin-bottom:0;
+	padding-left:0;
+}
+.usericon .sub_menu a {
+	padding:2px 3px 2px 8px;
+	font-size:12px;
+}
+/* admin menu options in avatar submenu */
+.user_menu_admin {
+	border-top:solid 1px #dddddd;
+}
+.usericon .sub_menu li.user_menu_admin a {
+	color:red;
+}
+.usericon .sub_menu li.user_menu_admin a:hover {
+	color:white;
+	background:red;
+}
+
+#facebox {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 10000;
+	text-align: left;
+}
+#facebox .popup {
+	position: relative;
+}
+#facebox .body {
+	padding: 10px;
+	background-color: white;
+	width: 730px;
+	-webkit-border-radius: 12px; 
+	-moz-border-radius: 12px;
+}
+#facebox .loading {
+	text-align: center;
+	padding: 100px 10px 100px 10px;
+}
+#facebox .image {
+	text-align: center;
+}
+#facebox .footer {
+	float: right;
+	width:22px;
+	height:22px;
+	margin:0;
+	padding:0;
+}
+#facebox .footer img.close_image {
+	background: url(http://elgg.leonid2.tsweb.toa/mod/embed/images/close_button.gif) no-repeat left top;
+}
+#facebox .footer img.close_image:hover {
+	background: url(http://elgg.leonid2.tsweb.toa/mod/embed/images/close_button.gif) no-repeat left -31px;
+}
+#facebox_overlay {
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	height:100%;
+	width:100%;
+}
+.facebox_hide {
+	z-index:-100;
+}
+.facebox_overlayBG {
+	background-color: #000000;
+	z-index: 9999;
+}
+* html #facebox_overlay { /* ie6 hack */
+	position: absolute;
+	height: expression(document.body.scrollHeight > document.body.offsetHeight ? document.body.scrollHeight : document.body.offsetHeight + 'px');
+}
+
+/* entity listing overrides */
+#media_upload,
+#media_embed {
+	margin:0 5px 10px 5px;
+	padding:10px;
+	border:2px solid #dedede;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	background: #dedede;
+}
+#media_embed .entity_listing {
+	margin:0;
+	padding:0;
+	background-color: white;
+}
+#media_embed .entity_listing_info {
+	width:610px;
+}
+#media_upload .input_textarea {
+	height:100px;
+	width:682px;
+}
+#media_embed .embed_instructions {
+	margin:10px 0 5px 0;
+}
+
+/* modal tabs */
+#embed_media_tabs {
+	margin:10px 0 0 10px;
+	padding:0;
+}
+#embed_media_tabs ul {
+	list-style: none;
+	padding-left: 0;
+}
+#embed_media_tabs ul li {
+	float: left;
+	margin:0;
+	background:white;
+}
+#embed_media_tabs ul li a {
+	font-weight: bold;
+	font-size:1.2em;
+	text-align: center;
+	text-decoration: none;
+	color:#b6b6b6;
+	background: white;
+	display: block;
+	padding: 3px 10px 0 10px;
+	margin:0 10px 0 10px;
+	height:20px;
+	width:auto;
+	border-top:2px solid #dedede;
+	border-left:2px solid #dedede;
+	border-right:2px solid #dedede;
+	-moz-border-radius-topleft: 8px;
+	-moz-border-radius-topright: 8px;
+	-webkit-border-top-left-radius: 8px;
+	-webkit-border-top-right-radius: 8px;
+}
+#embed_media_tabs ul li a:hover {
+	background:#b6b6b6;
+	color:white;
+	border-top:2px solid #b6b6b6;
+	border-left:2px solid #b6b6b6;
+	border-right:2px solid #b6b6b6;
+}
+#embed_media_tabs ul li a.embed_tab_selected {
+	border-top:2px solid #dedede;
+	border-left:2px solid #dedede;
+	border-right:2px solid #dedede;
+	-webkit-border-top-left-radius: 8px;
+	-webkit-border-top-right-radius: 8px;
+	-moz-border-radius-topleft: 8px;
+	-moz-border-radius-topright: 8px;
+	background: #dedede;
+	color:#666666;
+	position: relative;
+}
+/* IE6 fix */
+* html #embed_media_tabs ul li a { display: inline; }
+
+
+/* Pagination (override core elgg css defaults) */
+#media_embed .pagination,
+#media_upload .pagination {
+	float:right;
+	padding:5px;
+	background-color:white;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;	
+}
+#media_embed .pagination .pagination_number {
+	border:1px solid #999999; 
+	color:#666666;
+}
+#media_embed .pagination .pagination_number:hover {
+	background-color:#aaaaaa; 
+	color:black;
+}
+#media_embed .pagination .pagination_previous,
+#media_embed .pagination .pagination_next {
+	border:1px solid #999999; 
+	color:#666666;
+}
+#media_embed .pagination .pagination_previous:hover,
+#media_embed .pagination .pagination_next:hover {
+	background-color:#aaaaaa; 
+	color:black;
+}
+#media_embed .pagination .pagination_currentpage {
+	background-color:#666666; 
+	border:1px solid #666666; 
+	color:white;
+}#googleappslogin-box {
+	padding: 10px 10px 10px 10px;
+}
+
+.toolbarimages .user_mini_avatar {
+	width:16px;
+	height:16px;
+}
+.hidden {
+	display: none;
+}
+#custom-messages {
+	margin:0 auto;
+}
+#custom-messages .messages, #custom-messages .errors {
+	color:white;
+	font-weight: bold;
+	display:block;
+	padding:3px 10px;
+	z-index: 9600;
+	position:fixed;
+	right:20px;
+	margin-top:10px;
+	width:auto;
+	cursor: pointer;
+	opacity:0.9;
+	-webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45); /* safari v3+ */
+	-moz-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45); /* FF v3.5+ */
+}
+#custom-messages .errors {
+	background-color:red;
+}
+#custom-messages p {
+	margin:0;
+}
+#unreadmessagescountlink{
+	margin-left:4px !important;
+}
+
+.view-all {
+    text-align:right;
+    font-size:90%;
+}
+.document-icon {
+    background: url("/mod/googleappslogin/views/default/widgets/google_docs/images/mimetypes.gif") no-repeat 0 0;
+    width:10px;
+    height:10px;
+    display:block;
+    float:left;
+    margin:4px 5px; 
+}
+
+.doc{
+    background-position:0 -60px;
+}
+.spread {
+    background-position:0 -140px;
+}
+.pres {
+    background-position:0 -20px;
+}
+.form {
+    background-position:0 -130px;
+}
+
+
+
+.pdf{
+    background-position:0 -180px;
+}
+
+.audio {
+    background-position:0 0;
+}
+
+.drawing {
+    background-position:0 -90px;
+}
+
+.excel {
+    background-position:0 -30px;
+}
+
+.photo {
+    background-position:0 -160px;
+}
+
+.powerpoint {
+    background-position:0 -110px;
+}
+
+.video {
+    background-position:0 -40px;
+}
+
+.word {
+    background-position:0 -80px;
+}
+
+.star {
+    background-position:0 -10px;
+}
+
+.folder{
+    background-position:0 -190px;
+}
+
+.treeview, .treeview ul { 
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+
+.treeview ul {
+	background-color: white;
+	margin-top: 4px;
+}
+
+.treeview .hitarea {
+	background: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/treeview-default.gif) -64px -25px no-repeat;
+	height: 16px;
+	width: 16px;
+	margin-left: -16px;
+	float: left;
+	cursor: pointer;
+}
+/* fix for IE6 */
+* html .hitarea {
+	display: inline;
+	float:none;
+}
+
+.treeview li { 
+	margin: 0;
+	padding: 3px 0pt 3px 16px;
+}
+
+.treeview a.selected {
+	background-color: #eee;
+}
+
+#treecontrol { margin: 1em 0; display: none; }
+
+.treeview .hover { color: red; cursor: pointer; }
+
+.treeview li { background: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/treeview-default-line.gif) 0 0 no-repeat; }
+.treeview li.collapsable, .treeview li.expandable { background-position: 0 -176px; }
+
+.treeview .expandable-hitarea { background-position: -80px -3px; }
+
+.treeview li.last { background-position: 0 -1766px }
+.treeview li.lastCollapsable, .treeview li.lastExpandable { background-image: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/treeview-default.gif); }  
+.treeview li.lastCollapsable { background-position: 0 -111px }
+.treeview li.lastExpandable { background-position: -32px -67px }
+
+.treeview div.lastCollapsable-hitarea, .treeview div.lastExpandable-hitarea { background-position: 0; }
+
+.treeview-red li { background-image: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/treeview-red-line.gif); }
+.treeview-red .hitarea, .treeview-red li.lastCollapsable, .treeview-red li.lastExpandable { background-image: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/treeview-red.gif); } 
+
+.treeview-black li { background-image: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/treeview-black-line.gif); }
+.treeview-black .hitarea, .treeview-black li.lastCollapsable, .treeview-black li.lastExpandable { background-image: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/treeview-black.gif); }  
+
+.treeview-gray li { background-image: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/treeview-gray-line.gif); }
+.treeview-gray .hitarea, .treeview-gray li.lastCollapsable, .treeview-gray li.lastExpandable { background-image: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/treeview-gray.gif); } 
+
+.treeview-famfamfam li { background-image: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/treeview-famfamfam-line.gif); }
+.treeview-famfamfam .hitarea, .treeview-famfamfam li.lastCollapsable, .treeview-famfamfam li.lastExpandable { background-image: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/treeview-famfamfam.gif); } 
+
+
+.filetree li { padding: 3px 0 2px 16px; }
+.filetree span.folder, .filetree span.file { padding: 1px 0 1px 16px; display: block; }
+.filetree span.folder { background: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/folder.gif) 0 0 no-repeat; }
+.filetree li.expandable span.folder { background: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/folder-closed.gif) 0 0 no-repeat; }
+.filetree span.file { background: url(http://elgg.leonid2.tsweb.toa/mod/pages/images/file.gif) 0 0 no-repeat; }
+
+.pagesTreeContainer {
+		margin:0;
+		min-height: 200px;
+}
+
+#pages_page .strapline {
+    text-align:right;
+    border-top:1px solid #efefef;
+    margin:10px 0 10px 0;
+    color:#666666;
+}
+#pages_page .categories {
+    border:none !important;
+    padding:0 !important;
+}
+
+#pages_page .tags {
+    padding:0 0 0 16px;
+    margin:10px 0 4px 0;
+	background:transparent url(http://elgg.leonid2.tsweb.toa/_graphics/icon_tag.gif) no-repeat scroll left 2px;
+}
+
+#pages_page img[align="left"] {
+	margin: 10px 20px 10px 0;
+	float:left;
+}
+#pages_page img[align="right"] {
+	margin: 10px 0 10px 10px;
+	float:right;
+}
+
+.pageswelcome p {
+	margin:0 0 5px 0;
+}
+
+#sidebar_page_tree {
+	background:white;
+	-webkit-border-radius: 8px; 
+	-moz-border-radius: 8px;
+    padding:10px;
+    margin:0 10px 10px 10px;
+}
+#sidebar_page_tree h3 {
+	background: none;
+	border-top: none;
+	border-bottom: 1px solid #cccccc;
+	font-size:1.25em;
+	line-height:1.2em;
+	margin:0 0 5px 0;
+	padding:0 0 5px 5px;
+	color:#0054A7;
+}
+
+/* IE6 */
+* html #pages_welcome_tbl { width:676px !important;}
+
+.pages_widget_singleitem_more {
+	margin:0 10px 0 10px;
+	padding:5px;
+	display:block;
+	background:white;
+   	-webkit-border-radius: 8px; 
+	-moz-border-radius: 8px;	
+}
+
+
+
+/* messages/new messages icon & counter in elgg_topbar */
+a.privatemessages {
+	background:transparent url(http://elgg.leonid2.tsweb.toa/mod/messages/graphics/toolbar_messages_icon.gif) no-repeat left 2px;
+	padding-left:16px;
+	margin:4px 15px 0 5px;
+	cursor:pointer;
+}
+a.privatemessages:hover {
+	text-decoration: none;
+	background:transparent url(http://elgg.leonid2.tsweb.toa/mod/messages/graphics/toolbar_messages_icon.gif) no-repeat left -36px;
+}
+a.privatemessages.new {
+	background:transparent url(http://elgg.leonid2.tsweb.toa/mod/messages/graphics/toolbar_messages_icon.gif) no-repeat left 2px;
+	padding-left:18px;
+	margin:4px 15px 0 5px;
+	color:white;
+}
+a.privatemessages.new:hover {
+	text-decoration: none;
+	background:transparent url(http://elgg.leonid2.tsweb.toa/mod/messages/graphics/toolbar_messages_icon.gif) no-repeat left -36px;
+}
+a.privatemessages.new span {
+	background-color: red;
+	-webkit-border-radius: 10px; 
+	-moz-border-radius: 10px;
+	-webkit-box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.50); /* safari v3+ */
+	-moz-box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.50); /* FF v3.5+ */
+	color:white;
+	display:block;
+	float:right;
+	padding:0;
+	position:relative;
+	text-align:center;
+	top:-3px;
+	right:5px;
+	min-width: 16px;
+	height:16px;
+	font-size:10px;
+	font-weight:bold;
+}
+
+/* page content */
+.message {
+	border-bottom:1px dotted #cccccc;
+	padding:5px 0 7px 0;
+}
+.message.notread .entity_listing_info p.entity_title a {
+	color:#d40005;
+}
+.message_sender {
+	float:left;
+	width:180px;
+	overflow: hidden;
+}
+.messages_to {
+	float: left;
+	margin-right: 10px;
+}
+
+/* view and reply to message view */
+.message_body {
+	margin-left: 120px;
+}
+.message_subject {
+	float:left;
+	width:513px;
+	padding-top:6px;
+}
+.message .delete_button {
+	margin-top:3px;
+}
+.entity_listing.messages:hover {
+	background-color:white;
+}
+.messages_buttonbank {
+	margin:5px 0;
+	text-align: right;
+}
+.messages_buttonbank input {
+	margin:0 0 0 10px;
+}
+
+.search_listing  {
+	background:none;
+	border-bottom:1px dotted #CCCCCC;
+	clear:both;
+	display:block;
+	margin:0;
+	padding:5px 0 7px;
+	position:relative;
+}
+.search_listing_icon {
+	float:left;
+	margin-left:3px;
+	margin-top:3px;
+}
+.search_listing_icon .avatar_menu_button img {
+	width: 15px;
+	margin:0;
+}
+.search_listing_info {
+	float:left;
+	margin-left:7px;
+	min-height:28px;
+	width:693px;
+}
+.search_listing_info p {
+	margin:0;
+}
+.search_listing_category_title {
+	margin-top:20px;
+}
+.search_listing_category_title h2 {
+	color:#666666;
+}
+.search_listing.more {
+	display: block;
+}
+
+
+/* search matches */
+.searchtype {
+	background: #FFFACD;
+	color: black;
+}
+.searchtypes {
+	border: 1px #EEEEEE solid;
+	padding: 4px;
+	margin: 6px;
+}
+.searchMatch {
+	background-color: #bbdaf7;
+}
+.searchMatchColor1 {
+	background-color: #bbdaf7;
+}
+.searchMatchColor2 {
+	background-color: #A0FFFF;
+}
+.searchMatchColor3 {
+	background-color: #FDFFC3;
+}
+.searchMatchColor4 {
+	background-color: #cccccc;
+}
+.searchMatchColor5 {
+	background-color: #4690d6;
+}
+
+/* formatting for the search results */
+
+.search_listing .item_timestamp {
+	font-style: italic;
+}
+
+/* input msg area */
+#mb_input_wrapper {
+	margin:0 10px 5px 10px;
+	padding:5px;
+	background: white;
+	-webkit-border-radius: 8px; 
+	-moz-border-radius: 8px;
+}
+
+#mb_input_wrapper .input_textarea {
+	width:675px;
+}
+.collapsable_box_content #mb_input_wrapper .input_textarea {
+	width:259px;
+}
+.message_item_timestamp {
+	font-size:90%;
+	padding:10px 0 0 0;
+}
+p.message_item_timestamp {
+	margin-bottom: 10px;
+}
+/* wraps each message */
+.messageboard {
+	margin:0 10px 5px 10px;
+	padding:0;
+	background: white;
+	-webkit-border-radius: 8px; 
+	-moz-border-radius: 8px;
+}
+.messageboard .message_sender {
+	float:left;
+	margin: 5px 10px 0 5px;
+}
+/* IE6 */
+* html .messageboard { width: 280px; } 
+* html #two_column_left_sidebar_maincontent .messageboard { width: 667px; }
+* html .messageboard .message_sender { margin: 5px 10px 0 2px; }
+* html #mb_input_wrapper .input_textarea { width:645px; }
+/* IE7 */
+*:first-child+html .messageboard { width: 280px; } 
+*:first-child+html #two_column_left_sidebar_maincontent .messageboard { width: 698px; }
+*:first-child+html .messageboard .message_sender { margin: 5px 10px 0 2px; }
+
+.messageboard .message p {
+	line-height: 1.2em;
+	background:#dedede;
+	margin:0 6px 4px 6px;
+	padding:4px;
+	-webkit-border-radius: 4px; 
+	-moz-border-radius: 4px;
+	overflow-y:hidden;
+	overflow-x:auto;
+	color:#333333;
+}
+
+.message_buttons {
+	padding:0 0 3px 4px;
+	margin:0;
+	font-size: 90%;
+	color:#666666;
+}
+
+.messageboard .delete_message a {
+	display:block;
+	float:right;
+	cursor: pointer;
+	width:14px;
+	height:14px;
+	margin:0 3px 3px 0;
+	background: url("http://elgg.leonid2.tsweb.toa/_graphics/icon_customise_remove.png") no-repeat 0 0;
+	text-indent: -9000px;
+}
+.messageboard .delete_message a:hover {
+	background-position: 0 -16px;
+}
+
+
+.categories .input-checkboxes {
+	padding:0;
+	margin:2px 5px 0 0;
+}
+.categories label {
+	font-size: 100%;
+	line-height:1.2em;
+}
+
+#two_column_left_sidebar_maincontent .contentWrapper h2.categoriestitle {
+	padding: 0 0 3px 0;
+	margin:0;
+	font-size:120%;
+	color:#333333;
+}
+#two_column_left_sidebar_maincontent .contentWrapper .categories {
+	border:1px solid #CCCCCC;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	padding:5px;
+	margin:0 0 15px 0;
+}
+#two_column_left_sidebar_maincontent .contentWrapper .categories p {
+	margin:0;
+}
+#two_column_left_sidebar_maincontent .contentWrapper .blog_post .categories {
+	border:none;
+	margin:0;
+	padding:0;
+}
+
+#two_column_left_sidebar .blog_categories {
+	background:white;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	padding:10px;
+	margin:0 10px 10px 10px;
+}
+#two_column_left_sidebar .blog_categories h2 {
+	background:none;
+	border-top:none;
+	margin:0;
+	padding:0 0 5px 0;
+	font-size:1.25em;
+	line-height:1.2em;
+	color:#0054A7;
+}
+#two_column_left_sidebar .blog_categories ul {
+	color:#0054A7;
+	margin:5px 0 0 0;
+}#logbrowser_search_area {
+	margin-top:10px;
+	margin-bottom:10px;
+}
+#log_browser_search_form {
+	padding: 10px;
+	margin-bottom:10px;
+	background-color: #eeeeee;
+}
+.admin_settings.log_browser {
+	background-color: #eeeeee;
+	padding-top:7px;
+	padding-bottom:7px;
+}
+.log_entry {
+	width: 710px;
+	font-size: 80%;
+	background:white;
+	margin:0 10px 5px 10px;
+	border:1px solid white;
+}
+.log_entry:hover {
+	background-color: #eeeeee;
+	border:1px solid #666666;
+}
+.log_entry td {
+}
+.log_entry_user {
+	width: 120px;
+}
+.log_entry_time {
+	width: 210px;
+	padding:2px;
+}
+.log_entry_item {
+	
+}
+.log_entry_action {
+	width: 75px;
+}
+.bookmark_note {
+	margin:0 0 0 5px;
+}
+.note {
+	margin-top:5px;
+}
+
+
+/* BOOKMARKS WIDGET 
+.collapsable_box_content .ContentWrapper.bookmarks {
+	margin-bottom:5px;
+	line-height:1.2em;
+}
+.collapsable_box_content .ContentWrapper.bookmarks .share_desc {
+	display:none;
+	line-height: 1.2em;
+}
+.collapsable_box_content .ContentWrapper.bookmarks .share_desc p {
+	margin:0 0 5px 0;
+}
+.collapsable_box_content .ContentWrapper.bookmarks .river_object_bookmarks_create p {
+	min-height:17px;
+	padding:0 0 0 17px;
+}
+.collapsable_box_content .ContentWrapper.bookmarks .shares_timestamp {
+	color:#666666;
+	margin:0;
+	padding:0 0 0 17px;
+}
+.collapsable_box_content .ContentWrapper.bookmarks .shares_title {
+	margin:0;
+	line-height: 1.1em;
+}
+.collapsable_box_content .ContentWrapper.bookmarks.more {
+	margin:0 10px;
+	padding:5px 10px;
+}
+*/
+
+#twitter_widget {
+    margin:0 10px 0 10px;
+}
+#twitter_widget ul {
+	margin:0;
+	padding:0;
+}
+#twitter_widget li {
+	background: url(http://elgg.leonid2.tsweb.toa/mod/twitter/graphics/thewire_speech_bubble.gif) no-repeat right bottom;
+	list-style-image:none;
+	list-style-position:outside;
+	list-style-type:none;
+	margin:0 0 5px 0;
+	padding:0;
+	overflow-x: hidden;
+}
+#twitter_widget li span {
+	color:#666666;
+	background:white;
+	-webkit-border-radius: 8px; 
+	-moz-border-radius: 8px;
+	padding:5px;
+	display:block;
+}
+p.visit_twitter a {
+    background:url(http://elgg.leonid2.tsweb.toa/mod/twitter/graphics/twitter16px.png) left no-repeat;
+    padding:0 0 0 20px;
+    margin:0;
+}
+p.twitter_username .input_text {
+	width:200px;
+}
+.visit_twitter {
+	background:white;
+	-webkit-border-radius: 8px; 
+	-moz-border-radius: 8px;
+	padding:2px;
+	margin:0 0 5px 0;
+}
+#twitter_widget li a {
+	display:block;
+	margin:0 0 0 4px;
+}
+#twitter_widget li span a {
+	display:inline !important;
+}/* link in footer */
+#report_this {
+	text-align: left;
+	float:left;
+}
+#report_this a {
+	font-size: 90%;
+	padding:0 0 4px 20px;
+	background: url(http://elgg.leonid2.tsweb.toa/mod/reportedcontent/graphics/icon_reportthis.gif) no-repeat left top;
+}
+/* admin area */
+.admin_settings.reported_content {
+	margin:5px 0 0 0;
+	padding:5px 7px 3px 9px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+}
+.admin_settings.reported_content p {
+	margin:0;
+}
+.active_report {
+	border:1px solid #D3322A;
+	background:#F7DAD8;
+}
+.archived_report {
+	border:1px solid #666666;
+	background:#dedede;
+}
+.admin_settings.reported_content .controls {
+	float:right;
+	margin:14px 5px 0 0;
+}
+.admin_settings.reported_content a.action_button {
+	display:inline;
+	float:right;
+	margin-left:15px;
+}
+.admin_settings.reported_content .details_link {
+	cursor: pointer;
+}
+
+.files .entity_listing .entity_listing_info {
+	width:453px;
+}
+.files .entity_listing:hover {
+	background-color: white;
+}
+
+/* files - single entity view */
+.filerepo_title_owner_wrapper .filerepo_title,
+.filerepo_title_owner_wrapper .filerepo_owner,
+.filerepo_file .filerepo_maincontent {
+	margin-left: 70px !important;
+}
+.filerepo_owner_details {
+	margin:0;
+	padding:0;
+	line-height: 1.2em;
+}
+.filerepo_owner_details small {
+	color:#666666;
+}
+.filerepo_owner .usericon {
+	margin: 3px 5px 5px 0;
+	float: left;
+}
+.filerepo_file .filerepo_icon {
+	width: 70px;
+	position: absolute;
+	margin:5px 0 10px 0;
+}
+.filerepo_file .filerepo_title {
+	margin:0;
+	padding:7px 4px 10px 0;
+	line-height: 1.2em;
+}
+.filerepo_file .filerepo_description {
+	margin:10px 0 0 0;
+}
+.filerepo_file .filerepo_description p {
+	padding:0 0 5px 0;
+	margin:0;
+}
+.filerepo_file .filerepo_specialcontent img {
+	padding:10px;
+	margin-bottom:10px;
+	-webkit-border-radius: 6px; 
+	-moz-border-radius: 6px;
+	background: #333333; 
+}
+
+
+/* files - gallery view */
+.entity_gallery_item .filerepo_gallery_item {
+	margin:10px 10px 0 0;
+	padding:5px;
+	text-align:center;
+	background-color: #eeeeee;
+	-webkit-border-radius: 6px; 
+	-moz-border-radius: 6px;
+	width:165px;
+}
+.entity_gallery_item .filerepo_gallery_item:hover {
+	background-color: #999999;
+}
+.filerepo_download,
+.filerepo_controls {
+	padding:0 0 1px 0;
+	margin:0 0 10px 0;
+}
+.entity_gallery .filerepo_title {
+	font-weight: bold;
+	line-height: 1.1em;
+	margin:0 0 10px 0;
+}
+.filerepo_gallery_item p {
+	margin:0;
+	padding:0;
+}
+.filerepo_gallery_item .filerepo_controls {
+	margin-top:10px;
+}
+.filerepo_gallery_item .filerepo_controls a {
+	padding-right:10px;
+	padding-left:10px;
+}
+.entity_gallery .filerepo_comments {
+	font-size:90%;
+}
+.filerepo_user_gallery_link {
+	float:right;
+	margin:5px 5px 5px 50px;
+}
+.filerepo_user_gallery_link a {
+	padding:2px 25px 5px 0;
+	background: transparent url(http://elgg.leonid2.tsweb.toa/mod/file/graphics/icon_gallery.gif) no-repeat right top;
+	display:block;
+}
+.filerepo_user_gallery_link a:hover {
+	background-position: right -40px;
+}
+
+
+
+
+
+
+.blogpost {
+	border-bottom:1px dotted #CCCCCC;
+}
+.blogpost .entity_listing_icon {
+	margin-top:6px;
+}
+.blogpost .entity_listing_info {
+	margin-top:4px;
+}
+.blogpost .body {
+	margin-top:5px;
+	margin-bottom:10px;
+	display:block;
+}
+.blogpost .body p {
+	line-height: 1.4em;
+	padding-bottom:12px;
+}
+
+/* blogs list view */
+.entity_listing.blog .entity_metadata {
+	min-width:400px;
+	text-align: right;
+}
+
+/* blogs edit/create form */
+form#blog_post_edit .submit_button {
+	margin-right:15px;
+}
+/* force tinymce input height for a more useful editing / blog creation area */
+form#blog_post_edit #description_parent #description_ifr {
+	height:400px !important;
+}#riverdashboard_updates {
+	border-bottom:1px solid #cccccc;
+}
+#riverdashboard_updates a.update_link {
+	display: inline-table;
+	color:white;
+	font-weight: bold;
+	padding:1px 8px 2px 24px;
+	margin-top:9px;
+    cursor: pointer;
+	background: red url("http://elgg.leonid2.tsweb.toa/mod/riverdashboard/graphics/refresh.png") no-repeat 5px 3px;
+    -webkit-border-radius: 10px; 
+    -moz-border-radius: 10px;    
+}
+#riverdashboard_updates a.update_link:hover {
+	background: #4690D6 url("http://elgg.leonid2.tsweb.toa/mod/riverdashboard/graphics/refresh.png") no-repeat 5px -22px;
+	color:white;
+	text-decoration: none;
+}
+.riverdashboard_filtermenu {
+	margin:10px 0 10px 0;
+	float:right;
+}
+
+/* RIVER ENTRY */
+.river_item {
+	border-bottom:1px solid #cccccc;
+	padding:7px 0 7px 0;
+}
+.river_item p {
+	margin:0;
+}
+.river_item .entity_subtext {
+	padding-left:5px;
+	padding-right:12px;
+	/*font-size:85%;*/
+}
+.river_item_useravatar {
+	float:left;
+	margin-top:3px;
+	margin-left:1px;
+}
+.river_item_contents {
+	margin-left:55px;
+}
+.river_item_contents a {
+	font-weight: bold;
+}
+.river_content_display {
+	border-left:1px solid #DDDDDD;
+	font-size:85%;
+	line-height:1.5em;
+	margin:8px 0 5px 0;
+	padding-left:5px;
+}
+.following_icon {
+	width:20px;
+	height:25px;
+	margin:0 2px 0 2px;
+	background: url(http://elgg.leonid2.tsweb.toa/mod/riverdashboard/graphics/follow_icon.png) no-repeat left -7px;
+}
+
+/* LATEST COMMENTS IN RIVER */
+.river_comments_tabs {
+	max-height: 19px;
+	overflow:hidden;
+}
+.river_comments {
+	-moz-border-radius-bottomleft:5px;
+	-moz-border-radius-bottomright:5px;
+	-moz-border-radius-topleft:5px;
+	-moz-border-radius-topright:0;
+	-webkit-border-top-left-radius:5px;
+	-webkit-border-top-right-radius:0;
+	-webkit-border-bottom-right-radius:5px;
+	-webkit-border-bottom-left-radius:5px; 
+    background-color: #eeeeee;
+}
+.river_comment {
+	padding:3px;
+	border-bottom:1px solid white;	
+}
+.river_comment.penultimate {
+
+}
+.river_comment.latest {
+
+}
+/* hidden inline comment form */
+.river_comment_form.hidden {
+	padding:5px;	
+}
+.river_comment_form.hidden .input_text {
+	width:560px;
+	padding:3px;
+}
+#profile_content .river_comment_form.hidden .input_text { /* when activity is displayed on profile page */
+	width:535px;
+}
+.river_comment_form.hidden .submit_button {
+	margin:0 0 0 10px;
+	float:right;
+}
+.river_link_divider {
+	color:#999999;
+}
+.river_item_contents .river_comment_form_button,
+.river_item_contents .river_user_like_button {
+	font-size:85%;
+	font-weight:normal;
+}
+/* hidden list of users that liked item */
+.river_item .elgg_likes_user {
+	border-bottom:1px solid white;
+	padding:3px;
+}
+.river_item .elgg_likes_user .entity_listing_icon {
+	margin:3px 0 4px 2px;
+}
+.river_item .elgg_likes_user .entity_listing_info {
+	width:635px;
+}
+#profile_content .river_item .elgg_likes_user .entity_listing_info { /* when likes is displayed on profile page activity stream */
+	width:600px;
+}
+.river_item .elgg_likes_user .entity_metadata {
+	margin-top:3px;
+}
+.river_item p.elgg_likes_owner {
+	padding-top:4px;
+}
+.river_item a.river_more_comments {
+	display:block;
+	float:right;
+	padding:1px 7px 1px 7px;
+	margin-left:6px;
+	text-align:right;
+	font-size:85%;
+	font-weight:normal;
+	width:auto;
+	background-color: #eeeeee;
+	-moz-border-radius-topleft:4px;
+	-moz-border-radius-topright:4px;
+	-webkit-border-top-left-radius:4px;
+	-webkit-border-top-right-radius:4px;
+}
+.river_item a.river_more_comments.off {
+	background-color: white;
+}
+.river_item .river_comment_owner_icon {
+	float:left;
+	margin:3px 8px 4px 2px;
+}
+.river_item .river_comment_contents {
+	margin-left:34px;
+}
+
+
+
+
+/* new wire post form */
+.new_wire_post {
+	margin:10px 0 15px 0;
+	padding-bottom:15px;
+	border-bottom: 1px solid #dedede;
+}
+.new_wire_post input[type="submit"] {
+	margin:3px 0 0 0;
+	float:right;
+}
+.new_wire_post textarea {
+	width: 719px;
+	height: 52px;
+	padding: 2px 5px 5px 5px;
+	font-size: 120%;
+	color:#333333;
+}
+.character_count {
+	width: 642px;
+	color:#666666;
+}
+.character_count input { 
+	color:#666666;
+	border:none;
+	font-size: 100%;
+	font-weight: bold;
+	padding:0 2px 0 0;
+	margin:0;
+	text-align: right;
+	background: white;
+}
+.character_count input:focus {
+	border:none;
+	background:white;
+}
+
+
+/* wire posts listings */
+.wire_post {
+	padding-bottom:10px;
+	margin-bottom:5px;
+	background-image: url(http://elgg.leonid2.tsweb.toa/mod/thewire/graphics/thewire_speech_bubble.gif);
+	background-repeat: no-repeat;
+	background-position: right bottom; 
+}
+.members_list .wire_post { /* when displayed in lists of friends */
+	margin-top:4px;
+}
+.wire_post_contents {
+	background-color: #eeeeee;
+	margin:0;
+	padding:5px;
+	line-height: 1.2em;
+	min-height: 34px;
+	position: relative;
+}
+.wire_post_icon {
+    float:left;
+    margin-right:8px;
+}
+.wire_post_info {
+	margin-top:-3px;
+	float:left;
+	width:620px;
+	overflow: hidden;
+}
+.wire_post_options {
+	float:right;
+	width:65px;
+}
+.wire_post_options .action_button.reply.small {
+	float:right;
+}
+.wire_post_options .delete_button {
+	position: absolute;
+	bottom:5px;
+	right:5px;
+}
+
+
+/* latest wire post on profile page */
+.wire_post .action_button.update.small {
+	float:right;
+	padding:4px;
+	position: absolute;
+	bottom:5px;
+	right:5px;
+}
+
+/* river wire entry */
+.river_item .reply_link {
+	display:block;
+}
+/* group listings */
+.group_count {
+	float:right;
+}
+.group_listings {
+	/* wraps group lists on 
+	latest discussion, newest, popular */
+}
+.entity_subtext.groups {
+	float:right;
+	width:300px;
+	text-align: right;
+	margin-left: 10px;
+}
+.entity_listing.topic:hover {
+	background-color: white;
+}
+
+
+/* group invitations */
+.group_invitations a.action_button,
+.group_invitations a.submit_button {
+	float:right;
+	margin:0 0 0 14px;
+}
+
+
+/* GROUPS SIDEBAR ELEMENTS */
+#groupsearchform .search_input {
+	width:196px;
+}
+.featured_group {
+	margin-bottom:15px;
+}
+.featured_group .usericon {
+	float:left;
+	margin-right:10px;
+}
+.featured_group p.entity_title {
+	margin-bottom:0;
+}
+.member_icon {
+	margin:6px 6px 0 0;
+	float:left;
+}
+
+
+/* GROUP PROFILE PAGE (individual group homepage) */
+.group_profile_column {
+	float:left;
+	margin-top:10px;
+}
+.group_profile_column.icon {
+	width:200px;
+}
+.group_profile_column.info {
+	width:510px;
+	margin-left:20px;
+}
+.group_profile_icon {
+	width:200px;
+	height:200px;
+}
+.group_stats {
+	background: #eeeeee;
+	padding:5px;
+	margin-top:10px;
+	-webkit-border-radius: 5px; 
+	-moz-border-radius: 5px;
+}
+.group_stats p {
+	margin:0;
+}
+.group_profile_column .odd,
+.group_profile_column .even {
+	background:#f4f4f4;
+	-webkit-border-radius: 4px; 
+	-moz-border-radius: 4px;
+	padding:2px 4px;
+	margin:0 0 7px;
+}
+
+/* tool content boxes on group profile page */
+#group_tools_latest {
+	min-height: 300px;
+	margin-top:20px;
+}
+.group_tool_widget {
+	float:left;
+	margin-right:30px;
+	margin-bottom:40px;
+	min-height:200px;
+	width:350px;
+}
+.group_tool_widget.odd {
+	margin-right:0;
+}
+.group_tool_widget h3 {
+	border-bottom:1px solid #CCCCCC;	
+	background:#e4e4e4;
+	color:#333333;
+	padding:5px 5px 3px 5px;
+	-moz-border-radius-topleft:4px;
+	-moz-border-radius-topright:4px;
+	-webkit-border-top-left-radius:4px;
+	-webkit-border-top-right-radius:4px;
+}
+
+/* group activity latest
+	(hide some items used on the full riverdashboard activity) 
+	@todo provide a separate view for a groups latest activity
+	- so we can have tiny avatars and not have to manually hide elements
+*/
+.group_tool_widget.activity a.river_comment_form_button,
+.group_tool_widget.activity .river_comments_tabs,
+.group_tool_widget.activity .river_content_display,
+.group_tool_widget.activity .river_comments,
+.group_tool_widget.activity .river_link_divider,
+.group_tool_widget.activity .river_user_like_button {
+	display:none;
+}
+.group_tool_widget.activity .river_item .entity_subtext {
+	padding:0;
+}
+
+/* override default entity_listing_info width */
+.group_tool_widget .entity_listing_info {
+	width:315px;
+}
+
+/* edit group page */
+.delete_group {
+	float: right;
+	margin-top:-44px;
+}
+
+/* edit forum posts
+   - force tinyMCE to correct width */
+.edit_comment .defaultSkin table.mceLayout {
+	width: 694px !important;
+}
+
+
+.members .group_count {
+	font-weight: bold;
+	color: #666666;
+	margin:0 0 5px 4px;
+}
+#memberssearchform {
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 10px;
+}
+#memberssearchform input[type="submit"] {
+	padding:2px;
+	height:auto;
+	margin:4px 0 5px 0;
+}
+#memberssearchform .search_input {
+	width:196px;
+}
+#notificationstable td.namefield {
+	width:250px;
+	text-align: left;
+	vertical-align: middle;
+}
+#notificationstable td.namefield p {
+	margin:0;
+	vertical-align: middle;
+	line-height: 1.1em;
+	padding:5px 0 5px 0;
+}
+#notificationstable td.namefield p.namefieldlink {
+	margin:5px 0 0 0;
+}
+#notificationstable td.namefield a img {
+	float:left;
+	width:25px;
+	height:25px; 
+	margin:5px 10px 5px 5px;
+}
+#notificationstable td.emailtogglefield,
+#notificationstable td.smstogglefield {
+	width:50px;
+	text-align: center;
+	vertical-align: middle;
+}
+#notificationstable td.spacercolumn {
+	width:30px;
+}
+#notificationstable td {
+	border-bottom: 1px solid silver;
+}
+#notificationstable td.emailtogglefield input {
+	margin-right:36px;
+	margin-top:5px;
+}
+#notificationstable td.emailtogglefield a {
+	width:46px;
+	height:24px;
+	cursor: pointer;
+	display: block;
+	outline: none;
+}
+#notificationstable td.sitetogglefield {
+	width:50px;
+	text-align: center;
+	vertical-align: middle;
+}
+#notificationstable td.sitetogglefield input {
+	margin-right:36px;
+	margin-top:5px;
+}
+#notificationstable td.sitetogglefield a {
+	width:46px;
+	height:24px;
+	cursor: pointer;
+	display: block;
+	outline: none;
+}
+#notificationstable td.emailtogglefield a.emailtoggleOff {
+	background: url(http://elgg.leonid2.tsweb.toa/mod/notifications/graphics/icon_notifications_email.gif) no-repeat right 2px;
+}
+#notificationstable td.emailtogglefield a.emailtoggleOn {
+	background: url(http://elgg.leonid2.tsweb.toa/mod/notifications/graphics/icon_notifications_email.gif) no-repeat right -36px;
+}
+#notificationstable td.sitetogglefield a.sitetoggleOff {
+	background: url(http://elgg.leonid2.tsweb.toa/mod/notifications/graphics/icon_notifications_site.gif) no-repeat right 2px;
+}
+#notificationstable td.sitetogglefield a.sitetoggleOn {
+	background: url(http://elgg.leonid2.tsweb.toa/mod/notifications/graphics/icon_notifications_site.gif) no-repeat right -37px;
+}
+.notification_friends,
+.notification_personal,
+.notifications_per_user {
+	margin-bottom: 25px;
+}
+
+
+
+#elgg_page_contents .mceButton {
+background-color: #e9e8e8;
+	border-color: #B2B2B2;
+	margin:4px;
+	padding:2px;
+	-webkit-border-radius: 4px; 
+	-moz-border-radius: 4px;
+}
+#elgg_page_contents a.mceButtonEnabled:hover,
+#elgg_page_contents a.mceButtonActive,
+#elgg_page_contents a.mceButtonSelected {
+	background-color: #d5d5d5;
+	border-color: #777 !important;
+}
+#elgg_page_contents .mceFocus .mceTop .mceLeft {
+	background: #444444;
+	border-left: 1px solid #999;
+	border-top: 1px solid #999;
+	-moz-border-radius: 4px 0 0 0;
+	-webkit-border-top-left-radius: 4px;
+	-khtml-border-top-left-radius: 4px;
+	border-top-left-radius: 4px;
+}
+#elgg_page_contents .mceFocus .mceTop .mceRight {
+	background: #444444;
+	border-right: 1px solid #999;
+	border-top: 1px solid #999;
+	border-top-right-radius: 4px;
+	-khtml-border-top-right-radius: 4px;
+	-webkit-border-top-right-radius: 4px;
+	-moz-border-radius: 0 4px 0 0;
+}
+#elgg_page_contents .mceLayout{
+border: 1px solid #CCC;
+	-webkit-border-radius: 5px; 
+	-moz-border-radius: 5px;
+}
+#elgg_page_contents table.mceLayout tr.mceFirst td {border-top:0px solid #CCC}
+#elgg_page_contents table.mceLayout tr.mceLast td {border-bottom:0px solid #CCC}
+#elgg_page_contents #blogbody_toolbar1{}
+#elgg_page_contents .mceToolbar{}
+#elgg_page_contents #blogbody_ifr{height:400px !important;} /* blogs */
+#pagesForm #description_ifr {height:400px !important;} /* pages */
+#elgg_page_contents .mceIframeContainer{}
+.wp_themeSkin .mceButtonDisabled {
+	border-color: #ccc !important;
+}
+.ecml_admin_table {
+	width:100%;
+}
+.ecml_admin_table td, th {
+	border: 1px solid gray;
+	text-align: center;
+	padding: 5px;
+}
+.ecml_admin_table th, .ecml_keyword_desc {
+	font-weight: bold;
+}
+.ecml_row_odd {
+	background-color: #EEE;
+}
+.ecml_row_even {
+
+}
+.ecml_restricted {
+	color: #555;
+}

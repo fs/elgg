@@ -504,29 +504,61 @@
 
 
         function googleapps_change_doc_sharing($client, $doc_id, $access) {
-            
-            switch ($access) {
-                case 'public': $access_type='default'; break;
-                case 'logged_in': $access_type='domain'; break;
+
+            if ( !is_array($access) )  {
+                    switch ($access) {
+                        case 'public': $access_type='default'; break;
+                        case 'logged_in': $access_type='domain'; break;
+                    }
+
+                    $feed = 'http://docs.google.com/feeds/default/private/full/'. $doc_id.'/acl';
+
+                    $data = "<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:gAcl='http://schemas.google.com/acl/2007'>
+          <category scheme='http://schemas.google.com/g/2005#kind'
+            term='http://schemas.google.com/acl/2007#accessRule'/>
+                                          <gAcl:role value='reader'/> ";
+
+                   if ($access_type=="domain") {
+                       $domain = get_plugin_setting('googleapps_domain', 'googleappslogin');
+                       $data.="<gAcl:scope type=\"domain\" value=\"".$domain."\" />";
+                   } else {
+                       $data.="<gAcl:scope type=\"default\"/>";
+                   }
+
+                    $data.="</entry>";
+
+                    $result = $client->execute_post($feed, '3.0', null, 'POST', $data);
+
+            } else { // Batching ACL requests
+
+                $feed = 'http://docs.google.com/feeds/default/private/full/'. $doc_id.'/acl/batch';
+
+                $data .= '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:gAcl=\'http://schemas.google.com/acl/2007\'
+      xmlns:batch=\'http://schemas.google.com/gdata/batch\'>
+  <category scheme=\'http://schemas.google.com/g/2005#kind\' term=\'http://schemas.google.com/acl/2007#accessRule\'/>
+';
+                $data .= '  <entry>
+    <id>https://docs.google.com/feeds/default/private/full/'.$doc_id.'/acl/user%3A'.$user->email.'</id>
+    <batch:operation type="query"/>
+  </entry>
+';
+
+                $i=1;
+                foreach ($access as $member) {
+                    $data .= '  <entry>
+    <batch:id>'.$i.'</batch:id>
+    <batch:operation type=\'insert\'/>
+    <gAcl:role value=\'reader\'/>
+    <gAcl:scope type=\'user\' value=\''.$member.'\'/>
+  </entry>
+';
+                    $i++;
+                }
+
+
+                $result = $client->execute_post($feed, '3.0', null, 'POST', $data);
+                
             }
-
-            $feed = 'http://docs.google.com/feeds/default/private/full/'. $doc_id.'/acl';
-
-            $data = "<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:gAcl='http://schemas.google.com/acl/2007'>
-  <category scheme='http://schemas.google.com/g/2005#kind'
-    term='http://schemas.google.com/acl/2007#accessRule'/>
-                                  <gAcl:role value='reader'/> ";            
-
-           if ($access_type=="domain") {
-               $domain = get_plugin_setting('googleapps_domain', 'googleappslogin');
-               $data.="<gAcl:scope type=\"domain\" value=\"".$domain."\" />";
-           } else {
-               $data.="<gAcl:scope type=\"default\"/>";
-           }
-
-            $data.="</entry>";            
-
-            $result = $client->execute_post($feed, '3.0', null, 'POST', $data);
         }
 
 
@@ -828,13 +860,18 @@
             $doc_activity->owner_guid = $user->guid;
             $doc_activity->container_guid = $user->guid;
 
-            if ($access == 'group') { /* Group or Shared Access permission */
+            if ($access == 'match') { /* Match permissions of Google doc */
+                $doc_activity->access_id = ACCESS_LOGGED_IN;
+                $doc_activity->shared_acces = true;
+                $doc_activity->show_only_for = serialize($collaborators);
+            } elseif  ($access == 'group' and is_array($collaborators)) {      // Group
                 $doc_activity->access_id = ACCESS_LOGGED_IN;
                 $doc_activity->shared_acces = true;
                 $doc_activity->show_only_for = serialize($collaborators);
             } else {
                 $doc_activity->access_id = access_translate($access);
             }
+
 
             $doc_activity->title = $doc['title'];
             $doc_activity->text = $message.' <a href="' . $doc["href"] . '">Open document</a> ';
@@ -867,10 +904,26 @@
             // logged_in
             // private
 
-        function check_document_permission($document, $access) {
-            if ( $access==='group')  return true; /* There does not need to be any permission logic for this one. We'll leave that to the user. */
-            if ( $document==='public')  return true;
-            if ( $document==='everyone_in_domain' and $access==='logged_in')  return true;
+        function check_document_permission($document_access, $need_access, $group_members=null) {
+            if ( $document_access === 'public')  return true;
+            if ( $document_access === 'everyone_in_domain' and $need_access==='logged_in')  return true;
+            if ( $need_access === 'match')  return true; /* Match permissions of Google doc */
+            if ( $need_access === 'group')  { // Check that all users in group shared for this document
+
+//                print_r($document_access);
+//                print_r($group_members);
+//                exit;
+
+                $document_access=array_flip($document_access);
+                $permission=true;
+                foreach ($group_members as $member) {
+                    if (is_null($document_access[$member])) { $permission=false; break; }
+                }
+                
+                return $permission;
+            }
+            
+            
             return false;
         }
 
@@ -881,5 +934,17 @@
         $access = $site_entity->access_id;
         $merged[$site_id] = array('title'=>$title, 'access'=>$access, 'entity_id' =>  $site_entity->guid);
     }
+
+
+ function get_group_members_mails($group_id) {
+
+     $members=get_group_members($group_id);
+    $group_members_emails = array();
+    foreach ( $members as $member ) {
+        $group_members_emails[]=$member['email'];
+    }
+
+    return $group_members_emails;
+ }
 
 ?>

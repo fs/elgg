@@ -43,6 +43,7 @@
 	foreach ($google_docs as $id => $doc) {
 
             $collaborators =$doc['collaborators'];
+//            echo '<pre>'; print_r($collaborators);echo '</pre>';
             $permission_str=get_permission_str($collaborators);
 
             $area2 .= '
@@ -57,13 +58,23 @@
 	}
         $area2 .= '</table></div>';
 
-        $area2.='<br />View access level: <select name="access">';
+        $area2.='<br />View access level: <select name="access" id="access" onchange="showGroups()">';
         $area2.='<option value="public">Public</option>';
         $area2.='<option value="logged_in">Logged in users</option>';
         $area2.='<option value="group">Group or Shared Access</option>';
+        $area2.='<option value="match">Match permissions of Google doc</option>';
         $area2.='</select>';
 
+        $groups = get_entities_from_relationship('member',$user->guid,false,'group','',0, $limit,false, false);
+        $group_list='&nbsp;<span id="group_list"><select name="group">';
+        foreach ($groups as $group) {
+            $group_list.='<option value="'.$group->guid.'">'.$group->name.'</option>';
+        }
+        $group_list.='</select></span>';
 
+
+
+        $area2.=$group_list;
         $area2.='&nbsp;&nbsp;&nbsp;<input type="submit" value="Share doc"></form>';
         $area2.='</div><div class="clearfloat"></div></div>';
 
@@ -76,3 +87,18 @@
 	page_draw( elgg_echo('googleappslogin:google_docs'), $body);
 
 ?>
+
+<script type="text/javascript">
+var group_list = document.getElementById('group_list');
+group_list.style.display='none';
+
+function showGroups(){    
+    var val = document.getElementById('access').value;
+    if(val=="group") {
+        group_list.style.display='';
+    } else {
+        group_list.style.display='none';
+    }
+
+}
+</script>  

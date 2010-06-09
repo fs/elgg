@@ -4,8 +4,10 @@
         $user = $_SESSION['user'];
 
 
-        if ($object->shared_acces) {
-            $can_view=unserialize($object->show_only_for);            
+        if ($object->shared_acces) {            
+            $can_view=unserialize($object->show_only_for);
+//            echo'Only for<pre>'; print_r( $can_view);
+//            echo '</pre>';
             if (!in_array( $user->email, $can_view)) { echo "You do not have permission to view this item. "; return ;}
         }
 

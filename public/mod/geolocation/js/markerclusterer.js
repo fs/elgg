@@ -693,10 +693,11 @@ ClusterMarker_.prototype.initialize = function (map) {
     pos.x + "px;color:" + txtColor +  ";position:absolute;font-size:11px;" +
     'font-family:Arial,sans-serif;font-weight:bold';    
     div.innerHTML = this.text_;
+
     map.getPane(G_MAP_MAP_PANE).appendChild(div);
     var padding = this.padding_;
     GEvent.addDomListener(div, "click", function () {	
-	var title = '';		
+	var title = "<ol>";
 	var one_location = 0;	
 	var orig_loc = markers_desc[0].longitude + markers_desc[0].latitude;
 	
@@ -705,8 +706,10 @@ ClusterMarker_.prototype.initialize = function (map) {
 		one_location++;
 	    }
 	    var num = parseInt(i) +1
-	    title = title + num + ". " + markers_desc[i].desc + "<br />";
+	    title ="<li><p>"+ title + num + ". " + markers_desc[i].desc + "</p></li>";
 	}
+
+        title += "</ol>";
 		
 	if(one_location != 0) {
 	    var pos = map.fromLatLngToDivPixel(latlng);
@@ -724,7 +727,9 @@ ClusterMarker_.prototype.initialize = function (map) {
 	    });
 	}
     });
-      
+
+
+
     this.div_ = div;
 };
 

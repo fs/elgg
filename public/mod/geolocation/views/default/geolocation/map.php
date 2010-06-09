@@ -55,9 +55,9 @@
 
 		if (markerClusterer != null) {
 			markerClusterer.clearMarkers();
-                }
+		}
 
-                markerClusterer = new MarkerClusterer(map, markers, [], datajson.marker);
+		markerClusterer = new MarkerClusterer(map, markers, {gridSize: 20}, datajson.marker);
 	}
        
 
@@ -71,9 +71,9 @@
 
 		if (markerClusterer != null) {
 			markerClusterer.clearMarkers();
-                }
+		}
 
-                markerClusterer = new MarkerClusterer(map, markers, [], datajson.marker);
+		markerClusterer = new MarkerClusterer(map, markers, {gridSize: 20}, datajson.marker);
 	}
 
 	jQuery(function() {

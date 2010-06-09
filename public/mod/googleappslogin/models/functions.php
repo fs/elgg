@@ -906,7 +906,7 @@
 
         function check_document_permission($document_access, $need_access, $group_members=null) {
             if ( $document_access === 'public')  return true;
-            if ( $document_access === 'everyone_in_domain' and $need_access==='logged_in')  return true;
+            if ( $document_access === 'everyone_in_domain' and ($need_access==='logged_in' or $need_access==='group'))  return true;
             if ( $need_access === 'match')  return true; /* Match permissions of Google doc */
             if ( $need_access === 'group')  { // Check that all users in group shared for this document
 

@@ -43,7 +43,6 @@
 	foreach ($google_docs as $id => $doc) {
 
             $collaborators =$doc['collaborators'];
-//            echo '<pre>'; print_r($collaborators);echo '</pre>';
             $permission_str=get_permission_str($collaborators);
 
             $area2 .= '
@@ -65,7 +64,7 @@
         $area2.='<option value="match">Match permissions of Google doc</option>';
         $area2.='</select>';
 
-        $groups = get_entities_from_relationship('member',$user->guid,false,'group','',0, $limit,false, false);
+        $groups = get_entities_from_relationship('member', $user->guid, false, 'group', '', 0,  null, false,  false);
         $group_list='&nbsp;<span id="group_list"><select name="group">';
         foreach ($groups as $group) {
             $group_list.='<option value="'.$group->guid.'">'.$group->name.'</option>';

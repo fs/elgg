@@ -847,9 +847,9 @@
 
         function access_translate($access) {
                 switch ($access) {
-                    case 'logged_in': return 1; break; // logged_in
-                    case 'public': return 2; break; // public
-                    default: return -1;  // wrong access
+                    case 'logged_in': return ACCESS_LOGGED_IN; break; // logged_in
+                    case 'public': return ACCESS_PUBLIC; break; // public
+                    default: return ACCESS_DEFAULT;
                 }
         }
 
@@ -864,7 +864,7 @@
                 $doc_activity->access_id = ACCESS_LOGGED_IN;
                 $doc_activity->shared_acces = true;
                 $doc_activity->show_only_for = serialize($collaborators);
-            } elseif  ($access == 'group' and is_array($collaborators)) {      // Group
+            } elseif  ($access == 'group') {      // Group
                 $doc_activity->access_id = ACCESS_LOGGED_IN;
                 $doc_activity->shared_acces = true;
                 $doc_activity->show_only_for = serialize($collaborators);
@@ -882,7 +882,6 @@
             // Now save the object
             if (!$doc_activity->save()) {
                     register_error('Doc activity has not saves.');
-                    die("not saved");
                     exit;
             }
 
@@ -895,35 +894,33 @@
      }
 
 
-        // Document permissions:
-            // everyone_in_domain
-            // public
-            // number of collaborators
-        // Acces level
-            // public
-            // logged_in
-            // private
+//         Document permissions:
+//             everyone_in_domain
+//             public
+//             collaborators
+//         Acces level
+//             public
+//             logged_in
+//             private
+//             match
+//             group
 
         function check_document_permission($document_access, $need_access, $group_members=null) {
-            if ( $document_access === 'public')  return true;
-            if ( $document_access === 'everyone_in_domain' and ($need_access==='logged_in' or $need_access==='group'))  return true;
-            if ( $need_access === 'match')  return true; /* Match permissions of Google doc */
-            if ( $need_access === 'group')  { // Check that all users in group shared for this document
-
-//                print_r($document_access);
-//                print_r($group_members);
-//                exit;
-
+            if ( $document_access == 'public')  return true;
+            if ( $document_access == 'everyone_in_domain' and ($need_access == 'logged_in' or $need_access == 'group'))  return true;
+            if ( $need_access == 'match')  return true; // Match permissions of Google doc
+            
+            // Check that all group members has access to this doc
+            if ( $need_access === 'group')  {
                 $document_access=array_flip($document_access);
                 $permission=true;
                 foreach ($group_members as $member) {
                     if (is_null($document_access[$member])) { $permission=false; break; }
                 }
-                
+
                 return $permission;
             }
-            
-            
+                        
             return false;
         }
 
@@ -937,14 +934,29 @@
 
 
  function get_group_members_mails($group_id) {
-
-     $members=get_group_members($group_id);
+    $members=get_group_members($group_id);
     $group_members_emails = array();
     foreach ( $members as $member ) {
         $group_members_emails[]=$member['email'];
     }
 
     return $group_members_emails;
+ }
+
+
+ function get_members_not_shared($group_id, $doc) {
+
+    $collaborators = $doc['collaborators'];
+    $collaborators=array_flip($collaborators);
+    $members=get_group_members_mails($group_id);
+
+    $members_not_shared = array();
+
+    foreach ($members as $member) {
+        if (is_null($collaborators[$member])) {$members_not_shared[]=$member; }
+    }
+
+    return $members_not_shared;
  }
 
 ?>

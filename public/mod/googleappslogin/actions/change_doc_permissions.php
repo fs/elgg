@@ -22,8 +22,9 @@ switch ($answer) {
     case 'Grant view permisson':
 
         if ($access == 'group') {
-            $members = get_group_members_mails($group_id);            
-            googleapps_change_doc_sharing($client, $doc['id'], $members) ;
+            $members = get_group_members_mails($group_id);
+            $share_to_members = get_members_not_shared($group_id, $doc);
+            googleapps_change_doc_sharing($client, $doc['id'], $share_to_members) ; // change permissions
             share_document($doc, $user, $comment, $access, $members);
             break;
         }
@@ -35,7 +36,7 @@ switch ($answer) {
 
         if ($access == 'group') {
             $members = get_group_members_mails($group_id);
-            share_document($doc, $user, $comment, $access, $members);
+            share_document($doc, $user, $comment, $access, $members); // share to group members
             break;
         }
 

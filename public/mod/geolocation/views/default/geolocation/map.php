@@ -1,9 +1,26 @@
 <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<?= $GLOBALS['google_api'] ?>" type="text/javascript"></script>
 <script src="/mod/geolocation/js/markerclusterer.js" type="text/javascript"></script>
-<script src="/pg/geolocation/data?types=all" type="text/javascript"></script>
+
+<?php
+    $selected=get_input('selected');
+?>
+
+<?php if (is_array($selected)) {
+    $str='';
+    foreach($selected as $item)  {
+        $str.='check_types[]='.$item.'&';
+    }
+    
+    echo '<script src="/pg/geolocation/data?link=1&'.$str.'" type="text/javascript"></script>';
+?>    
+<?php } else { ?>
+    <script src="/pg/geolocation/data?types=all" type="text/javascript"></script>
+<?php } ?>
+ 
 <script type="text/javascript">
 	var markerClusterer = null;
 	var markers = [];
+
 
 	function toggleAll(toggle) {
 		var allCheckboxes = $("#typesForm input:checkbox:enabled");
@@ -47,7 +64,7 @@
 		}
 	}
 
-	function refreshMarkers(datajson){
+	function refreshMarkers(datajson) {
 		loadMarkers(datajson);
 		
 		//map.addControl(new GLargeMapControl());
@@ -79,17 +96,46 @@
 	jQuery(function() {
 		map = new google.maps.Map2(document.getElementById("map"));
 		map.setUIToDefault();
+
 		refreshMap(data);
+
+                <?php
+                        $lat = get_input('lat');
+                        $lng = get_input('lng');
+                        $zoom = get_input('zoom');
+                        if ($lat) {
+                            ?>
+                                    var link = new GLatLng(<?=$lat?>, <?=$lng?>);
+                                    map.setCenter(link, <?=$zoom ?>);
+                            <?php
+                        }
+                ?>
+                        
+
 	});
 
-//	function positionSuccess(position) {
-//		// Centre the map on the new location
-//		var coords = position.coords || position.coordinate || position;
-//		var latLng = new google.maps.LatLng(coords.latitude, coords.longitude);
-//		map.panTo(latLng);
-//		map.setZoom(12);
-//        //map.addOverlay(new GMarker(latLng));
-//	}
+
+        function showMapLink() {
+            var checkboxes = new Array();
+            var current_zoom = null;
+            var current_latlng = null;
+            var share_url = '';
+
+            current_zoom = map.getZoom();
+            current_latlng = map.getCenter();
+
+            $("#typesForm input:checkbox:checked").filter(':checked').each(function() {
+                   checkboxes.push($(this).val());
+              });
+
+            share_url = location.protocol+'//'+location.hostname+location.pathname +'?&lat='+current_latlng.lat() + '&lng='+current_latlng.lng() + '&zoom='+current_zoom+'&';
+            for ( i in checkboxes) {
+                share_url += 'selected[]='+checkboxes[i]+'&';
+            }           
+            prompt("Direct link:", share_url);
+
+        }
+
 
 	$(document).ready(function() {
         $('#typesForm').bind('submit', function() {
@@ -116,10 +162,18 @@
 	<form method="GET" action="" id="typesForm">
 		<p class="title">Include on map:</p>
 		<ul>
-			<?php foreach($vars['select_checkboxes'] as $item): ?>
+			<?php
+                            $selected=array_flip($selected);
+                            foreach($vars['select_checkboxes'] as $item): ?>
 			<li>
-				<input id="label_<?php echo $item['name']; ?>" type="checkbox" name="check_types[]" value="<?php echo $item['name']; ?>" />
-				<label for="label_<?php echo $item['name']; ?>"><?php echo $item['label']; ?></label>
+                            <?php                                                               
+                                if (!is_null($selected[$item['name']])) {
+                                    echo '<input id="label_'.$item['name'].'" type="checkbox" name="check_types[]" value="'.$item['name'].'" checked />';
+                                } else  {
+                                    echo '<input id="label_'.$item['name'].'" type="checkbox" name="check_types[]" value="'.$item['name'].'" />';
+                                }
+                            ?>            
+                                <label for="label_<?php echo $item['name']; ?>"><?php echo $item['label']; ?></label>
 			</li>
 			<?php endforeach; ?>
 		</ul>
@@ -128,7 +182,9 @@
 			<span><input type="submit" name="do" value="Update map"></span>
 		</div>
 	</form>
+    <div id="direct_link"><a href="javascript:showMapLink()">Direct link</a></div>
 </div>
+
 
 <div class="google-map">
 	<div class="geosearch single">
@@ -142,3 +198,4 @@
 		<div style="padding: 1em; color: gray">Loading...</div>
 	</div>
 </div>
+

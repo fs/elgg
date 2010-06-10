@@ -239,13 +239,14 @@ function get_json_markers() {
 
 function geolocation_page_handler($page) {
 
+    
+
 	global $CONFIG;
 
 	require_once($CONFIG->path . "engine/start.php");
 
 	switch ($page[0]) {
 		case 'data':
-
 			$result = get_json_markers() ;
 
 			if(get_input('view') == 'kml') {
@@ -297,7 +298,7 @@ function geolocation_page_handler($page) {
 			}
 
 
-			if(get_input('types') == 'all') echo 'var data = ';
+			if(get_input('types') == 'all' or get_input('link') == '1' ) echo 'var data = ';
 			echo json_encode($data);
 
 			break;
@@ -365,7 +366,7 @@ function geolocation_page_handler($page) {
 
 			break;
 
-	}
+	} // end page
 
 }
 

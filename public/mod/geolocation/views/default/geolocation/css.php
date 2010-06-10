@@ -82,3 +82,4 @@ p.user_menu_item {margin-bottom:0;}
 #map .gmnoprint ol li {margin-bottom:5px}
 #map .gmnoprint ol li p {margin-bottom:0}
  #map .gmnoprint ol {padding-left:30px}
+

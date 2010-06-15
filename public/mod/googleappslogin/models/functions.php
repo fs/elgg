@@ -117,7 +117,7 @@
 
 
                                 // Parse entries for each google site
-                                echo "<br /><b>site ".$site_entity->title."</b>( ".$site_entity->site_id." )<br />";
+                                echo "<br />site entity id=".$site_entity->guid." <b>site ".$site_entity->title."</b>( ".$site_entity->site_id." )<br />";
                                 if ($site_entity->access_id == ACCESS_PRIVATE) { echo "site access is private<br />"; }
 
                                 foreach ($rss->entry as $item) {

@@ -76,7 +76,7 @@
                     $is_new_activity = false;
                     $is_new_docs = false;
 
-                    $res=googleapps_sync_sites(true, $user, true);
+                    $res=googleapps_sync_sites(true, $user);
 
                     $response_list = $res['response_list']; //sites xml list
                     $site_entities=$res['site_entities']; // sites objects
@@ -95,7 +95,7 @@
 
                                 /* found current site entity obj */
                                 foreach ($site_entities as $site_entity) {
-                                    if ($site_entity->site_id ==$site['site_id']) break; // found
+                                    if ($site_entity->site_id == $site['site_id']) break; // found
                                 }
 
                                 $last_time_site_updated = $site_entity->modified;
@@ -132,41 +132,42 @@
                                         $access = calc_access($site_access);
                                         $times[] = $time; // all user's sites time
 
+                                        // if sit is public
+                                        if ($site_activity->access_id != ACCESS_PRIVATE) {
+                                            if ( $user->last_site_activity <= $time // not publich already
+                                                            && $author_email == $user->email // edited by this user
+                                                            /* &&  $site['isPublic'] == true */ )
+                                                    {
+                                                        // Initialise a new ElggObject (entity)
+                                                        $site_activity = new ElggObject();
+                                                        $site_activity->subtype = "site_activity";
+                                                        $site_activity->owner_guid = $user->guid;
+                                                        $site_activity->container_guid = $user->guid;
 
-                                        if (   $user->last_site_activity <= $time // not publich already
-                                                        && $author_email == $user->email // edited by this user
-                                                        /* &&  $site['isPublic'] == true */ )
-                                                {
-                                                    // Initialise a new ElggObject (entity)
-                                                    $site_activity = new ElggObject();
-                                                    $site_activity->subtype = "site_activity";
-                                                    $site_activity->owner_guid = $user->guid;
-                                                    $site_activity->container_guid = $user->guid;
+                                                        $site_activity->access_id = $access;
+                                                        $site_activity->title = $title;
 
-                                                    $site_activity->access_id = $access;
-                                                    $site_activity->title = $title;
+                                                        $site_activity->updated = $date;
 
-                                                    $site_activity->updated = $date;
+                                                        $site_activity->text = str_replace('<a href', '<a target="_blank" href', $text) . ' on the <a target="_blank" href="' . $site['url'] . '">' . $site_title . '</a> site';
+                                                        $site_activity->site_name = $site_title;
 
-                                                    $site_activity->text = str_replace('<a href', '<a target="_blank" href', $text) . ' on the <a target="_blank" href="' . $site['url'] . '">' . $site_title . '</a> site';
-                                                    $site_activity->site_name = $site_title;
-
-                                                    // Now save the object
-                                                    if (!$site_activity->save()) {
-                                                            register_error('Site activity has not saves.');
-                                                            //forward($_SERVER['HTTP_REFERER']);
-                                                    }
-
-                                                    // if site is public  add to river
-                                                    if ($site_activity->access_id!=ACCESS_PRIVATE) {
-                                                        if (add_to_river('river/object/site_activity/create', 'create', $user->guid, $site_activity->guid, "", strtotime($date))) {
-                                                                $is_new_activity = true;
-                                                                echo "<br /><b>Published activity for this site</b>. Site is access is ".$access;
+                                                        // Now save the object
+                                                        if (!$site_activity->save()) {
+                                                                register_error('Site activity has not saves.');
+                                                                //forward($_SERVER['HTTP_REFERER']);
                                                         }
-                                                    } else {
-                                                        echo "<br />Not published activity. Site is private.";
-                                                    }
+
+                                                        if (add_to_river('river/object/site_activity/create', 'create', $user->guid, $site_activity->guid, "", strtotime($date))) {
+                                                            $is_new_activity = true;
+                                                            echo "<br /><b>Published activity for this site</b>. Site is access is ".$access;
+                                                        } else {
+                                                            echo "error with add to river";
+                                                        }
+
+                                                } // need to add activite
                                         } // public activity
+
                                 } // rss in site
 
                                 // change site time
@@ -367,11 +368,10 @@
 		}
 
 		// 3. Save
-                $user_site_list = empty($user->site_list) ? array() : unserialize($user->site_list);
-		$merged = array();               
+                //$user_site_list = empty($user->site_list) ? array() : unserialize($user->site_list);
 
-
-
+                // user's site list
+		$merged = array();
 
 //		// 4.1 Update normalized sites: destroy deleted sites
 //		if($normalized_sites) {
@@ -414,11 +414,14 @@
 //			}
 //		}
 
-                $users_site_entities=array(); // site entities what have user
+                // site entities what have user
+                $users_site_entities=array(); 
 
 		// 4.2 Update normalized sites: create new sites
 		foreach ($response_list as $site) {
 			$found = false;
+
+                        // search for site in elgg entities
 			foreach ($all_site_entities as $site_entity) {
 				if ($site['site_id'] == $site_entity->site_id) {
                                         $users_site_entities[]=$site_entity;
@@ -427,8 +430,9 @@
 					break;
 				}
 			}
+
+                        // create new site entity
 			if (!$found) {
-				// create entity
 				$new_site = new ElggObject();
 				$new_site->owner_guid = $user->guid;
 				$new_site->site_id = $site['site_id'];
@@ -436,7 +440,7 @@
 				$new_site->subtype = "site";
 				$new_site->url = $site['url'];
 				$new_site->modified = $site['modified'];
-				$new_site->access_id = $merged[$site['title']];
+				$new_site->access_id = ACCESS_PRIVATE ;
 				$new_site->save();
                                 $users_site_entities[]=$site_entity;
                                 save_site_to_user_list($new_site, $site, $merged);

@@ -19,7 +19,7 @@ function update_site_entity_acces($entity_id, $access) {
 
     foreach ($user_site_entities as $entity) {
         if ( $entity->guid == $entity_id ) {
-            $entity->access_id = $access;
+            $entity->site_access_id = $access;
             $entity->save();
         }
     }

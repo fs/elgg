@@ -128,7 +128,7 @@
 
                                 // Parse entries for each google site
                                 echo "<br />site entity id=".$site_entity->guid." <b>site ".$site_entity->title."</b>( ".$site_entity->site_id." )<br />";
-                                if ($site_entity->access_id == ACCESS_PRIVATE) { echo "site access is private<br />"; }
+                                if ($site_entity->site_access_id == ACCESS_PRIVATE) { echo "site access is private<br />"; }
 
                                 foreach ($rss->entry as $item) {
                                         // Get entry data
@@ -139,13 +139,13 @@
                                          if (strtotime($date)>$last_time_site_updated) $last_time_site_updated=strtotime($date); // update site time
 
                                         $time = strtotime($date);
-                                        $site_access = $site_entity->access_id;
+                                        $site_access = $site_entity->site_access_id;
                                         $access = calc_access($site_access);
                                         $times[] = $time; // all user's sites time
 
                                         // if sit is public
-                                        if ($site_entity->access_id != ACCESS_PRIVATE) {
-                                            if ( $user->last_site_activity <= $time // not publich already
+                                        if ($site_entity->site_access_id != ACCESS_PRIVATE) {
+                                            if ( $user->last_site_activity <= $time // not publish already
                                                             && $author_email == $user->email // edited by this user
                                                             /* &&  $site['isPublic'] == true */ )
                                                     {
@@ -373,7 +373,7 @@
 		$result = $client->execute('https://sites.google.com/feeds/site/' . $client->key . '/', '1.1');
 		$response_list = $client->fetch_sites($result); // Site list
 
-                $all_site_entities = elgg_get_entities(array('type'=>'object', 'subtype'=>'site')); // Get all site entities
+                $all_site_entities = elgg_get_entities(array('type'=>'object', 'subtype'=>'site', 'limit'=>9999)); // Get all site entities
 
 
 		// 2. Get local site list
@@ -455,7 +455,8 @@
 				$new_site->subtype = "site";
 				$new_site->url = $site['url'];
 				$new_site->modified = $site['modified'];
-				$new_site->access_id = ACCESS_PRIVATE ;
+                                $new_site->access_id = ACCESS_LOGGED_IN; // for entity. just for search availably
+				$new_site->site_access_id = ACCESS_PRIVATE ; // for site
 				$new_site->save();
                                 $users_site_entities[]=$new_site;
                                 save_site_to_user_list($new_site, $site, $merged);
@@ -947,7 +948,7 @@
     function save_site_to_user_list($site_entity, $site_xml, &$merged) {
         $title = $site_xml['title'];
         $site_id = $site_xml['site_id'];
-        $access = $site_entity->access_id;
+        $access = $site_entity->site_access_id;
         $merged[$site_id] = array('title'=>$title, 'access'=>$access, 'entity_id' =>  $site_entity->guid);
     }
 

@@ -447,7 +447,7 @@
 
                         // create new site entity
 			if (!$found) {
-                                echo "<b> CREATED SITE ENTITY </b><br />";
+//                                echo "<b> CREATED SITE ENTITY </b><br />";
 				$new_site = new ElggObject();
 				$new_site->owner_guid = $user->guid;
 				$new_site->site_id = $site['site_id'];

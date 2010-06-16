@@ -183,6 +183,11 @@ function googleappslogin_can_edit($hook_name, $entity_type, $return_value, $para
 		// should be able to do anything with googleapps user data
 		return true;
 	}
+
+        if ($context == 'googleappslogin_cron_job') {
+		return true;
+	}
+
 	return null;
 }
 

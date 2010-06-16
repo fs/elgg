@@ -45,6 +45,10 @@
 
 	function googleapps_cron_fetch_data() {
 
+        $context = get_context();
+	set_context('googleappslogin_cron_job');
+
+
             /* need to sync sites ? */
             $oauth_sync_sites = get_plugin_setting('oauth_sync_sites', 'googleappslogin');
             if ($oauth_sync_sites == 'no') return;
@@ -94,9 +98,15 @@
                         foreach ($response_list as $site) {
 
                                 /* found current site entity obj */
-                                foreach ($site_entities as $site_entity) {
-                                    if ($site_entity->site_id == $site['site_id']) break; // found
+
+                                $site_entity=null;
+                                foreach ($site_entities as $site_obj) {
+                                    if ($site_obj->site_id == $site['site_id']) {
+                                        $site_entity =  $site_obj;
+                                        break; // found
+                                    }
                                 }
+
 
                                 $last_time_site_updated = $site_entity->modified;
 
@@ -203,7 +213,9 @@
                 echo "<br /><br /><b>All finished</b>";
                 $b_time=time();
                 echo "<br>".($b_time-$a_time)." sec";
-                flush();	
+                flush();
+
+                set_context($context);
 	}
 
 	/**
@@ -363,6 +375,7 @@
 
                 $all_site_entities = elgg_get_entities(array('type'=>'object', 'subtype'=>'site')); // Get all site entities
 
+
 		// 2. Get local site list
 		if($user == null) {
 			$user =& $_SESSION['user'];
@@ -434,6 +447,7 @@
 
                         // create new site entity
 			if (!$found) {
+                                echo "<b> CREATED SITE ENTITY </b><br />";
 				$new_site = new ElggObject();
 				$new_site->owner_guid = $user->guid;
 				$new_site->site_id = $site['site_id'];
@@ -443,7 +457,7 @@
 				$new_site->modified = $site['modified'];
 				$new_site->access_id = ACCESS_PRIVATE ;
 				$new_site->save();
-                                $users_site_entities[]=$site_entity;
+                                $users_site_entities[]=$new_site;
                                 save_site_to_user_list($new_site, $site, $merged);
 			}
 		}

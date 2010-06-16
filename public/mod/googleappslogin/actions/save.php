@@ -15,6 +15,9 @@ function update_acitivities_access($site_name, $access) {
 
 
 function update_site_entity_acces($entity_id, $access) {
+    $context = get_context();
+    set_context('googleappslogin_cron_job');
+
     $user_site_entities=unserialize($_SESSION['user_site_entities']);
 
     foreach ($user_site_entities as $entity) {
@@ -24,6 +27,7 @@ function update_site_entity_acces($entity_id, $access) {
         }
     }
 
+    set_context($context); 
 }
 
 $googleapps_controlled_profile = strip_tags(get_input('googleapps_controlled_profile'));

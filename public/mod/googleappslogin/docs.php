@@ -24,20 +24,19 @@
 
 	// Get a list of google sites
 	$area2 .= '<div id="googleappslogin">';
+  $area2 .= '<script type="text/javascript" src="/mod/googleappslogin/jquery.tablesorter.js"></script> ';
+  $area2 .= '<script>$(function(){$("#docs_table").tablesorter()});</script>';
 	$area2 .= '<div class="contentWrapper singleview">';
 
 
         $area2 .='<form action="'.$GLOBALS['share_doc_url'].'" method="post">';
         $area2 .='<label>Comment to add</label><br /><textarea name="comment" class="docs_comment"></textarea><br /><br />';
-
-        $area2.='<table width="100%">
-                                <tr>
-                                        <td width="70"></td><td  width="200"><b>Name</b></td><td><b>Sharing</b></td><td><b>Modified</b></td>
-                                </tr>
-                             </table>';
-        
         $area2.='<div class="docs_table">            
-                                <table width="100%">';
+          <table width="100%" id="docs_table">
+            <thead>
+              <tr><th width="70"></th><th  width="200"><b>Name</b></th><th><b>Sharing</b></th><th><b>Modified</b></th></tr>
+            </thead><tbody>';
+
 
         $documents_collaborators=array();
 	foreach ($google_docs as $id => $doc) {
@@ -55,7 +54,7 @@
             </tr>
             ';
 	}
-        $area2 .= '</table></div>';
+        $area2 .= '</tbody></table></div>';
 
         $area2.='<br />View access level: <select name="access" id="access" onchange="showGroups()">';
         $area2.='<option value="public">Public</option>';

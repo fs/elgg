@@ -50,10 +50,14 @@ padding:0 0 5px;
 .google-map {position:relative;}
 .filter-toolbar {padding:10px;overflow:hidden;position:relative;}
 .filter-toolbar .title {font-weight:bold;margin-bottom:0;}
-.filter-toolbar ul {overflow:hidden;padding:0;margin:10px 0 0;float:left;width:500px;}
-.filter-toolbar ul li {list-style:none;display:block;float:left;width:160px;}
+.filter-toolbar ul {overflow:hidden;padding:0;margin:10px 0 6px;float:left;width:100%;}
+.filter-toolbar ul li {list-style:none;display:block;float:left;width:180px;padding:2px 0;}
 .filter-toolbar ul li label {font-size:12px;font-weight:normal;}
-.filter-toolbar .update-map {float:right;width:200px;position:absolute;bottom:0;right:10px;}
+.filter-toolbar .map-actions {width:140px;position:absolute;top:40px;right:10px;}
+.filter-toolbar .map-actions .select {text-align:left;float:left;width:180px;}
+.filter-toolbar .map-actions .update-map {padding-left:0px;width:140px;float:right;}
+.filter-toolbar .map-actions .update-map .upd {display:block;}
+.filter-toolbar .map-actions .update-map .upd  input {margin:8px 0 5px;}
 .map_home,
 .map_current {float:left;margin-left:76px;}
 #map_home {width:200px;height:200px;overflow: hidden;}
@@ -62,22 +66,26 @@ padding:0 0 5px;
 #facebox .popup {}
 #facebox .body {width:auto;}
 p.user_menu_item {margin-bottom:0;}
-
+.direct-link {font-size:80%;padding-right:10px;}
+#hidden_share_link {font-size:80%;padding:0 2px;overflow:hidden;clear:both;}
+	#hidden_share_link input {width:99%;padding:1px 2px;}
 
 #layout_map #my_location_button {top:310px;left:36px;}
 
-#my_location_button {position:relative;top:290px;left:26px; background-image:url('/mod/geolocation/graphics/my_location_button.png');  width: 20px; height: 20px; overflow: visible !important; z-index: 1;cursor:pointer;}
+#my_location_button {position:absolute;top:290px;left:26px; background-image:url('/mod/geolocation/graphics/my_location_button.png');  width: 20px; height: 20px; overflow: visible !important; z-index: 1;cursor:pointer;}
 
 .user_on_map {
-    display: inline;
-    float: none;
-}
+  overflow:hidden;
+	width:100%;
+	}
+	.user_on_map .user-image {float:left;width:30px;margin-right:10px;}
+		.user_on_map .user-image a {display:block;}
+		.user_on_map .user-image img {width:30px;margin-top:5px;}
+	.user_on_map .user-description {margin-left:40px;}
+		.user_on_map .user-description a.user-name {display:block;margin:0;line-height:20px;text-transform:capitalize;font-size:13px;font-weight:bold;}
+		.user_on_map .user-description p {margin:0;line-height:1.2em;font-size:10px;}
 
 
-.user_on_map img {
-     float: left;
-     padding-right: 5px;
-}
 
 #map .gmnoprint ol li {margin-bottom:5px}
 #map .gmnoprint ol li p {margin-bottom:0}

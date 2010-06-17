@@ -115,7 +115,7 @@
 	});
 
 
-        function showMapLink() {
+        function showMapLink(t) {
             var checkboxes = new Array();
             var current_zoom = null;
             var current_latlng = null;
@@ -131,9 +131,9 @@
             share_url = location.protocol+'//'+location.hostname+location.pathname +'?&lat='+current_latlng.lat() + '&lng='+current_latlng.lng() + '&zoom='+current_zoom+'&';
             for ( i in checkboxes) {
                 share_url += 'selected[]='+checkboxes[i]+'&';
-            }           
-            prompt("Direct link:", share_url);
-
+            }
+						$('#hidden_share_link').toggle().find('input').val(share_url)[0].select();
+						return false;
         }
 
 
@@ -177,12 +177,20 @@
 			</li>
 			<?php endforeach; ?>
 		</ul>
-		<div class="update-map">
-			<span>Select: <a href="javascript:toggleAll(1)">All</a> | <a href="javascript:toggleAll(0)">None</a></span>
-			<span><input type="submit" name="do" value="Update map"></span>
+		<div class="map-actions">
+				<div class="select">
+						<span>Select: <a href="javascript:toggleAll(1)">All</a> | <a href="javascript:toggleAll(0)">None</a></span>
+				</div>
+				<div class="update-map">
+						<span class="upd"><input type="submit" name="do" value="Update map"></span>
+						<div class="direct-link">
+								<div id="direct_link"><a href="#" onclick="return showMapLink(this);">Get direct link to this map</a></div>								
+					  </div>
+				</div>
 		</div>
+		<div style="display:none" id="hidden_share_link"><input type="text" value="" /></div>
 	</form>
-    <div id="direct_link"><a href="javascript:showMapLink()">Direct link</a></div>
+    
 </div>
 
 

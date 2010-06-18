@@ -80,7 +80,7 @@ p.user_menu_item {margin-bottom:0;}
 	}
 	.user_on_map .user-image {float:left;width:30px;margin-right:10px;}
 		.user_on_map .user-image a {display:block;}
-		.user_on_map .user-image img {width:30px;margin-top:5px;}
+		.user_on_map .user-image img {width:30px;margin-top:3px;}
 	.user_on_map .user-description {margin-left:40px;}
 		.user_on_map .user-description a.user-name {display:block;margin:0;line-height:20px;text-transform:capitalize;font-size:13px;font-weight:bold;}
 		.user_on_map .user-description p {margin:0;line-height:1.2em;font-size:10px;}

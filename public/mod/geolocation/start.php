@@ -295,15 +295,19 @@ function geolocation_page_handler($page) {
                                                 $data['marker'][$key]['desc'] = '<a class="image-on-map" href="' . $item->getURL() . '">image</a>';
                                                 $data['marker'][$key]['desc'] .= '</div>';                                                 
                                         }
-                                        if (get_subtype_from_id($item->subtype) == 'image') {
+                                        if ( $item->type == 'group') {
 
-                                            /* Group */
+                                              /* Group */
+
+                                                $data['marker'][$key]['desc'] = '<div class="'.$item->type.'">';
+						$data['marker'][$key]['desc'] .= '<a class="title" href="' . $item->getURL() . '">' . $item->name . '</a> ';
+						$data['marker'][$key]['desc'] .= '<p class="description">' . $item->description . '</p>';
+                                                $data['marker'][$key]['desc'] .= '</div>';
 
 
 					} else {
-                                                $data['marker'][$key]['desc'] = '<div class="'.$item->type.'">';
-                                                //$data['marker'][$key]['desc'] .= htmlspecialchars(print_r($item));
-						$data['marker'][$key]['desc'] .= '<a class="title" href="' . $item->getURL() . '">' . $item->name . '</a> ';
+                                                $data['marker'][$key]['desc'] = '<div class="'.get_subtype_from_id($item->subtype).'">';
+						$data['marker'][$key]['desc'] .= '<a class="title" href="' . $item->getURL() . '">' . $item->title . '</a> ';
 						$data['marker'][$key]['desc'] .= '<p class="description">' . $item->description . '</p>';
                                                 $data['marker'][$key]['desc'] .= '</div>';
 					}

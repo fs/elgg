@@ -53,6 +53,7 @@ if (! check_document_permission($doc_access, $activity_access, $members) ) {
         $area2 .= '<input type="submit" value="Cancel" onclick="save_answer(this)">&nbsp;';
         $area2 .= '</div><div class="clearfloat"></div>';
 	echo $area2;
+        exit;
  } else {
 
      if ($activity_access == 'group') {

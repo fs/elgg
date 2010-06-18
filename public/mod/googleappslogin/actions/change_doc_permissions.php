@@ -7,9 +7,10 @@ $comment = $data['comment'];
 $access = $data['access'];
 $group_id = $data['group'];
 $doc_id = $data['doc_id'];
-$doc = $google_docs[$doc_id];
+
 
 $google_docs = unserialize($_SESSION['oauth_google_docs']);
+$doc = $google_docs[$doc_id];
 $user = $_SESSION['user'];
 $client = authorized_client(true);
 

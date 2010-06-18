@@ -4,8 +4,6 @@ $doc_id = get_input('doc_id');
 $comment = get_input('comment', '');
 $activity_access = get_input('access', '');
 $group_id = get_input('group', '');
-$url_to_redirect=$CONFIG->wwwroot . 'pg/docs/my';
-$url_for_permission_redirect=$CONFIG->wwwroot . 'pg/docs/permissions';
 
 $to_share=array();
 $to_share['doc_id']=$doc_id;
@@ -15,14 +13,13 @@ $to_share['group']=$group_id;
 $_SESSION['google_docs_to_share_data']=serialize( $to_share ); // remember data
 
 if ( is_null($doc_id) ) {
-    die('No doc id');
-    system_message(elgg_echo("googleappslogin:doc:share:no_doc_id"));
-    forward($url_to_redirect);
+    echo elgg_echo("googleappslogin:doc:share:no_doc_id");
+    exit;
 }
 
 if( empty($comment)) {
-    die('No comment');
-    system_message(elgg_echo("googleappslogin:doc:share:no_comment"));
+    echo elgg_echo("googleappslogin:doc:share:no_comment");
+    exit;
     forward($url_to_redirect);
 }
 
@@ -61,8 +58,8 @@ if (! check_document_permission($doc_access, $activity_access, $members) ) {
     }
 
      share_document($doc, $user, $comment, $activity_access, $doc_access); // Share and public document activity
-     die('Document shared');
-     forward($url_to_redirect); // forward
+     echo elgg_echo("googleappslogin:doc:share:ok");
+     exit;
  }
 
 

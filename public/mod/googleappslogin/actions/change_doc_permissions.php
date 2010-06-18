@@ -1,7 +1,4 @@
 <?php
-
-$url_to_redirect = $CONFIG->wwwroot . 'pg/docs/my';
-
 $data = unserialize($_SESSION['google_docs_to_share_data']);
 $comment = $data['comment'];
 $access = $data['access'];
@@ -38,10 +35,11 @@ switch (get_input('answer')) {
         share_document($doc, $user, $comment, $access);
         break;
 
-    case 'Cancel':
-        break;        
+    case 'Cancel':  echo 'Canceled'; exit; break;
+
 }
-die('OK');
-forward($url_to_redirect);
+
+     die ( elgg_echo("googleappslogin:doc:share:ok") );
+     exit;
 
 ?>

@@ -910,7 +910,7 @@
                 add_to_river('river/object/doc_activity/create', 'create doc', $user->guid, $doc_activity->guid, "", strtotime($date));
             }
 
-            system_message(elgg_echo("googleappslogin:doc:share:ok"));
+//            system_message(elgg_echo("googleappslogin:doc:share:ok"));
      }
 
 

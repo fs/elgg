@@ -11,8 +11,8 @@
 	 */
 
 	// Load Elgg engine
-	global $CONFIG;
-	require_once($CONFIG->path . "engine/start.php");
+	//global $CONFIG;
+	//require_once($CONFIG->path . "engine/start.php");
         
 	$area2 = elgg_view_title(elgg_echo('googleappslogin:google_docs'));
 
@@ -33,13 +33,14 @@
 
 
         $area2.='</div><div class="clearfloat"></div></div>';
+	echo $area2;
 
-	$body = elgg_view_layout("two_column_left_sidebar", '', $area1 . $area2, $area3);
+	//$body = elgg_view_layout("two_column_left_sidebar", '', $area1 . $area2, $area3);
 
 	// Display them in the page
-	$body = elgg_view_layout("two_column_left_sidebar", '', $area1 . $area2, $area3);
+	//$body = elgg_view_layout("two_column_left_sidebar", '', $area1 . $area2, $area3);
 
 	// Display page
-	page_draw( elgg_echo('googleappslogin:google_docs'), $body);
+	//page_draw( elgg_echo('googleappslogin:google_docs'), $body);
 
 ?>

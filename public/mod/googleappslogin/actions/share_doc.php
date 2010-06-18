@@ -15,11 +15,13 @@ $to_share['group']=$group_id;
 $_SESSION['google_docs_to_share_data']=serialize( $to_share ); // remember data
 
 if ( is_null($doc_id) ) {
+    die('No doc id');
     system_message(elgg_echo("googleappslogin:doc:share:no_doc_id"));
     forward($url_to_redirect);
 }
 
 if( empty($comment)) {
+    die('No comment');
     system_message(elgg_echo("googleappslogin:doc:share:no_comment"));
     forward($url_to_redirect);
 }
@@ -35,8 +37,22 @@ if ($activity_access == 'group') {
 }
 
 if (! check_document_permission($doc_access, $activity_access, $members) ) {
-    system_message(elgg_echo("googleappslogin:doc:share:wrong_permissions"));
-    forward($url_for_permission_redirect);
+
+	$area2 .= '
+	<script>
+	function save_answer(el) {
+		el.form.answer.value = el.value;
+	}
+	</script>';
+	$area2 .= '<div class="contentWrapper singleview">';
+        $area2 .= '<form action="'. $GLOBALS['change_doc_permissions_url'] .'" onsubmit="return ajax_submit(this);"  method="post">';
+        $area2 .= '<h3>'.elgg_echo('googleappslogin:doc:share:wrong_permissions').'</h3>';
+        $area2 .= '<input type="hidden" value="" name="answer">&nbsp;';
+        $area2 .= '<input type="submit" value="Grant view permisson" onclick="save_answer(this)">&nbsp;';
+        $area2 .= '<input type="submit" value="Ignore and continue" onclick="save_answer(this)">&nbsp;';
+        $area2 .= '<input type="submit" value="Cancel" onclick="save_answer(this)">&nbsp;';
+        $area2 .= '</div><div class="clearfloat"></div>';
+	echo $area2;
  } else {
 
      if ($activity_access == 'group') {
@@ -44,6 +60,7 @@ if (! check_document_permission($doc_access, $activity_access, $members) ) {
     }
 
      share_document($doc, $user, $comment, $activity_access, $doc_access); // Share and public document activity
+     die('Document shared');
      forward($url_to_redirect); // forward
  }
 

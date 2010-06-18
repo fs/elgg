@@ -291,7 +291,7 @@ function geolocation_page_handler($page) {
 
                                             /* Image */
 
-                                                $data['marker'][$key]['desc'] = '<div class="'.get_subtype_from_id($item->subtype).'">';
+                                                $data['marker'][$key]['desc'] = '<div class="object-on-map '.get_subtype_from_id($item->subtype).'">';
                                                 $data['marker'][$key]['desc'] = '<a class="image-on-map" href="' . $item->getURL() . '">image</a>';
                                                 $data['marker'][$key]['desc'] .= '</div>';                                                 
                                         }
@@ -299,14 +299,14 @@ function geolocation_page_handler($page) {
 
                                               /* Group */
 
-                                                $data['marker'][$key]['desc'] = '<div class="'.$item->type.'">';
+                                                $data['marker'][$key]['desc'] = '<div class="object-on-map '.$item->type.'"><div class="object-icon"></div><div class="object-description">';
 						$data['marker'][$key]['desc'] .= '<a class="title" href="' . $item->getURL() . '">' . $item->name . '</a> ';
 						$data['marker'][$key]['desc'] .= '<p class="description">' . $item->description . '</p>';
                                                 $data['marker'][$key]['desc'] .= '</div>';
 
 
 					} else {
-                                                $data['marker'][$key]['desc'] = '<div class="'.get_subtype_from_id($item->subtype).'">';
+                                                $data['marker'][$key]['desc'] = '<div class="object-on-map '.get_subtype_from_id($item->subtype).'"><div class="object-icon"></div><div class="object-description">';
 						$data['marker'][$key]['desc'] .= '<a class="title" href="' . $item->getURL() . '">' . $item->title . '</a> ';
 						$data['marker'][$key]['desc'] .= '<p class="description">' . $item->description . '</p>';
                                                 $data['marker'][$key]['desc'] .= '</div>';

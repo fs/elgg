@@ -74,20 +74,21 @@ p.user_menu_item {margin-bottom:0;}
 
 #my_location_button {position:absolute;top:290px;left:26px; background-image:url('/mod/geolocation/graphics/my_location_button.png');  width: 20px; height: 20px; overflow: visible !important; z-index: 1;cursor:pointer;}
 
-.user_on_map {
-  overflow:hidden;
-	width:100%;
-	}
-	.user_on_map .user-image {float:left;width:30px;margin-right:10px;}
-		.user_on_map .user-image a {display:block;}
-		.user_on_map .user-image img {width:30px;margin-top:3px;}
-	.user_on_map .user-description {margin-left:40px;}
-		.user_on_map .user-description a.user-name {display:block;margin:0;line-height:20px;text-transform:capitalize;font-size:13px;font-weight:bold;}
-		.user_on_map .user-description p {margin:0;line-height:1.2em;font-size:10px;}
+#map .gmnoprint ol {padding-left:0;margin:0;overflow:hidden;}
+	#map .gmnoprint ol li {margin-bottom:5px;}
 
-
-
-#map .gmnoprint ol li {margin-bottom:5px}
-#map .gmnoprint ol li p {margin-bottom:0}
- #map .gmnoprint ol {padding-left:30px}
+	.user_on_map {overflow:hidden;width:100%;}
+		.user_on_map .user-image {float:left;width:20px;margin-right:10px;}
+			.user_on_map .user-image a {display:block;}
+			.user_on_map .user-image img {width:20px;margin-top:3px;}
+		.user_on_map .user-description {margin-left:30px;}
+			.user_on_map .user-description a.user-name {display:block;margin:0;line-height:20px;text-transform:capitalize;font-size:13px;font-weight:bold;}
+			.user_on_map .user-description p {margin:0;line-height:1.2em;font-size:10px;}
+		
+	.object-on-map {overflow:hidden;width:100%;}
+		.object-on-map .object-icon {float:left;width:20px;height:20px;margin-right:10px;background:url('/mod/geolocation/graphics/objects-on-map.png') 0 0 no-repeat;}
+			.object-on-map.bookmarks .object-icon {background-position:0 -21px}
+		.object-on-map .object-description {margin-left:30px;}
+			.object-on-map .title {display:block;margin:0;line-height:20px;text-transform:capitalize;font-size:13px;font-weight:bold;}
+			.object-on-map p {margin:0;line-height:1.2em;font-size:10px;}
 

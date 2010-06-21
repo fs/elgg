@@ -114,3 +114,7 @@
 .docs_comment {
     width: 90%;
 }
+
+.docs_tags {
+    width: 90%;
+}

@@ -874,11 +874,18 @@
         }
 
         
-    function share_document($doc, $user, $message, $access, $collaborators = null) {
+    function share_document($doc, $user, $message, $tags, $access, $collaborators = null) {
             $doc_activity = new ElggObject();
             $doc_activity->subtype = "doc_activity";
             $doc_activity->owner_guid = $user->guid;
             $doc_activity->container_guid = $user->guid;
+
+            $tag_array = string_to_tag_array($tags);
+
+            // Now let's add tags.
+            if (is_array($tag_array)) {
+                    $doc_activity->tags = $tag_array;
+            }
 
             if ($access == 'match') { /* Match permissions of Google doc */
                 $doc_activity->access_id = ACCESS_LOGGED_IN;

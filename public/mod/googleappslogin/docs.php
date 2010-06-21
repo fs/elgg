@@ -83,6 +83,7 @@
 
 
 		$area .= '<label>Comment to add</label><br /><textarea name="comment" class="docs_comment"></textarea><br /><br />';
+                $area .= '<label>Tags</label><br /><input type="text" name="tags" class="docs_tags"></textarea><br /><br />';
 		$area .= '<div class="docs_table">            
 		  <table width="100%" id="docs_table" class="tablesorter">
 		    <thead>

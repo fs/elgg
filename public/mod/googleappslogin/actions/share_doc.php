@@ -2,6 +2,7 @@
 
 $doc_id = get_input('doc_id');
 $comment = get_input('comment', '');
+$tags = get_input('tags', '');
 $activity_access = get_input('access', '');
 $group_id = get_input('group', '');
 
@@ -10,6 +11,7 @@ $to_share['doc_id']=$doc_id;
 $to_share['comment']=$comment;
 $to_share['access']=$activity_access;
 $to_share['group']=$group_id;
+$to_share['tags']=$tags;
 $_SESSION['google_docs_to_share_data']=serialize( $to_share ); // remember data
 
 if ( is_null($doc_id) ) {
@@ -57,7 +59,7 @@ if (! check_document_permission($doc_access, $activity_access, $members) ) {
          $doc_access = get_group_members_mails($group_id); // rewrite access to group members
     }
 
-     share_document($doc, $user, $comment, $activity_access, $doc_access); // Share and public document activity
+     share_document($doc, $user, $comment, $tags, $activity_access, $doc_access); // Share and public document activity
      echo elgg_echo("googleappslogin:doc:share:ok");
      exit;
  }

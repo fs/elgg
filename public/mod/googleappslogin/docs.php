@@ -19,7 +19,7 @@
 
 	$area2 .= '<form action="'.$GLOBALS['share_doc_url'].'" method="post" onsubmit="return ajax_submit(this)" >';
 	// Get a list of google sites
-	$area2 .= '<div id="googleappslogin">Loading...</div>';
+	$area2 .= '<div id="googleappslogin"><img src="/mod/embed/images/loading.gif" /></div>';
 	$area2 .= '';
 
         $area2.='<br />View access level: <select name="access" id="access" onchange="showGroups()">';

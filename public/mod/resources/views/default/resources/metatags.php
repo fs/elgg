@@ -17,7 +17,7 @@
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
 <script type="text/javascript">
 
-  	google.load("jqueryui", "1.7.2");
+  	//google.load("jqueryui", "1.7.2");
 
 </script>
 

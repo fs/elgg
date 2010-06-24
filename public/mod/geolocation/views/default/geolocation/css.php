@@ -87,15 +87,21 @@ p.user_menu_item {margin-bottom:0;}
 		
 	.object-on-map {overflow:hidden;width:100%;}
 		.object-on-map .object-icon {float:left;width:20px;height:20px;margin-right:5px;background:url('/mod/geolocation/graphics/objects-on-map.png') 0 0 no-repeat;}
-			.object-on-map.bookmarks .object-icon {background-position:0 -21px}
-			.object-on-map.group .object-icon {background-position:0 -41px}
-			.object-on-map.doc_activity .object-icon {background-position:0 -61px}
+			.object-on-map.bookmarks .object-icon {background-position:0 -19px}
+			.object-on-map.group .object-icon {background-position:0 -38px}
+			.object-on-map.doc_activity .object-icon {background-position:0 -59px}
 			.object-on-map.resourcerequest .object-icon {background-position:0 -81px}
-			.object-on-map.image .object-icon {background-position:0 -101px}
-			.object-on-map.album .object-icon {background-position:0 -121px}
-			.object-on-map.page_top .object-icon {background-position:0 -141px}
-			.object-on-map.site_activity .object-icon {background-position:0 -161px}
+			.object-on-map.image .object-icon {background-position:0 -99px}
+			.object-on-map.album .object-icon {background-position:0 -118px}
+			.object-on-map.page_top .object-icon {background-position:0 -139px}
+			.object-on-map.site_activity .object-icon {background-position:0 -159px}
 			.object-on-map.rubric .object-icon {background-position:0 -178px}
+			.object-on-map.blog .object-icon {background-position:0 -198px}
+			.object-on-map.thewire .object-icon {background-position:0 -218px}
+			.object-on-map.file .object-icon {background-position:0 -238px}
+			.object-on-map.video .object-icon {background-position:0 -258px}
+			.object-on-map.page .object-icon {background-position:0 -278px}
+			.object-on-map.todo .object-icon {background-position:0 -298px}
 		.object-on-map .object-description {margin-left:25px;}
 			.object-on-map .title {display:block;margin:0;line-height:1.3em;text-transform:capitalize;font-size:13px;font-weight:bold;}
 			.object-on-map p {margin:0;line-height:1.2em;font-size:10px;}

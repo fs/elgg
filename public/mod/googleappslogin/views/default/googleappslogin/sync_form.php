@@ -14,7 +14,6 @@ $enabled = array ();
 if(!is_array($user_sync_settings)) {
     $user_sync_settings['sync_name'] = 1;
     $user->save();
-    echo "<br>set defa";
 }
 
 foreach ($user_sync_settings as $setting => $v) {

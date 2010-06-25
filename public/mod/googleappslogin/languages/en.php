@@ -38,6 +38,9 @@ $english = array(
 		'googleappslogin:google_sites_settings' => "Google sites access settings",
 		'googleappslogin:google_sites_settings_description' => "You can specify the settings of visibility for your activities",
 
+		'googleappslogin:google_sync_settings' => "Syncing with Google Apps settings",
+		'googleappslogin:google_sync_settings_description' => "You can specify the settings of syncing with Google Apps",
+
 		'googleappslogin:oauth_update_interval' => 'Time interval of Googleapps update (in minutes)',
 
 		'googleappslogin:sites' => "Wiki",

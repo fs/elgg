@@ -84,6 +84,7 @@ function googleappslogin_pagesetup() {
 
 	if (get_context() == "settings") {
 		add_submenu_item(elgg_echo('googleappslogin:google_sites_settings'), $CONFIG->wwwroot . "mod/googleappslogin/");
+                add_submenu_item(elgg_echo('googleappslogin:google_sync_settings'), $CONFIG->wwwroot . "mod/googleappslogin/sync_settings.php");
 	}
 
 	if (get_context() == 'wikis') {
@@ -346,6 +347,7 @@ register_action('googleappslogin/disconnect', true, $CONFIG->pluginspath . 'goog
 register_action('googleappslogin/return', true, $CONFIG->pluginspath . 'googleappslogin/actions/return.php');
 register_action('googleappslogin/return_with_connect', true, $CONFIG->pluginspath . 'googleappslogin/actions/return_with_connect.php');
 register_action('googleappslogin/save', false, $CONFIG->pluginspath . 'googleappslogin/actions/save.php');
+register_action('googleappslogin/save_user_sync_settings', false, $CONFIG->pluginspath . 'googleappslogin/actions/save_user_sync.php');
 
 register_action('googleappslogin/share_doc', false, $CONFIG->pluginspath . 'googleappslogin/actions/share_doc.php');
 register_action('googleappslogin/change_doc_permissions', false, $CONFIG->pluginspath . 'googleappslogin/actions/change_doc_permissions.php');

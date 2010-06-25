@@ -174,7 +174,10 @@ if (!$google->is_authorized()) {
 	if ($do_login) {
 		$rememberme = true;
 
-		if (($user->google || $subtype == 'googleapps') && ($user->googleapps_controlled_profile != 'no')) {
+                $user_sync_settings = unserialize($user->sync_settings);
+                
+
+		if (($user->google || $subtype == 'googleapps') && ($user->googleapps_controlled_profile != 'no') && $user_sync_settings['sync_name']!==0) {
 			// update from GoogleApps
 			$user->email = $email;
 			$user->name = (!empty($firstname) || !empty($lastname)) ? ($firstname . ' ' . $lastname) : $email;

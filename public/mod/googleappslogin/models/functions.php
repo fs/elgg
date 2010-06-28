@@ -84,10 +84,20 @@
 
                     $response_list = $res['response_list']; //sites xml list
                     $site_entities =$res['site_entities']; // sites objects
-                    $all_site_entities_count =$res['all_site_entities_count']; // sites objects
+                    $all_site_entities_count =count($res['all_site_entities']); // sites objects
+                    $all_site_entities =$res['all_site_entities'];
+
+
 
 
                     echo "User = ".$user->name.', all site_entities = '.$all_site_entities_count;
+                    if (get_input('debug')) {
+                        echo "<pre>";
+                        print_r($all_site_entities);
+                        echo "</pre>";
+                    } else {
+                        echo "no debug";
+                    }
 
                         $max_time = null;
                         $times = array();
@@ -471,7 +481,7 @@
 		$user->save();
 
 		// 5. Profit
-		return array('response_list'=>$response_list,  'site_entities'=>$users_site_entities, 'all_site_entities_count' => count($all_site_entities) );
+		return array('response_list'=>$response_list,  'site_entities'=>$users_site_entities, 'all_site_entities' => $all_site_entities );
 	}
 
 	/**

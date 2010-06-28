@@ -69,7 +69,7 @@
                             continue;
                     }
 
-                    echo "user=".$user->name;
+                    
 
                     $_SESSION['user'] = $user;
                     $client = get_client($user);
@@ -83,7 +83,11 @@
                     $res=googleapps_sync_sites(true, $user);
 
                     $response_list = $res['response_list']; //sites xml list
-                    $site_entities=$res['site_entities']; // sites objects
+                    $site_entities =$res['site_entities']; // sites objects
+                    $all_site_entities_count =$res['all_site_entities_count']; // sites objects
+
+
+                    echo "User = ".$user->name.', all site_entities = '.$all_site_entities_count;
 
                         $max_time = null;
                         $times = array();
@@ -97,8 +101,7 @@
                         // Parse server response for google sites activity stream
                         foreach ($response_list as $site) {
 
-                                /* found current site entity obj */
-
+                                // found current site entity obj
                                 $site_entity=null;
                                 foreach ($site_entities as $site_obj) {
                                     if ($site_obj->site_id == $site['site_id']) {
@@ -468,7 +471,7 @@
 		$user->save();
 
 		// 5. Profit
-		return array('response_list'=>$response_list,  'site_entities'=>$users_site_entities );
+		return array('response_list'=>$response_list,  'site_entities'=>$users_site_entities, 'all_site_entities_count' => count($all_site_entities) );
 	}
 
 	/**

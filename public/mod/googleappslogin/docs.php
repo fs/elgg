@@ -29,7 +29,7 @@
         $area2.='<option value="match">Match permissions of Google doc</option>';
         $area2.='</select>';
 
-        $groups = get_entities_from_relationship('member', $user->guid, false, 'group', '', 0,  null, false,  false);
+        $groups = elgg_get_entities_from_relationship('member', $user->guid, false, 'group', '', 0,  null, false,  false);
         $group_list='&nbsp;<span id="group_list"><select name="group">';
         foreach ($groups as $group) {
             $group_list.='<option value="'.$group->guid.'">'.$group->name.'</option>';

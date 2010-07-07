@@ -55,7 +55,7 @@ if (!$google->is_authorized()) {
 		$user->save();
 		
 		$_SESSION['oauth_connect'] = 1;
-		$googleappslogin_return = elgg_validate_action_url('https://' . $_SERVER['HTTP_HOST'] . '/action/googleappslogin/return');
+		$googleappslogin_return = elgg_add_action_tokens_to_url('https://' . $_SERVER['HTTP_HOST'] . '/action/googleappslogin/return', FALSE);
 		forward($googleappslogin_return);
 		
 	} else {

@@ -8,7 +8,7 @@ require_once (dirname(dirname(__FILE__)) . '/models/client.inc');
 
 global $CONFIG;
 if (empty($CONFIG->input['openid_ns'])){
-	$CONFIG->input = array_merge($CONFIG->input, $_POST);
+	$CONFIG->input = array_merge($CONFIG->input, $_REQUEST);
 }
 //print_r($GLOBALS);
 $user = $_SESSION['user'];

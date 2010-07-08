@@ -1,1 +1,0 @@
-Sign in with Google Apps account

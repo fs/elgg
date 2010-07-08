@@ -118,7 +118,7 @@
 	//$area2 .= elgg_list_entities(array('type' => 'object', 'subtype' => 'site', 'limit' => 4, 'full_view' => FALSE));
 	$area2 .= '</div><div class="clearfloat"></div></div>';
 
-	$body = elgg_view_layout("two_column_left_sidebar", '', $area1 . $area2, $area3);
+	$body = elgg_view_layout("one_column", $area1 . $area2, $area3);
 
 	// Get categories, if they're installed
 	//global $CONFIG;

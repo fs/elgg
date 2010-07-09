@@ -12,10 +12,8 @@ $doc = $google_docs[$doc_id];
 $user = $_SESSION['user'];
 $client = authorized_client(true);
 
-switch (get_input('answer')) {
-    
+switch (get_input('answer')) {	
     case 'Grant view permisson':
-
         if ($access == 'group') {
             $members = get_group_members_mails($group_id);
             $share_to_members = get_members_not_shared($group_id, $doc);

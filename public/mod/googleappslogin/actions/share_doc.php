@@ -22,7 +22,6 @@ if ( is_null($doc_id) ) {
 if( empty($comment)) {
     echo elgg_echo("googleappslogin:doc:share:no_comment");
     exit;
-    forward($url_to_redirect);
 }
 
 $google_docs = unserialize($_SESSION['oauth_google_docs']);

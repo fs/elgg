@@ -4,7 +4,7 @@ gatekeeper();
 
 global $SESSION;
 
-
+// todo: depricated ?
 function update_acitivities_access($site_name, $access) {
 	$entities = get_entities_from_metadata('site_name', $site_name, 'object');
 	foreach ($entities as $entity) {
@@ -69,7 +69,7 @@ if ($user->google == 1) {
 			foreach ($googleapps_sites_settings as $site_id=> $access) {
 				$site_list[$site_id]['access'] = $access;
                                 $entity_id=$site_list[$site_id]['entity_id'];
-				update_acitivities_access($title, $access);
+				//update_acitivities_access($title, $access);
                                 update_site_entity_acces($entity_id, $access);
 			}
 			$user->site_list = serialize($site_list);

@@ -19,7 +19,7 @@
 
 	$area2 .= '<form action="'.$GLOBALS['share_doc_url'].'" method="post" onsubmit="return ajax_submit(this)" >';
 	// Get a list of google sites
-	$area2 .= '<div id="googleappslogin">Loading....<img src="/mod/embed/images/loading.gif" /></div>';
+	$area2 .= '<div id="googleappslogin">Loading....</div>';
 	$area2 .= '';
 
         $area2.='<br />View access level: <select name="access" id="access" onchange="showGroups()">';
@@ -28,8 +28,10 @@
         $area2.='<option value="group">Group or Shared Access</option>';
         $area2.='<option value="match">Match permissions of Google doc</option>';
         $area2.='</select>';
+       	
+		$groups = elgg_get_entities_from_relationship(array('relationship' => 'member', 'relationship_guid' => get_loggedin_userid(), 'types' => 'group', 'limit' => 9999));
 
-        $groups = elgg_get_entities_from_relationship('member', $user->guid, false, 'group', '', 0,  null, false,  false);
+
         $group_list='&nbsp;<span id="group_list"><select name="group">';
         foreach ($groups as $group) {
             $group_list.='<option value="'.$group->guid.'">'.$group->name.'</option>';
@@ -45,7 +47,7 @@
 	switch (get_input('action')) {
 	default:
 		// Display them in the page
-		$body = elgg_view_layout('one_column', $area1 . $area2, $area3);
+		$body = elgg_view_layout('one_column', $area2);
 		// Display page
 		page_draw( elgg_echo('googleappslogin:google_docs'), $body);
 	break;

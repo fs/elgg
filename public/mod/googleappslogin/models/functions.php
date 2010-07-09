@@ -589,10 +589,11 @@
                 }
 
 
-                $result = $client->execute_post($feed, '3.0', null, 'POST', $data);
+                $result = $client->execute_post($feed, '3.0', null, 'POST', $data);				
                 
             }
         }
+
 
 
 	/**
@@ -974,7 +975,7 @@
 
 
  function get_group_members_mails($group_id) {
-    $members=get_group_members($group_id);
+    $members=get_group_members($group_id, 9999);
     $group_members_emails = array();
     foreach ( $members as $member ) {
         $group_members_emails[]=$member['email'];

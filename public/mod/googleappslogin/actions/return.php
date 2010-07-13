@@ -23,13 +23,14 @@ $oauth_verifier = $CONFIG->input['oauth_verifier'];
 
 $client = new OAuth_Client($CONSUMER_KEY, $CONSUMER_SECRET, SIG_METHOD_HMAC);
 
+
 //print_r($_SESSION);
 
 //exit;
 if (!$client->authorized() && !empty($user) && ($oauth_sync_email != 'no' || $oauth_sync_sites != 'no')) {
 	
 	if (empty($oauth_verifier)) {
-		
+	
 		$result = $client->oauth_authorize();
 		header('Location: ' . $result);
 		exit;
@@ -37,6 +38,7 @@ if (!$client->authorized() && !empty($user) && ($oauth_sync_email != 'no' || $oa
 	} else {
 		
 		$token = $client->oauth_fetch_access_token($oauth_verifier, $_SESSION['request_key'], $_SESSION['request_secret']);
+
 		
 		$_SESSION['access_token'] = $token->key;
 		$_SESSION['access_secret'] = $token->secret;
@@ -100,25 +102,20 @@ if (!$google->is_authorized()) {
 	$entities = get_user_by_email($email);
 	//$entities = elgg_get_entities(array('email' => 'shotman0@rambler.ru'));
 	//echo '<pre>';print_r($email . '<br><br>');
-	//print_r($entities);exit;
+
     if (!$entities) {
 		
 		$username = $email;
+		$username = preg_replace("/\@[a-zA-Z\.0-9\-]+$/", "", $username);
 
+		if(get_user_by_username($username)) {
+			$username = preg_replace("/\@([a-zA-Z\.0-9\-]+)/", ".$1", $email);
+		}
 
-
-    $username = preg_replace("/\@[a-zA-Z\.0-9\-]+$/", "", $username);
-    
-    if(get_user_by_username($username)) {
-        $username = preg_replace("/\@([a-zA-Z\.0-9\-]+)/", ".$1", $email);
-    }
-
-
-			
-			if(get_user_by_username($username)) {
-				$duplicate_account = true;
-				register_error(sprintf(elgg_echo("googleappslogin:account_duplicate"), $username));
-			}
+		if(get_user_by_username($username)) {
+			$duplicate_account = true;
+			register_error(sprintf(elgg_echo("googleappslogin:account_duplicate"), $username));
+		}
 		
 		if (!$duplicate_account) {
 			$firstname = $google->get_firstname();
@@ -148,16 +145,14 @@ if (!$google->is_authorized()) {
 			}
 		}
 	} elseif ($entities[0]->active == 'no') {
-		// this is an inactive account
+		// this is an inactive account		
 		register_error(elgg_echo("googleappslogin:inactive"));
 	} else {
 		$user = $entities[0];
 		
 		$subtype = $user->getSubtype();
-		//print_r($subtype);exit;
-		if ($user->google == 1 || $subtype == 'googleapps') {
-		//if ($subtype == 'googleapps') {
-			
+//		print_r($subtype);exit;
+		if ($user->google == 1 || $subtype == 'googleapps' or true) {
 			// account is active, check to see if this user has been banned
 			if (isset($user->banned) && $user->banned == 'yes') { // this needs to change.
 				register_error(elgg_echo("googleappslogin:banned"));
@@ -171,22 +166,21 @@ if (!$google->is_authorized()) {
 		
     }
 	
-	if ($do_login) {
+	if ($do_login) {	
 		$rememberme = true;
 
-                $user_sync_settings = unserialize($user->sync_settings);
-                
+		$user_sync_settings = unserialize($user->sync_settings);
 
-		if (($user->google || $subtype == 'googleapps') && ($user->googleapps_controlled_profile != 'no') && $user_sync_settings['sync_name']!==0) {
+		if (($user->googleapps_controlled_profile != 'no') && $user_sync_settings['sync_name']!==0) {
 			// update from GoogleApps
 			$user->email = $email;
 			$user->name = (!empty($firstname) || !empty($lastname)) ? ($firstname . ' ' . $lastname) : $email;
-			/*
-			echo '<pre>FIRSTNAME: ';print_r($firstname);echo '</pre>';
-			echo '<pre>LASTNAME: ';print_r($lastname);echo '</pre>';
-			echo '<pre>RESULT: ';print_r($user->name);echo '</pre>';
-			exit;
-			*/
+			
+//			echo '<pre>FIRSTNAME: ';print_r($firstname);echo '</pre>';
+//			echo '<pre>LASTNAME: ';print_r($lastname);echo '</pre>';
+//			echo '<pre>RESULT: ';print_r($user->name);echo '</pre>';
+//			exit;
+			
 			$user->save();
 		}
 

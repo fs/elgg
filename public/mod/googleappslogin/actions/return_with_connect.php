@@ -11,7 +11,7 @@ require_once (dirname(dirname(__FILE__)) . "/models/Google_OpenID.php");
 
 global $CONFIG;
 if (empty($CONFIG->input['openid_ns'])){
-	$CONFIG->input = array_merge($CONFIG->input, $_POST);
+	$CONFIG->input = array_merge($CONFIG->input, $_REQUEST);
 }
 
 $google = Google_OpenID::create_from_response($CONFIG->input);

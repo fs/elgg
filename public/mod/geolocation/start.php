@@ -32,7 +32,7 @@ function geolocation_init() {
 
 
 //extend toolbar
-	elgg_extend_view('page_elements/searchbox', 'geolocation/toolbar_link', 400);
+	elgg_extend_view('header/extend', 'geolocation/toolbar_link');
 
 // extend some views
 	elgg_extend_view('search/listing', 'geolocation/search_link');

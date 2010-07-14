@@ -24,11 +24,8 @@ if ($googleapps_domain) {
     $google->set_start_url("https://www.google.com/accounts/o8/id");
 }
 
-//$google->set_start_url("https://www.google.com/accounts/o8/id");
-
 try {
     $url = $google->get_authorization_url();
-	//die($url);
     forward($url);
 } catch(Exception $e) {
     register_error(sprintf(elgg_echo("googleappslogin:wrongdomain"), $username));

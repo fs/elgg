@@ -57,7 +57,7 @@
 					?></p><?
 				}
 			}
-		}
+		}		
 		echo elgg_view('googleappslogin/disconnect');
 	} else {
 		$googleapps_screen_name = $user->googleapps_screen_name;

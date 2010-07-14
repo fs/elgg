@@ -29,8 +29,8 @@ $english = array(
 
 		'googleappslogin:googleapps_user_settings:save:ok' => "Your googleapps profile preference has been saved.",
 		'googleappslogin:googleapps_login_settings:save:ok' => "Your googleapps screen name has been saved.",
-		'googleappslogin:googleapps_login_title' => "googleapps login",
-		'googleappslogin:googleapps_login_description' => "If you want to login to Elgg using googleapps, enter your googleapps screen name here.",
+		'googleappslogin:googleapps_login_title' => "Googleapps login",
+		'googleappslogin:googleapps_login_description' => "If you want to login to Elgg using googleapps, click \"Connect with Google OpenID account\"",
 
 		'googleappslogin:google_docs' => "Share Google docs",
 		'googleappslogin:google_docs:description' => "",

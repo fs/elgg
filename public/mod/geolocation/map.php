@@ -23,7 +23,7 @@ $body = elgg_view('geolocation/scripts');
 $body .= elgg_view('geolocation/map', array('select_checkboxes' => $select_checkboxes));
 $sidebar = elgg_view('geolocation/search_map_sidebar');
 
-$body = elgg_view_layout('two_column_left_sidebar', $sidebar, $body);
+$body = elgg_view_layout('one_column_with_sidebar', $body,  $sidebar);
 
 // Draw the page
 page_draw(elgg_echo('googleappslogin:google_sites_settings'),$body);

@@ -50,6 +50,7 @@ function googleappslogin_init() {
 	//$body = elgg_view("blogs/list", array('googleappslogin_url' => $googleappslogin_url));
 	//elgg_extend_view("account/forms/login", $body);
 	elgg_extend_view('account/forms/login', 'googleappslogin/login');
+	elgg_extend_view('account/forms/login_dropdown', 'googleappslogin/login_dropdown');
 	elgg_extend_view('messages/list', 'googleappslogin/scripts');
 
 	// Extend system CSS with our own styles
@@ -157,9 +158,8 @@ function googleappslogin_page_handler($page) {
 }
 
 function googleappslogin_logout() {
-
-	//setcookie('elgg_redirect', '0');
-	//setcookie('elgg_logout', mktime());
+//	setcookie('elgg_redirect', '0');
+//	setcookie('elgg_logout', mktime());
 }
 
 function googleappslogin_login() {

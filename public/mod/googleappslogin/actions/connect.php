@@ -46,7 +46,7 @@ if (!$user->google) {
 		forward();
 	}
 } else {
-	forward('mod/googleappslogin');
+	forward('mod/googleappslogin/sync_settings.php');
 }
 
 exit;

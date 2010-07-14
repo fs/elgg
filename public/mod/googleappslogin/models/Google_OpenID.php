@@ -93,7 +93,7 @@ class Google_OpenID
 			 $params['openid.ns.oauth'] = 'http://specs.openid.net/extensions/oauth/1.0';
 			$params['openid.oauth.consumer'] = get_plugin_setting('googleapps_domain', 'googleappslogin');
 			$params['openid.oauth.scope'] = 'https://mail.google.com/mail/feed/atom https://sites.google.com/feeds http://docs.google.com/feeds/ http://spreadsheets.google.com/feeds/';
-			///echo '<pre>';print_r($params);exit;
+			//echo '<pre>';print_r($params);exit;
 		}
 
 		

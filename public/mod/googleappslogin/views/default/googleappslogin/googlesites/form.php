@@ -67,15 +67,6 @@ $_SESSION['user_site_entities']=serialize($user_site_entities);
 				'action' => $vars['url'] . 'action/googleappslogin/save',
 				));
 			}
-			echo elgg_view('googleappslogin/disconnect');
-
-		} else {
-			$googleapps_screen_name = $user->googleapps_screen_name;
-			?>
-		<h3><?php echo elgg_echo('googleappslogin:googleapps_login_title'); ?></h3>
-			<?php
-			echo elgg_echo('googleappslogin:googleapps_login_description');
-			echo elgg_view('googleappslogin/connect');
 		}
 
 		?>

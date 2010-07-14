@@ -23,18 +23,12 @@ $oauth_verifier = $CONFIG->input['oauth_verifier'];
 
 $client = new OAuth_Client($CONSUMER_KEY, $CONSUMER_SECRET, SIG_METHOD_HMAC);
 
-
-//print_r($_SESSION);
-
-//exit;
 if (!$client->authorized() && !empty($user) && ($oauth_sync_email != 'no' || $oauth_sync_sites != 'no')) {
 	
-	if (empty($oauth_verifier)) {
-	
+	if (empty($oauth_verifier)) {	
 		$result = $client->oauth_authorize();
 		header('Location: ' . $result);
-		exit;
-		
+		exit;		
 	} else {
 		
 		$token = $client->oauth_fetch_access_token($oauth_verifier, $_SESSION['request_key'], $_SESSION['request_secret']);
@@ -47,25 +41,14 @@ if (!$client->authorized() && !empty($user) && ($oauth_sync_email != 'no' || $oa
 		$user->token_secret = $token->secret;
 		$user->save();
 		
-		googleapps_fetch_oauth_data($client);
-		
+		googleapps_fetch_oauth_data($client);		
 	}
 	
-} else {
-	/*
-	if ($user) {
-		echo '<pre>';
-		print_r($user);
-		echo '</pre>';
-		exit;
-	}
-	*/
-	
-}
+};
 
 if (!empty($_SESSION['oauth_connect'])) {
 	unset($_SESSION['oauth_connect']);
-	forward('mod/googleappslogin');
+	forward('mod/googleappslogin/sync_settings.php');
 }
 
 $google = Google_OpenID::create_from_response($CONFIG->input);
@@ -152,7 +135,7 @@ if (!$google->is_authorized()) {
 		
 		$subtype = $user->getSubtype();
 //		print_r($subtype);exit;
-		if ($user->google == 1 || $subtype == 'googleapps' or true) {
+//		if ($user->google == 1 || $subtype == 'googleapps' or true) {
 			// account is active, check to see if this user has been banned
 			if (isset($user->banned) && $user->banned == 'yes') { // this needs to change.
 				register_error(elgg_echo("googleappslogin:banned"));
@@ -160,13 +143,13 @@ if (!$google->is_authorized()) {
 				$do_login = true;
 				$new_account = false;
 			}
-		} else {
-			register_error(sprintf(elgg_echo('googleappslogin:googleappserror'), 'Sorry, but username ' . $user->username . ' already exists.'));
-		}
+//		} else {
+//			register_error(sprintf(elgg_echo('googleappslogin:googleappserror'), 'Sorry, but username ' . $user->username . ' already exists.'));
+//		}
 		
     }
 	
-	if ($do_login) {	
+	if ($do_login) {
 		$rememberme = true;
 
 		$user_sync_settings = unserialize($user->sync_settings);

@@ -946,7 +946,7 @@
 //             match
 //             group
 
-        function check_document_permission($document_access, $need_access, $group_members=null) {
+        function check_document_permission($document_access, $need_access, $group_members = null) {
             if ( $document_access == 'public')  return true;
             if ( $document_access == 'everyone_in_domain' and ($need_access == 'logged_in' or $need_access == 'group'))  return true;
             if ( $need_access == 'match')  return true; // Match permissions of Google doc
@@ -956,9 +956,11 @@
                 $document_access=array_flip($document_access);
                 $permission=true;
                 foreach ($group_members as $member) {
-                    if (is_null($document_access[$member])) { $permission=false; break; }
+                    if (is_null($document_access[$member])) {
+						$permission=false;
+						break;
+					}
                 }
-
                 return $permission;
             }
                         
@@ -973,24 +975,42 @@
         $merged[$site_id] = array('title'=>$title, 'access'=>$access, 'entity_id' =>  $site_entity->guid);
     }
 
+function get_group_or_channel_members($group_channel) {
+	$share_type = substr($group_channel, 0, 2);		
+	if ($share_type == 'gr') {
+		$group_id = (int)$group_channel;
+		$members = get_group_members_mails($group_id);
+	} else {
+		$channel_id = (int)$group_channel;
+		$members = get_channel_members_mails($channel_id);
+	}
+	return $members;
+}
 
  function get_group_members_mails($group_id) {
     $members=get_group_members($group_id, 9999);
-    $group_members_emails = array();
-    foreach ( $members as $member ) {
-        $group_members_emails[]=$member['email'];
-    }
-
-    return $group_members_emails;
+	return get_members_mails($members);
  }
 
+ function get_channel_members_mails($group_id) {
+    $members = elgg_get_entities_from_relationship(array('relationship' => 'shared_access_member', 'relationship_guid' => $share_id, 'inverse_relationship' => TRUE, 'limit' => 9999));
+	return get_members_mails($members);
+ }
 
- function get_members_not_shared($group_id, $doc) {
+function get_members_mails($members) {
+	$members_mails = array();
+	foreach ($members as $member) {
+        $members_emails[]=$member['email'];
+    }
+
+    return  $members_emails;
+ }
+
+ function get_members_not_shared($members, $doc) {
 
     $collaborators = $doc['collaborators'];
     $collaborators=array_flip($collaborators);
-    $members=get_group_members_mails($group_id);
-
+    
     $members_not_shared = array();
 
     foreach ($members as $member) {

@@ -3,7 +3,7 @@ $data = unserialize($_SESSION['google_docs_to_share_data']);
 $comment = $data['comment'];
 $tags = $data['tags'];
 $access = $data['access'];
-$group_id = $data['group'];
+$group_channel = $data['group_channel'];
 $doc_id = $data['doc_id'];
 
 
@@ -12,11 +12,11 @@ $doc = $google_docs[$doc_id];
 $user = $_SESSION['user'];
 $client = authorized_client(true);
 
-switch (get_input('answer')) {	
+switch (get_input('answer')) {
     case 'Grant view permisson':
         if ($access == 'group') {
-            $members = get_group_members_mails($group_id);
-            $share_to_members = get_members_not_shared($group_id, $doc);
+            $members = get_group_or_channel_members($group_channel);
+            $share_to_members = get_members_not_shared($members, $doc);
             googleapps_change_doc_sharing($client, $doc['id'], $share_to_members) ; // change permissions
             share_document($doc, $user, $comment, $tags, $access, $members);
             break;

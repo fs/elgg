@@ -11,7 +11,6 @@ $user_sync_settings = unserialize( $user->sync_settings );
 $enabled = array ();
 
 if(!is_array($user_sync_settings)) {
-	echo "<pre>SET DEF</pre>";
     $user_sync_settings['sync_name'] = 1;
 	$user->sync_settings = serialize($user_sync_settings);
     $user->save();

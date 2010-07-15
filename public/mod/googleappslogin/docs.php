@@ -12,37 +12,43 @@
 
 	// Load Elgg engine
 	global $CONFIG;
-	require_once($CONFIG->path . "engine/start.php");	
-        
-	$user = $_SESSION['user'];	
-	$area2 = elgg_view_title(elgg_echo('googleappslogin:google_docs'));
+	require_once($CONFIG->path . "engine/start.php");
 
+	$user = $_SESSION['user'];
+	$groups = elgg_get_entities_from_relationship(array('relationship' => 'member', 'relationship_guid' => get_loggedin_userid(), 'types' => 'group', 'limit' => 9999));
+	$shared_access = elgg_get_entities_from_relationship(array(	'relationship' => 'shared_access_member', 'relationship_guid' => get_loggedin_userid(), 'limit' => 999));
+
+	$area2 = elgg_view_title(elgg_echo('googleappslogin:google_docs'));
 	$area2 .= '<form action="'.$GLOBALS['share_doc_url'].'" method="post" onsubmit="return ajax_submit(this)" >';
 	// Get a list of google sites
 	$area2 .= '<div id="googleappslogin">Loading....</div>';
 	$area2 .= '';
 
-        $area2.='<br />View access level: <select name="access" id="access" onchange="showGroups()">';
-        $area2.='<option value="public">Public</option>';
-        $area2.='<option value="logged_in">Logged in users</option>';
-        $area2.='<option value="group">Group or Shared Access</option>';
-        $area2.='<option value="match">Match permissions of Google doc</option>';
-        $area2.='</select>';
-       	
-		$groups = elgg_get_entities_from_relationship(array('relationship' => 'member', 'relationship_guid' => get_loggedin_userid(), 'types' => 'group', 'limit' => 9999));
+	$area2.='<br />View access level: <select name="access" id="access" onchange="showGroups()">';
+	$area2.='<option value="public">Public</option>';
+	$area2.='<option value="logged_in">Logged in users</option>';
+	if (is_array($groups)) {
+		$area2.='<option value="group">Group or Shared Access</option>';
+	}
+	$area2.='<option value="match">Match permissions of Google doc</option>';
+	$area2.='</select>';
 
 
-        $group_list='&nbsp;<span id="group_list"><select name="group">';
-        foreach ($groups as $group) {
-            $group_list.='<option value="'.$group->guid.'">'.$group->name.'</option>';
-        }
-        $group_list.='</select></span>';
+	$group_and_channels_list='&nbsp;<span id="group_list"><select name="group_channel">';
 
+	foreach ($groups as $group) {
+		$group_and_channels_list .= '<option value="gr'.$group->guid.'">'.$group->name.'</option>';
+	}
 
+	foreach ($shared_access as $shared) {
+		$group_and_channels_list .= '<option value="ch'.$shared->guid.'">'.$shared->title.'</option>';
+	}
 
-        $area2.=$group_list;
-        $area2.='&nbsp;&nbsp;&nbsp;<input type="submit" value="Share doc"></form>';
-        $area2.='</div><div class="clearfloat"></div></div>';	
+	$group_and_channels_list .= '</select></span>';
+
+	$area2 .= $group_and_channels_list;
+	$area2 .= '&nbsp;&nbsp;&nbsp;<input type="submit" value="Share doc"></form>';
+	$area2 .= '</div><div class="clearfloat"></div></div>';
 
 	switch (get_input('action')) {
 	default:
@@ -147,4 +153,4 @@ function ajax_submit(x) {
 	return false;
 }
 $(load_docs);
-</script>  
+</script>
